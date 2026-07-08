@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Bangun Datar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fdf4ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 15px;
+            color: #334155;
+            overflow: hidden;
+        }
+        h1, h2, h3, .font-kids { font-family: 'Baloo 2', cursive; }
+        
+        .slide { display: none; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .slide.active { display: flex; }
+        
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .btn-kid { transition: all 0.1s; box-shadow: 0 5px 0px rgba(0,0,0,0.2); }
+        .btn-kid:hover { transform: translateY(2px); box-shadow: 0 3px 0px rgba(0,0,0,0.2); }
+        .btn-kid:active { transform: translateY(5px); box-shadow: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #e0e7ff; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #818cf8; border-radius: 4px; }
+
+        .svg-highlight { transition: all 0.3s ease; }
+        
+        .shape-btn { transition: all 0.2s; }
+        .shape-btn.active { background-color: #6366f1; color: white; border-color: #4f46e5; transform: scale(1.05); }
+
+        .card-guess { transition: all 0.3s; cursor: pointer; }
+        .card-guess:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .card-guess.opened { background-color: #cbd5e1; cursor: default; transform: none; box-shadow: none; }
+
+        .input-correct { border-color: #22c55e !important; background-color: #dcfce7 !important; color: #166534 !important; }
+        .input-wrong { border-color: #ef4444 !important; background-color: #fee2e2 !important; color: #991b1b !important; }
+    </style>
+</head>
+<body>
+
+    <div class="w-full max-w-6xl h-[92vh] min-h-[600px] bg-white rounded-[30px] shadow-2xl flex flex-col overflow-hidden border-[6px] border-indigo-200 relative">
+        
+        <!-- Header -->
+        <div class="bg-indigo-50 px-6 py-4 flex justify-between items-center z-10 shrink-0 border-b-[4px] border-indigo-100">
+            <div class="flex items-center gap-3 text-indigo-500">
+                <i class="fa-solid fa-shapes text-3xl bg-white p-2 rounded-2xl shadow-sm"></i>
+                <h1 class="font-kids text-2xl tracking-wide hidden sm:block text-indigo-700 font-bold">Dunia Bangun Datar</h1>
+            </div>
+            
+            <div id="student-badge" class="hidden items-center gap-4 bg-white px-5 py-2 rounded-full font-bold text-sm shadow-sm border-2 border-indigo-100">
+                <div class="text-sky-500"><i class="fa-solid fa-face-smile"></i> <span id="s1-name-display">S1</span></div>
+                <div class="text-rose-500"><i class="fa-solid fa-face-laugh-wink"></i> <span id="s2-name-display">S2</span></div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="navSlide(-1)" class="w-10 h-10 rounded-xl bg-white text-slate-500 shadow-sm border-b-4 border-slate-200 btn-kid flex items-center justify-center" id="btn-prev" disabled><i class="fa-solid fa-chevron-left"></i></button>
+                <span id="slide-indicator" class="flex items-center font-bold text-slate-400">1/8</span>
+                <button onclick="navSlide(1)" class="w-10 h-10 rounded-xl bg-indigo-500 text-white shadow-sm border-b-4 border-indigo-600 btn-kid flex items-center justify-center" id="btn-next" disabled><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-grow overflow-y-auto custom-scrollbar relative bg-[#fafafa]">
+            
+            <!-- SLIDE 1: COVER -->
+            <div id="slide-1" class="slide active flex-col justify-center items-center h-full p-8 text-center bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
+                <div class="absolute top-10 left-10 text-rose-300 text-6xl opacity-50 rotate-12"><i class="fa-regular fa-square"></i></div>
+                <div class="absolute bottom-10 right-10 text-sky-300 text-6xl opacity-50 -rotate-12"><i class="fa-regular fa-circle"></i></div>
+                
+                <h1 class="font-kids text-5xl md:text-7xl font-extrabold text-slate-800 mb-2 drop-shadow-sm">Mengenal <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-500">Bangun Datar</span></h1>
+                <p class="text-slate-500 text-xl font-bold mb-10">Bentuk-bentuk Menarik di Sekitar Kita!</p>
+                
+                <div class="bg-white p-8 rounded-3xl shadow-xl border-[4px] border-indigo-50 w-full max-w-lg z-10 space-y-6">
+                    <h2 class="font-kids text-2xl font-bold text-indigo-500">Siapa Namamu?</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-left text-sm font-bold text-sky-500 mb-2">Siswa 1 (Tim Biru)</label>
+                            <input type="text" id="input-s1" placeholder="Nama..." class="w-full bg-sky-50 border-2 border-sky-200 rounded-xl px-4 py-3 outline-none focus:border-sky-500 font-bold text-center">
+                        </div>
+                        <div>
+                            <label class="block text-left text-sm font-bold text-rose-500 mb-2">Siswa 2 (Tim Merah)</label>
+                            <input type="text" id="input-s2" placeholder="Nama..." class="w-full bg-rose-50 border-2 border-rose-200 rounded-xl px-4 py-3 outline-none focus:border-rose-500 font-bold text-center">
+                        </div>
+                    </div>
+                    <button onclick="startApp()" class="w-full bg-amber-400 text-amber-900 hover:bg-amber-300 font-kids text-2xl font-bold py-3 rounded-2xl border-b-4 border-amber-500 btn-kid mt-4">Mulai Petualangan! <i class="fa-solid fa-play ml-2"></i></button>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: TUJUAN -->
+            <div id="slide-2" class="slide flex-col justify-center items-center h-full p-8 text-center bg-indigo-50">
+                <h2 class="font-kids text-4xl font-bold text-indigo-600 mb-8"><i class="fa-solid fa-bullseye"></i> Tujuan Pembelajaran</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl">
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border-4 border-sky-200 flex flex-col items-center">
+                        <div class="w-16 h-16 bg-sky-100 text-sky-500 rounded-full flex items-center justify-center text-3xl mb-4 font-bold">1</div>
+                        <h3 class="font-bold text-lg text-slate-700 mb-2">Mengenal Konsep</h3>
+                        <p class="text-slate-500 text-sm">Memahami apa itu bangun datar dan menemukannya di kehidupan sehari-hari.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border-4 border-emerald-200 flex flex-col items-center">
+                        <div class="w-16 h-16 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center text-3xl mb-4 font-bold">2</div>
+                        <h3 class="font-bold text-lg text-slate-700 mb-2">Anatomi Bangun</h3>
+                        <p class="text-slate-500 text-sm">Mengetahui apa itu sisi, sudut, titik sudut, dan diagonal.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border-4 border-rose-200 flex flex-col items-center">
+                        <div class="w-16 h-16 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center text-3xl mb-4 font-bold">3</div>
+                        <h3 class="font-bold text-lg text-slate-700 mb-2">Ciri & Bentuk</h3>
+                        <p class="text-slate-500 text-sm">Membedakan berbagai jenis bangun datar berdasarkan ciri-cirinya.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: APA ITU BANGUN DATAR -->
+            <div id="slide-3" class="slide flex-col justify-center items-center h-full p-8 text-center">
+                <h2 class="font-kids text-4xl font-bold text-sky-500 mb-6">Apa itu Bangun Datar?</h2>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border-4 border-sky-100 max-w-4xl">
+                    <p class="text-xl font-bold text-slate-600 mb-6 leading-relaxed">
+                        Bangun datar adalah benda berbentuk <span class="text-sky-500">bidang rata (dua dimensi)</span> yang dibatasi oleh garis lurus atau garis lengkung. Bangun ini punya panjang dan lebar, tapi <span class="text-rose-500">tidak punya ketebalan/ruang</span>.
+                    </p>
+                    <h3 class="font-bold text-lg text-slate-400 uppercase tracking-widest mb-4">Contoh di Sekitar Kita:</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-2xl border-2 border-slate-200 flex flex-col items-center">
+                            <i class="fa-solid fa-square text-4xl text-amber-400 mb-2"></i>
+                            <span class="font-bold text-slate-700">Ubin Lantai</span>
+                            <span class="text-xs text-slate-500">(Persegi)</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border-2 border-slate-200 flex flex-col items-center">
+                            <i class="fa-solid fa-door-closed text-4xl text-amber-700 mb-2"></i>
+                            <span class="font-bold text-slate-700">Pintu</span>
+                            <span class="text-xs text-slate-500">(Persegi Panjang)</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border-2 border-slate-200 flex flex-col items-center">
+                            <i class="fa-solid fa-triangle-exclamation text-4xl text-rose-500 mb-2"></i>
+                            <span class="font-bold text-slate-700">Rambu Jalan</span>
+                            <span class="text-xs text-slate-500">(Segitiga)</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border-2 border-slate-200 flex flex-col items-center">
+                            <i class="fa-solid fa-life-ring text-4xl text-orange-500 mb-2"></i>
+                            <span class="font-bold text-slate-700">Ban/Roda</span>
+                            <span class="text-xs text-slate-500">(Lingkaran)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 4: ANATOMI -->
+            <div id="slide-4" class="slide flex-col h-full p-8 overflow-y-auto">
+                <h2 class="font-kids text-4xl font-bold text-emerald-500 mb-2 text-center">Kenali Bagian-bagiannya!</h2>
+                <p class="text-center font-bold text-slate-500 mb-8">Tekan tombol di bawah untuk melihat bagian yang menyala.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center max-w-5xl mx-auto w-full">
+                    <!-- SVG Interactive Image -->
+                    <div class="bg-white p-8 rounded-3xl shadow-sm border-4 border-slate-200 flex justify-center">
+                        <svg viewBox="0 0 200 200" class="w-full max-w-xs drop-shadow-md">
+                            <!-- Base Rect -->
+                            <rect x="30" y="40" width="140" height="100" fill="#f1f5f9" stroke="none" />
+                            
+                            <!-- Area for SISI -->
+                            <rect id="anat-sisi" x="30" y="40" width="140" height="100" fill="none" stroke="#94a3b8" stroke-width="4" class="svg-highlight" />
+                            
+                            <!-- Area for SUDUT -->
+                            <g id="anat-sudut" class="opacity-0 svg-highlight">
+                                <path d="M 30 60 A 20 20 0 0 0 50 40 L 30 40 Z" fill="#ef4444" />
+                                <path d="M 170 60 A 20 20 0 0 1 150 40 L 170 40 Z" fill="#ef4444" />
+                                <path d="M 30 120 A 20 20 0 0 1 50 140 L 30 140 Z" fill="#ef4444" />
+                                <path d="M 170 120 A 20 20 0 0 0 150 140 L 170 140 Z" fill="#ef4444" />
+                            </g>
+                            
+                            <!-- Area for TITIK SUDUT -->
+                            <g id="anat-titik" class="opacity-0 svg-highlight">
+                                <circle cx="30" cy="40" r="8" fill="#10b981" />
+                                <circle cx="170" cy="40" r="8" fill="#10b981" />
+                                <circle cx="30" cy="140" r="8" fill="#10b981" />
+                                <circle cx="170" cy="140" r="8" fill="#10b981" />
+                            </g>
+
+                            <!-- Area for DIAGONAL -->
+                            <g id="anat-diag" class="opacity-0 svg-highlight">
+                                <line x1="30" y1="40" x2="170" y2="140" stroke="#f59e0b" stroke-width="6" stroke-dasharray="8,8" />
+                                <line x1="170" y1="40" x2="30" y2="140" stroke="#f59e0b" stroke-width="6" stroke-dasharray="8,8" />
+                            </g>
+                        </svg>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="space-y-4">
+                        <button onclick="highlightAnatomy('sisi')" class="w-full bg-blue-100 border-2 border-blue-300 text-blue-700 font-bold py-4 rounded-2xl btn-kid text-xl">Sisi</button>
+                        <button onclick="highlightAnatomy('sudut')" class="w-full bg-red-100 border-2 border-red-300 text-red-700 font-bold py-4 rounded-2xl btn-kid text-xl">Sudut</button>
+                        <button onclick="highlightAnatomy('titik')" class="w-full bg-emerald-100 border-2 border-emerald-300 text-emerald-700 font-bold py-4 rounded-2xl btn-kid text-xl">Titik Sudut</button>
+                        <button onclick="highlightAnatomy('diagonal')" class="w-full bg-amber-100 border-2 border-amber-300 text-amber-700 font-bold py-4 rounded-2xl btn-kid text-xl">Diagonal</button>
+                        
+                        <div id="anat-desc" class="bg-slate-800 text-white p-4 rounded-xl font-bold text-center h-20 flex items-center justify-center mt-4 border-b-4 border-slate-900">
+                            Klik salah satu tombol di atas!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: MATERI CIRI-CIRI -->
+            <div id="slide-5" class="slide flex-col h-full overflow-hidden">
+                <div class="flex flex-col md:flex-row h-full">
+                    <!-- Sidebar menu -->
+                    <div class="w-full md:w-1/3 bg-slate-100 border-r border-slate-200 p-4 overflow-y-auto custom-scrollbar flex flex-row md:flex-col gap-2 shrink-0">
+                        <h3 class="font-bold text-slate-500 uppercase tracking-wider text-xs mb-2 hidden md:block">Daftar Bangun</h3>
+                        <div id="shape-buttons" class="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0 w-full"></div>
+                    </div>
+                    
+                    <!-- Content Area -->
+                    <div class="w-full md:w-2/3 p-6 md:p-8 overflow-y-auto custom-scrollbar bg-white relative">
+                        <div id="shape-content" class="max-w-2xl mx-auto">
+                            <div class="flex items-center gap-6 mb-6 pb-6 border-b-2 border-slate-100">
+                                <div id="shape-icon" class="w-24 h-24 shrink-0 flex items-center justify-center text-5xl text-indigo-500 bg-indigo-50 rounded-2xl border-4 border-indigo-100">
+                                    <!-- Icon -->
+                                </div>
+                                <div>
+                                    <h2 id="shape-title" class="font-kids text-4xl font-bold text-slate-800">Nama Bangun</h2>
+                                    <div class="flex gap-2 mt-2">
+                                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-sm font-bold"><span id="shape-sides">0</span> Sisi</span>
+                                        <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-sm font-bold"><span id="shape-vertices">0</span> Titik Sudut</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h3 class="font-bold text-lg text-slate-700 mb-3"><i class="fa-solid fa-list-check text-indigo-400"></i> Ciri-ciri Lengkap:</h3>
+                            <ul id="shape-chars" class="space-y-3 text-slate-600 list-disc pl-5 mb-6 font-semibold">
+                                <!-- Features -->
+                            </ul>
+
+                            <div class="bg-amber-50 border-2 border-amber-200 p-4 rounded-xl">
+                                <h3 class="font-bold text-amber-700 mb-1"><i class="fa-solid fa-lightbulb"></i> Contoh di Sekitar Kita:</h3>
+                                <p id="shape-example" class="font-bold text-slate-700"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 6: GAME ACAK HURUF -->
+            <div id="slide-6" class="slide flex-col h-full p-6 bg-slate-800 relative overflow-y-auto">
+                <h2 class="font-kids text-5xl text-amber-400 text-center mb-2 drop-shadow-md">Tebak Kata!</h2>
+                <p class="text-white text-center font-bold mb-6">Susun huruf acak ini menjadi nama bangun datar. Rebutan ya!</p>
+                
+                <div class="bg-slate-900 border-4 border-slate-700 rounded-3xl p-8 max-w-3xl mx-auto w-full text-center flex-grow flex flex-col justify-center items-center">
+                    <div class="text-sm font-bold text-slate-400 mb-2 uppercase tracking-widest">Soal <span id="anagram-idx">1</span>/8</div>
+                    <div id="anagram-text" class="text-5xl md:text-7xl font-mono font-bold text-white tracking-[0.3em] mb-8 bg-slate-800 p-6 rounded-2xl border-2 border-slate-600">
+                        P R E S G I E
+                    </div>
+                    
+                    <button onclick="nextAnagram()" class="bg-sky-500 text-white font-bold px-8 py-3 rounded-xl border-b-4 border-sky-700 btn-kid mb-8">
+                        Ganti Kata <i class="fa-solid fa-forward"></i>
+                    </button>
+
+                    <!-- Scoreboard Manual -->
+                    <div class="grid grid-cols-2 gap-8 w-full">
+                        <div class="bg-slate-800 p-4 rounded-2xl border-2 border-sky-500/50">
+                            <h3 class="text-sky-400 font-bold text-xl mb-2" id="s6-p1-name">Siswa 1</h3>
+                            <div class="text-5xl font-black text-white mb-4" id="s6-score1">0</div>
+                            <div class="flex justify-center gap-2">
+                                <button onclick="updateScoreS6(1, -1)" class="bg-rose-500 text-white px-4 py-2 rounded-lg font-bold btn-kid">-1</button>
+                                <button onclick="updateScoreS6(1, 1)" class="bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold btn-kid">+1</button>
+                            </div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-2xl border-2 border-rose-500/50">
+                            <h3 class="text-rose-400 font-bold text-xl mb-2" id="s6-p2-name">Siswa 2</h3>
+                            <div class="text-5xl font-black text-white mb-4" id="s6-score2">0</div>
+                            <div class="flex justify-center gap-2">
+                                <button onclick="updateScoreS6(2, -1)" class="bg-rose-500 text-white px-4 py-2 rounded-lg font-bold btn-kid">-1</button>
+                                <button onclick="updateScoreS6(2, 1)" class="bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold btn-kid">+1</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-6">
+                    <button onclick="announceAnagramWinner()" class="bg-amber-400 text-amber-900 font-kids text-3xl font-bold px-10 py-3 rounded-full border-b-[6px] border-amber-600 btn-kid">
+                        <i class="fa-solid fa-bullhorn"></i> Umumkan Pemenang!
+                    </button>
+                </div>
+            </div>
+
+            <!-- SLIDE 7: TEBAK SIAPA AKU (20 KARTU) -->
+            <div id="slide-7" class="slide flex-col h-full p-6 overflow-y-auto bg-indigo-50">
+                <h2 class="font-kids text-4xl text-indigo-600 mb-2 text-center">Tebak Siapa Aku?</h2>
+                <p class="text-center font-bold text-slate-500 mb-6">Pilih kartu dan tebak nama bangun datarnya!</p>
+                
+                <div class="flex flex-col lg:flex-row gap-6 w-full max-w-6xl mx-auto">
+                    <!-- Kiri: Kartu Grid -->
+                    <div class="lg:w-1/2">
+                        <div class="grid grid-cols-4 md:grid-cols-5 gap-2" id="riddle-cards">
+                            <!-- Cards generated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Kanan: Area Tebak & Skor -->
+                    <div class="lg:w-1/2 flex flex-col gap-4">
+                        <!-- Panel Tebak -->
+                        <div class="bg-white p-6 rounded-3xl shadow-sm border-4 border-indigo-200">
+                            <div class="text-sm font-bold text-indigo-500 mb-2 uppercase" id="riddle-title">Pilih Kartu Dulu</div>
+                            <p class="text-xl font-bold text-slate-700 italic mb-6 min-h-[80px]" id="riddle-text">
+                                "?"
+                            </p>
+                            <input type="text" id="riddle-ans" placeholder="Ketik jawabanmu..." class="w-full bg-slate-50 border-4 border-slate-200 rounded-xl px-4 py-3 text-center text-xl font-bold outline-none focus:border-indigo-400 mb-4" disabled>
+                            <button onclick="checkRiddle()" id="riddle-btn" class="w-full bg-indigo-500 text-white font-bold py-3 rounded-xl border-b-4 border-indigo-700 btn-kid" disabled>Cek Jawaban</button>
+                            <div id="riddle-fb" class="font-bold text-lg h-6 mt-4 text-center"></div>
+                        </div>
+
+                        <!-- Manual Score Board -->
+                        <div class="bg-white p-6 rounded-3xl shadow-sm border-4 border-slate-200">
+                            <h3 class="font-bold text-center text-slate-500 mb-4">Papan Skor Manual Tutor</h3>
+                            <div class="flex justify-around items-center">
+                                <div class="text-center">
+                                    <span id="s7-p1-name" class="font-bold text-sky-500">Siswa 1</span>
+                                    <div class="text-4xl font-black text-slate-800 my-2" id="s7-score1">0</div>
+                                    <button onclick="updateScoreS7(1, 1)" class="bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold btn-kid">+1</button>
+                                </div>
+                                <div class="text-3xl font-black text-slate-300">VS</div>
+                                <div class="text-center">
+                                    <span id="s7-p2-name" class="font-bold text-rose-500">Siswa 2</span>
+                                    <div class="text-4xl font-black text-slate-800 my-2" id="s7-score2">0</div>
+                                    <button onclick="updateScoreS7(2, 1)" class="bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold btn-kid">+1</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 8: KESIMPULAN & PENUTUP -->
+            <div id="slide-8" class="slide flex-col justify-center items-center h-full p-8 text-center bg-emerald-50">
+                <div class="text-7xl mb-4 text-emerald-500 drop-shadow-md"><i class="fa-solid fa-medal"></i></div>
+                <h2 class="font-kids text-5xl font-bold text-emerald-700 mb-6">Kerja Bagus!</h2>
+                
+                <div class="bg-white p-8 rounded-3xl shadow-sm border-4 border-emerald-200 max-w-2xl w-full text-left space-y-4 mb-8">
+                    <h3 class="font-bold text-xl text-slate-700 border-b-2 border-slate-100 pb-2 mb-4">Kesimpulan Hari Ini:</h3>
+                    <p class="font-bold text-slate-600"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Bangun datar adalah bentuk dua dimensi (hanya punya panjang & lebar).</p>
+                    <p class="font-bold text-slate-600"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Unsur utamanya adalah sisi, sudut, titik sudut, dan diagonal.</p>
+                    <p class="font-bold text-slate-600"><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Ada banyak jenis: Persegi, Segitiga, Lingkaran, dll dengan cirinya masing-masing.</p>
+                </div>
+
+                <h1 class="font-kids text-4xl md:text-5xl font-extrabold text-slate-800">Thank You For Today!</h1>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- STATE VARIABLES ---
+        let currentSlide = 1;
+        const totalSlides = 8;
+        let s1Name = "Siswa 1";
+        let s2Name = "Siswa 2";
+
+        // --- MATERI DATA ---
+        const shapes = [
+            {
+                id: 'persegi', name: 'Persegi', icon: 'fa-square', sides: 4, vertices: 4,
+                chars: [
+                    'Memiliki 4 sisi yang sama panjang.', 
+                    'Memiliki 4 sudut siku-siku (90 derajat).', 
+                    'Memiliki 2 diagonal yang saling tegak lurus dan membagi dua sama panjang.',
+                    'Memiliki 4 simetri lipat dan 4 simetri putar.'
+                ],
+                contoh: 'Ubin lantai, papan catur, roti tawar kotak.'
+            },
+            {
+                id: 'persegipanjang', name: 'Persegi Panjang', icon: 'fa-square', // using square icon but scaled in CSS or similar if needed, let's just use generic
+                iconHtml: '<div class="w-16 h-10 border-4 border-indigo-500 rounded-sm"></div>',
+                sides: 4, vertices: 4,
+                chars: [
+                    'Memiliki 2 pasang sisi yang sejajar dan sama panjang (sisi berhadapan).', 
+                    'Memiliki 4 sudut siku-siku (90 derajat).', 
+                    'Memiliki 2 diagonal yang sama panjang.',
+                    'Memiliki 2 simetri lipat dan 2 simetri putar.'
+                ],
+                contoh: 'Pintu, buku tulis, layar TV, meja.'
+            },
+            {
+                id: 'segitiga', name: 'Segitiga', icon: 'fa-play', // rotated play
+                iconHtml: '<i class="fa-solid fa-play -rotate-90 text-indigo-500 text-5xl"></i>',
+                sides: 3, vertices: 3,
+                chars: [
+                    'Memiliki 3 sisi dan 3 titik sudut.', 
+                    'Jumlah ketiga sudut dalamnya adalah 180 derajat.',
+                    '<b>Siku-siku:</b> Punya satu sudut 90 derajat.',
+                    '<b>Sama Kaki:</b> Punya 2 sisi sama panjang.',
+                    '<b>Sama Sisi:</b> Ketiga sisinya sama panjang.'
+                ],
+                contoh: 'Rambu lalu lintas, potongan pizza, atap rumah.'
+            },
+            {
+                id: 'jajargenjang', name: 'Jajar Genjang', iconHtml: '<div class="w-12 h-10 border-4 border-indigo-500 skew-x-12"></div>',
+                sides: 4, vertices: 4,
+                chars: [
+                    'Memiliki 2 pasang sisi yang sejajar dan sama panjang.', 
+                    'Sudut-sudut yang berhadapan sama besar.', 
+                    'Diagonalnya saling membagi dua sama panjang.',
+                    'Tidak memiliki simetri lipat.'
+                ],
+                contoh: 'Penghapus jajar genjang, motif batik tertentu.'
+            },
+            {
+                id: 'trapesium', name: 'Trapesium', iconHtml: '<div class="w-12 h-0 border-b-[40px] border-b-indigo-500 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent"></div>',
+                sides: 4, vertices: 4,
+                chars: [
+                    'Memiliki tepat sepasang sisi yang sejajar.', 
+                    '<b>Sama Kaki:</b> Memiliki dua sisi tidak sejajar yang sama panjang (miringnya sama).',
+                    '<b>Siku-siku:</b> Memiliki sepasang sudut siku-siku.'
+                ],
+                contoh: 'Atap rumah, pot bunga.'
+            },
+            {
+                id: 'belahketupat', name: 'Belah Ketupat', iconHtml: '<div class="w-12 h-12 border-4 border-indigo-500 rotate-45"></div>',
+                sides: 4, vertices: 4,
+                chars: [
+                    'Keempat sisinya sama panjang.', 
+                    'Sudut-sudut yang berhadapan sama besar.', 
+                    'Kedua diagonalnya saling berpotongan tegak lurus.'
+                ],
+                contoh: 'Ketupat lebaran, rambu lalu lintas belah ketupat.'
+            },
+            {
+                id: 'layanglayang', name: 'Layang-layang', iconHtml: '<div class="w-10 h-14 border-4 border-indigo-500 rounded-sm rotate-45" style="clip-path: polygon(50% 0%, 100% 30%, 50% 100%, 0% 30%); background: #6366f1;"></div>',
+                sides: 4, vertices: 4,
+                chars: [
+                    'Memiliki dua pasang sisi yang berdekatan sama panjang.', 
+                    'Memiliki sepasang sudut berhadapan yang sama besar.', 
+                    'Diagonalnya berpotongan tegak lurus, salah satu diagonal membagi dua sama panjang.'
+                ],
+                contoh: 'Mainan layang-layang di langit.'
+            },
+            {
+                id: 'lingkaran', name: 'Lingkaran', iconHtml: '<div class="w-14 h-14 border-4 border-indigo-500 rounded-full"></div>',
+                sides: 1, vertices: 0,
+                chars: [
+                    'Hanya memiliki 1 sisi lengkung tertutup.', 
+                    'Tidak memiliki titik sudut.', 
+                    'Jarak dari titik pusat ke tepi lingkaran selalu sama (Jari-jari).',
+                    'Memiliki simetri putar dan lipat tak terhingga.'
+                ],
+                contoh: 'Roda sepeda, jam dinding, koin.'
+            }
+        ];
+
+        // --- ANAGRAM DATA ---
+        const anagrams = [
+            { s: "G E S E P R E", a: "PERSEGI" },
+            { s: "G I T E S I A G", a: "SEGITIGA" },
+            { s: "R A N G K I L N A", a: "LINGKARAN" },
+            { s: "P E S I M U R A T", a: "TRAPESIUM" },
+            { s: "J A N G J E R J A G A N", a: "JAJAR GENJANG" },
+            { s: "L A Y A G A N Y A L N G", a: "LAYANG LAYANG" },
+            { s: "T U P A K E L A B E H", a: "BELAH KETUPAT" },
+            { s: "G I P E S R E N J A P N G A", a: "PERSEGI PANJANG" }
+        ];
+        let currAnagram = 0;
+        let scoreAnag1 = 0;
+        let scoreAnag2 = 0;
+
+        // --- RIDDLES DATA ---
+        const riddles = [
+            { q: "Aku punya 4 sisi sama panjang, dan 4 sudut siku-siku. Siapakah aku?", a: "persegi" },
+            { q: "Aku punya 3 sisi dan 3 sudut. Total sudutku 180 derajat. Siapakah aku?", a: "segitiga" },
+            { q: "Aku bulat, tak punya titik sudut, dan hanya punya 1 sisi lengkung. Siapakah aku?", a: "lingkaran" },
+            { q: "Aku punya 4 sisi. Sisi yang berhadapan sama panjang. Sudutku siku-siku semua. Siapakah aku?", a: "persegi panjang" },
+            { q: "Bentukku mirip persegi panjang yang didorong miring. Aku tak punya simetri lipat. Siapakah aku?", a: "jajar genjang" },
+            { q: "Aku punya tepat sepasang sisi yang sejajar. Bentukku sering dipakai untuk atap rumah. Siapakah aku?", a: "trapesium" },
+            { q: "Keempat sisiku sama panjang, tapi sudutku bukan siku-siku. Diagonalku berpotongan tegak lurus. Siapakah aku?", a: "belah ketupat" },
+            { q: "Aku sering terbang di langit. Punya dua pasang sisi berdekatan yang sama panjang. Siapakah aku?", a: "layang layang" },
+            { q: "Aku segitiga, tapi salah satu sudutku persis 90 derajat. Siapakah aku?", a: "segitiga siku-siku" },
+            { q: "Aku segitiga yang memiliki dua sisi yang panjangnya sama persis. Siapakah aku?", a: "segitiga sama kaki" },
+            { q: "Aku segitiga yang ketiga sisinya sama panjang semua. Siapakah aku?", a: "segitiga sama sisi" },
+            { q: "Aku trapesium yang sisi miringnya di kiri dan kanan punya panjang yang sama. Siapakah aku?", a: "trapesium sama kaki" },
+            { q: "Ubin di lantai kelas biasanya berbentuk sepertiku. Siapakah aku?", a: "persegi" },
+            { q: "Roda mobil ayah berbentuk sepertiku. Siapakah aku?", a: "lingkaran" },
+            { q: "Papan tulis di depan kelas biasanya berbentuk sepertiku. Siapakah aku?", a: "persegi panjang" },
+            { q: "Rambu lalu lintas bertanda seru biasanya berbentuk sepertiku. Siapakah aku?", a: "segitiga" },
+            { q: "Pintu kamarmu berbentuk sepertiku. Siapakah aku?", a: "persegi panjang" },
+            { q: "Ketupat yang dimakan saat lebaran berbentuk sepertiku. Siapakah aku?", a: "belah ketupat" },
+            { q: "Jarak dari titik tengahku ke pinggir selalu sama di mana pun kau mengukurnya. Siapakah aku?", a: "lingkaran" },
+            { q: "Aku punya 4 sisi, 4 titik sudut, dan diagonal membagi diriku jadi 2 bagian sama. Aku nama umum untuk persegi, dll. Aku adalah bangun...", a: "segi empat" }
+        ];
+        let activeRiddle = null;
+        let scoreRiddle1 = 0;
+        let scoreRiddle2 = 0;
+
+        // --- CORE FUNCTIONS ---
+        function startApp() {
+            const s1 = document.getElementById('input-s1').value.trim();
+            const s2 = document.getElementById('input-s2').value.trim();
+            
+            if(!s1 || !s2) {
+                alert("Isi nama kedua tim dulu ya!");
+                return;
+            }
+            s1Name = s1; s2Name = s2;
+            
+            document.getElementById('s1-name-display').innerText = s1Name;
+            document.getElementById('s2-name-display').innerText = s2Name;
+            document.getElementById('student-badge').classList.remove('hidden');
+            document.getElementById('student-badge').classList.add('flex');
+            
+            // Set Names in Games
+            document.getElementById('s6-p1-name').innerText = s1Name;
+            document.getElementById('s6-p2-name').innerText = s2Name;
+            document.getElementById('s7-p1-name').innerText = s1Name;
+            document.getElementById('s7-p2-name').innerText = s2Name;
+
+            document.getElementById('btn-prev').disabled = false;
+            document.getElementById('btn-next').disabled = false;
+            
+            initShapes();
+            initRiddles();
+            loadAnagram();
+
+            navSlide(1);
+        }
+
+        function navSlide(step) {
+            let next = currentSlide + step;
+            if(next < 1 || next > totalSlides) return;
+            
+            document.querySelectorAll('.slide').forEach(el => el.classList.remove('active'));
+            document.getElementById('slide-' + next).classList.add('active');
+            currentSlide = next;
+
+            document.getElementById('slide-indicator').innerText = `${currentSlide}/${totalSlides}`;
+            document.getElementById('btn-prev').disabled = (currentSlide === 1);
+            document.getElementById('btn-next').disabled = (currentSlide === totalSlides);
+
+            // Reset SVG Anatomy if sliding to Slide 4
+            if(currentSlide === 4) {
+                highlightAnatomy('none');
+            }
+        }
+
+        // --- SLIDE 4: ANATOMI SVG ---
+        function highlightAnatomy(part) {
+            const sisi = document.getElementById('anat-sisi');
+            const sudut = document.getElementById('anat-sudut');
+            const titik = document.getElementById('anat-titik');
+            const diag = document.getElementById('anat-diag');
+            const desc = document.getElementById('anat-desc');
+
+            // Reset all
+            sisi.setAttribute('stroke', '#94a3b8');
+            sisi.setAttribute('stroke-width', '4');
+            sudut.classList.remove('opacity-100'); sudut.classList.add('opacity-0');
+            titik.classList.remove('opacity-100'); titik.classList.add('opacity-0');
+            diag.classList.remove('opacity-100'); diag.classList.add('opacity-0');
+
+            if(part === 'sisi') {
+                sisi.setAttribute('stroke', '#3b82f6');
+                sisi.setAttribute('stroke-width', '8');
+                desc.innerHTML = "<b>SISI:</b> Ruas garis yang membentuk batas luar bangun datar.";
+            } else if(part === 'sudut') {
+                sudut.classList.remove('opacity-0'); sudut.classList.add('opacity-100');
+                desc.innerHTML = "<b>SUDUT:</b> Daerah yang dibentuk oleh pertemuan dua sisi.";
+            } else if(part === 'titik') {
+                titik.classList.remove('opacity-0'); titik.classList.add('opacity-100');
+                desc.innerHTML = "<b>TITIK SUDUT:</b> Titik ujung tempat bertemunya dua sisi.";
+            } else if(part === 'diagonal') {
+                diag.classList.remove('opacity-0'); diag.classList.add('opacity-100');
+                desc.innerHTML = "<b>DIAGONAL:</b> Garis lurus yang menghubungkan dua titik sudut yang saling berhadapan.";
+            } else {
+                desc.innerHTML = "Klik salah satu tombol di atas!";
+            }
+        }
+
+        // --- SLIDE 5: MATERI BANGUN DATAR ---
+        function initShapes() {
+            const menu = document.getElementById('shape-buttons');
+            menu.innerHTML = "";
+            shapes.forEach(sh => {
+                const btn = document.createElement('button');
+                btn.className = "shape-btn w-full text-left px-4 py-3 rounded-xl font-bold bg-white text-slate-600 border-2 border-slate-200 hover:border-indigo-400 transition flex items-center gap-3 shrink-0";
+                
+                let iconHtml = sh.iconHtml || `<i class="fa-solid ${sh.icon} text-2xl w-8 text-center text-indigo-500"></i>`;
+                
+                btn.innerHTML = `<div class="w-10 flex justify-center">${iconHtml}</div> <span>${sh.name}</span>`;
+                btn.onclick = () => loadShape(sh.id, btn);
+                menu.appendChild(btn);
+            });
+            // Load first
+            if(menu.firstChild) loadShape('persegi', menu.firstChild);
+        }
+
+        function loadShape(id, btn) {
+            document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active', 'bg-indigo-500', 'text-white'));
+            if(btn) {
+                btn.classList.add('active');
+            }
+
+            const sh = shapes.find(s => s.id === id);
+            if(!sh) return;
+
+            document.getElementById('shape-icon').innerHTML = sh.iconHtml || `<i class="fa-solid ${sh.icon}"></i>`;
+            document.getElementById('shape-title').innerText = sh.name;
+            document.getElementById('shape-sides').innerText = sh.sides;
+            document.getElementById('shape-vertices').innerText = sh.vertices;
+            document.getElementById('shape-example').innerText = sh.contoh;
+
+            const ul = document.getElementById('shape-chars');
+            ul.innerHTML = "";
+            sh.chars.forEach(c => {
+                ul.innerHTML += `<li>${c}</li>`;
+            });
+        }
+
+        // --- SLIDE 6: ANAGRAM GAME ---
+        function loadAnagram() {
+            document.getElementById('anagram-idx').innerText = currAnagram + 1;
+            document.getElementById('anagram-text').innerText = anagrams[currAnagram].s;
+        }
+
+        function nextAnagram() {
+            currAnagram = (currAnagram + 1) % anagrams.length;
+            loadAnagram();
+        }
+
+        function updateScoreS6(player, val) {
+            if(player === 1) {
+                scoreAnag1 += val;
+                if(scoreAnag1 < 0) scoreAnag1 = 0;
+                document.getElementById('s6-score1').innerText = scoreAnag1;
+            } else {
+                scoreAnag2 += val;
+                if(scoreAnag2 < 0) scoreAnag2 = 0;
+                document.getElementById('s6-score2').innerText = scoreAnag2;
+            }
+        }
+
+        function announceAnagramWinner() {
+            let winText = "";
+            if (scoreAnag1 > scoreAnag2) {
+                winText = `Pemenangnya adalah ${s1Name}!`;
+            } else if (scoreAnag2 > scoreAnag1) {
+                winText = `Pemenangnya adalah ${s2Name}!`;
+            } else {
+                winText = "Hasilnya Seri!";
+            }
+
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(winText);
+                utterance.lang = 'id-ID';
+                window.speechSynthesis.speak(utterance);
+            }
+            alert(winText);
+        }
+
+        // --- SLIDE 7: TEBAK SIAPA AKU ---
+        function initRiddles() {
+            const grid = document.getElementById('riddle-cards');
+            grid.innerHTML = "";
+            for (let i = 1; i <= 20; i++) {
+                const btn = document.createElement('button');
+                btn.className = "card-guess bg-indigo-500 text-white font-kids text-2xl font-bold rounded-xl py-3 border-b-4 border-indigo-700";
+                btn.innerText = i;
+                btn.id = "card-" + i;
+                btn.onclick = () => openRiddle(i);
+                grid.appendChild(btn);
+            }
+        }
+
+        function openRiddle(n) {
+            const card = document.getElementById('card-' + n);
+            if(card.classList.contains('opened')) return;
+
+            activeRiddle = n;
+            const r = riddles[n-1];
+            
+            document.getElementById('riddle-title').innerText = `Kartu No #${n}`;
+            document.getElementById('riddle-text').innerText = `"${r.q}"`;
+            
+            const inp = document.getElementById('riddle-ans');
+            inp.value = "";
+            inp.disabled = false;
+            inp.className = "w-full bg-slate-50 border-4 border-slate-200 rounded-xl px-4 py-3 text-center text-xl font-bold outline-none focus:border-indigo-400 mb-4";
+            
+            document.getElementById('riddle-btn').disabled = false;
+            document.getElementById('riddle-fb').innerText = "";
+        }
+
+        function checkRiddle() {
+            if(!activeRiddle) return;
+            const r = riddles[activeRiddle-1];
+            const inp = document.getElementById('riddle-ans');
+            const fb = document.getElementById('riddle-fb');
+            
+            // Allow loose matching (e.g. "persegi panjang" matched even if user types "persegi-panjang")
+            const userAns = inp.value.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+            const correctAns = r.a.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+            if(userAns === correctAns || userAns.includes(correctAns)) {
+                inp.className = "w-full bg-green-50 border-4 border-green-400 rounded-xl px-4 py-3 text-center text-xl font-bold outline-none mb-4 text-green-700";
+                fb.innerHTML = '<span class="text-green-500"><i class="fa-solid fa-check"></i> Tepat Sekali!</span>';
+                
+                // Mark card opened
+                document.getElementById('card-' + activeRiddle).classList.add('opened');
+                document.getElementById('card-' + activeRiddle).classList.remove('bg-indigo-500', 'border-indigo-700', 'text-white');
+                
+                document.getElementById('riddle-btn').disabled = true;
+                inp.disabled = true;
+            } else {
+                inp.className = "w-full bg-red-50 border-4 border-red-400 rounded-xl px-4 py-3 text-center text-xl font-bold outline-none mb-4 text-red-700";
+                fb.innerHTML = '<span class="text-red-500"><i class="fa-solid fa-xmark"></i> Coba baca baik-baik cirinya!</span>';
+                setTimeout(() => {
+                    if(!inp.disabled) {
+                        inp.className = "w-full bg-slate-50 border-4 border-slate-200 rounded-xl px-4 py-3 text-center text-xl font-bold outline-none focus:border-indigo-400 mb-4";
+                        fb.innerHTML = "";
+                    }
+                }, 1500);
+            }
+        }
+
+        function updateScoreS7(player, val) {
+            if(player === 1) {
+                scoreRiddle1 += val;
+                if(scoreRiddle1 < 0) scoreRiddle1 = 0;
+                document.getElementById('s7-score1').innerText = scoreRiddle1;
+            } else {
+                scoreRiddle2 += val;
+                if(scoreRiddle2 < 0) scoreRiddle2 = 0;
+                document.getElementById('s7-score2').innerText = scoreRiddle2;
+            }
+        }
+
+        // Init App to Slide 1
+        window.onload = function() {
+            document.getElementById('slide-1').classList.add('active');
+        };
+    </script>
+</body>
+</html>
