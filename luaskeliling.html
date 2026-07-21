@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Geometri | Keliling & Luas Bangun Datar</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800;9..144,900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg: #fef9e7; --bg-2: #fdecb3; --fg: #1a2e2a; --fg-muted: #5a6b65;
+  --forest: #0f4c3a; --forest-2: #1a6b52; --amber: #f59e0b; --amber-2: #d97706;
+  --coral: #fb7185; --coral-2: #e11d48; --teal: #0d9488; --teal-2: #0f766e;
+  --purple: #7c3aed; --purple-2: #6d28d9; --card: #ffffff; --border: #e7d9b8;
+  --shadow: rgba(28, 25, 23, 0.08); --success: #16a34a; --error: #dc2626;
+}
+* { font-family: 'Outfit', sans-serif; -webkit-font-smoothing: antialiased; box-sizing: border-box; }
+.font-display { font-family: 'Fraunces', serif; font-variation-settings: "opsz" 144; }
+body {
+  background: var(--bg); color: var(--fg);
+  background-image: 
+    radial-gradient(circle at 10% 5%, rgba(245, 158, 11, 0.1) 0%, transparent 30%),
+    radial-gradient(circle at 90% 95%, rgba(15, 76, 58, 0.08) 0%, transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(251, 113, 133, 0.05) 0%, transparent 50%);
+  min-height: 100vh; overflow-x: hidden;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none;
+  background-image: 
+    repeating-linear-gradient(45deg, rgba(245, 158, 11, 0.02) 0px, transparent 1px, transparent 6px),
+    repeating-linear-gradient(-45deg, rgba(15, 76, 58, 0.015) 0px, transparent 1px, transparent 6px);
+  z-index: 0;
+}
+.slide { display: none; animation: slideIn 0.7s cubic-bezier(0.16, 1, 0.3, 1); position: relative; z-index: 1; }
+.slide.active { display: block; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); max-height: 0; } to { opacity: 1; transform: translateY(0); max-height: 800px; } }
+@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.1); opacity: 0.9; } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+@keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(5deg); } }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes confettiFall { 0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); } 50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.6); } }
+.btn-primary {
+  background: linear-gradient(135deg, var(--amber) 0%, var(--amber-2) 100%);
+  color: white; padding: 14px 28px; border-radius: 12px; font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+  cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; font-size: 1rem;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(245, 158, 11, 0.5); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-secondary {
+  background: var(--card); color: var(--fg); padding: 12px 22px; border-radius: 12px;
+  font-weight: 600; border: 2px solid var(--border); cursor: pointer;
+  transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem;
+}
+.btn-secondary:hover { border-color: var(--amber); color: var(--amber-2); background: #fffbeb; }
+.btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-ghost {
+  background: transparent; color: var(--fg-muted); padding: 8px 14px; border-radius: 8px;
+  font-weight: 500; border: 1px solid var(--border); cursor: pointer;
+  transition: all 0.2s ease; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-ghost:hover { background: var(--bg-2); color: var(--fg); border-color: var(--amber); }
+.nav-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; transition: all 0.3s; border: none; padding: 0; }
+.nav-dot:hover { background: var(--amber); }
+.nav-dot.active { background: var(--forest); width: 32px; border-radius: 6px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 4px 14px var(--shadow); transition: all 0.3s ease; }
+.cover-hero {
+  background: linear-gradient(135deg, var(--forest) 0%, var(--forest-2) 50%, #083024 100%);
+  border-radius: 28px; padding: 48px 40px; position: relative; overflow: hidden; color: white;
+}
+.cover-hero::before {
+  content: ''; position: absolute; top: -30%; right: -10%; width: 70%; height: 200%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.4) 0%, transparent 50%);
+  animation: pulse 6s ease-in-out infinite; pointer-events: none;
+}
+.cover-hero::after {
+  content: ''; position: absolute; bottom: -30%; left: -10%; width: 60%; height: 150%;
+  background: radial-gradient(circle, rgba(251, 113, 133, 0.3) 0%, transparent 50%);
+  animation: pulse 8s ease-in-out infinite reverse; pointer-events: none;
+}
+.cover-content { position: relative; z-index: 1; }
+.shape-float { position: absolute; opacity: 0.15; pointer-events: none; animation: float 8s ease-in-out infinite; }
+.input-name {
+  width: 100%; padding: 14px 18px; border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1);
+  color: white; font-size: 1rem; font-weight: 600; transition: all 0.2s ease; backdrop-filter: blur(10px);
+}
+.input-name::placeholder { color: rgba(255,255,255,0.5); }
+.input-name:focus { outline: none; border-color: var(--amber); background: rgba(255,255,255,0.15); box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2); }
+.tab-btn {
+  padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s ease; border: 2px solid var(--border); background: var(--card);
+  color: var(--fg-muted); font-size: 0.88rem; white-space: nowrap;
+}
+.tab-btn:hover { border-color: var(--amber); color: var(--amber-2); }
+.tab-btn.active { background: linear-gradient(135deg, var(--forest) 0%, var(--forest-2) 100%); color: white; border-color: var(--forest); box-shadow: 0 4px 12px rgba(15, 76, 58, 0.3); }
+.shape-card { background: var(--card); border: 2px solid var(--border); border-radius: 16px; padding: 20px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; position: relative; overflow: hidden; }
+.shape-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--amber) 0%, var(--coral) 100%); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease; }
+.shape-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px var(--shadow); border-color: var(--amber); }
+.shape-card:hover::before { transform: scaleX(1); }
+.shape-card.flipped { background: linear-gradient(135deg, var(--forest) 0%, var(--forest-2) 100%); color: white; }
+.shape-card.flipped .shape-name { color: var(--amber); }
+.shape-svg { width: 100%; height: 100px; display: flex; align-items: center; justify-content: center; }
+.shape-svg svg { max-width: 100%; max-height: 100%; }
+.q-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; box-shadow: 0 2px 8px var(--shadow); transition: all 0.3s ease; }
+.q-card:hover { box-shadow: 0 8px 20px var(--shadow); }
+.q-number { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--forest) 0%, var(--forest-2) 100%); color: white; font-weight: 700; font-family: 'Fraunces', serif; font-size: 1rem; margin-right: 12px; flex-shrink: 0; }
+.q-text { font-size: 1.02rem; font-weight: 500; color: var(--fg); line-height: 1.6; }
+.option-btn { background: var(--bg); border: 2px solid var(--border); border-radius: 10px; padding: 12px 14px; text-align: left; transition: all 0.2s ease; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 12px; width: 100%; }
+.option-btn:hover { border-color: var(--amber); background: #fffbeb; transform: translateX(4px); }
+.option-btn.selected { background: #fffbeb; border-color: var(--amber); color: var(--amber-2); }
+.option-btn.correct { background: #f0fdf4; border-color: var(--success); color: #15803d; }
+.option-btn.incorrect { background: #fef2f2; border-color: var(--error); color: #b91c1c; }
+.option-letter { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: var(--card); font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+.option-btn.selected .option-letter, .option-btn.correct .option-letter, .option-btn.incorrect .option-letter { background: rgba(255,255,255,0.6); }
+.input-answer { border: 2px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 1rem; background: var(--card); transition: all 0.2s ease; font-weight: 600; color: var(--fg); width: 100%; max-width: 220px; }
+.input-answer:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15); }
+.input-answer.correct { border-color: var(--success); background: #f0fdf4; color: #15803d; }
+.input-answer.incorrect { border-color: var(--error); background: #fef2f2; color: #b91c1c; }
+.explanation-box { background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%); border-left: 4px solid var(--amber); border-radius: 8px; padding: 14px 16px; margin-top: 14px; font-size: 0.92rem; color: var(--fg); line-height: 1.6; display: none; }
+.explanation-box.show { display: block; animation: slideDown 0.4s ease-out; }
+.explanation-box .exp-title { font-weight: 700; color: var(--amber-2); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.clue-box { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-left: 4px solid var(--forest); border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 0.88rem; color: var(--forest); display: flex; align-items: center; gap: 8px; }
+.toast { position: fixed; bottom: 100px; right: 30px; background: var(--fg); color: white; padding: 14px 22px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); z-index: 1000; transform: translateY(100px); opacity: 0; transition: all 0.3s ease; font-weight: 500; display: flex; align-items: center; gap: 10px; max-width: 350px; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: linear-gradient(135deg, #15803d 0%, #16a34a 100%); }
+.toast.error { background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%); }
+.toast.info { background: linear-gradient(135deg, var(--forest) 0%, var(--forest-2) 100%); }
+.progress-bar { height: 8px; background: var(--bg-2); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--amber) 0%, var(--coral) 100%); border-radius: 4px; transition: width 0.5s ease; }
+.numbered-item { display: flex; align-items: flex-start; gap: 16px; padding: 22px; background: var(--card); border-radius: 16px; border: 1px solid var(--border); transition: all 0.3s ease; }
+.numbered-item:hover { border-color: var(--amber); transform: translateX(4px); box-shadow: 0 8px 20px var(--shadow); }
+.number-badge { flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--amber) 0%, var(--amber-2) 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: 'Fraunces', serif; font-size: 1.25rem; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
+.game-arena { background: linear-gradient(135deg, #f0fdf4 0%, #fef3c7 50%, #fce7f3 100%); border-radius: 24px; padding: 32px; position: relative; overflow: hidden; border: 3px solid var(--border); }
+.game-arena::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, rgba(15, 76, 58, 0.03) 0px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, rgba(15, 76, 58, 0.03) 0px, transparent 1px, transparent 40px); pointer-events: none; }
+.player-card { border-radius: 16px; padding: 20px; transition: all 0.3s ease; position: relative; }
+.player-card.p1 { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid var(--amber); }
+.player-card.p2 { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border: 3px solid var(--coral); }
+.player-card.active { transform: scale(1.03); box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
+.player-card.p1.active { border-color: var(--amber-2); animation: glow 2s ease-in-out infinite; }
+.player-card.p2.active { border-color: var(--coral-2); animation: glow 2s ease-in-out infinite; }
+.player-avatar { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; box-shadow: 0 6px 14px rgba(0,0,0,0.2); }
+.player-card.p1 .player-avatar { background: linear-gradient(135deg, var(--amber) 0%, var(--amber-2) 100%); }
+.player-card.p2 .player-avatar { background: linear-gradient(135deg, var(--coral) 0%, var(--coral-2) 100%); }
+.score-display { font-family: 'Fraunces', serif; font-weight: 900; font-size: 2.5rem; line-height: 1; }
+.player-card.p1 .score-display { color: var(--amber-2); }
+.player-card.p2 .score-display { color: var(--coral-2); }
+.game-question { background: var(--card); border-radius: 16px; padding: 24px; box-shadow: 0 8px 24px var(--shadow); border: 2px solid var(--border); }
+.timer-bar { height: 10px; background: var(--bg-2); border-radius: 5px; overflow: hidden; position: relative; }
+.timer-fill { height: 100%; background: linear-gradient(90deg, var(--success) 0%, var(--amber) 50%, var(--coral) 100%); border-radius: 5px; transition: width 1s linear; }
+.confetti { position: fixed; width: 12px; height: 12px; pointer-events: none; z-index: 9999; animation: confettiFall 3s linear forwards; }
+.shape-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+.life-example { background: var(--card); border-radius: 16px; padding: 20px; border: 2px solid var(--border); transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden; }
+.life-example:hover { transform: translateY(-4px); border-color: var(--amber); box-shadow: 0 12px 24px var(--shadow); }
+.life-example .icon-circle { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 12px; }
+.concept-box { background: var(--card); border-radius: 16px; padding: 24px; border-left: 6px solid var(--forest); box-shadow: 0 4px 14px var(--shadow); }
+.concept-box.amber { border-left-color: var(--amber); }
+.concept-box.coral { border-left-color: var(--coral); }
+.concept-box.teal { border-left-color: var(--teal); }
+.grid-visual { display: grid; gap: 2px; padding: 8px; background: var(--forest); border-radius: 8px; display: inline-grid; }
+.grid-cell { background: white; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--fg-muted); font-weight: 600; }
+.formula-display { background: linear-gradient(135deg, var(--forest) 0%, var(--forest-2) 100%); color: white; padding: 16px; border-radius: 12px; font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 600; text-align: center; box-shadow: 0 4px 14px rgba(15, 76, 58, 0.3); }
+.reflection-input { width: 100%; border: none; border-bottom: 2px solid var(--border); background: transparent; padding: 12px 0; font-size: 1rem; color: var(--fg); transition: all 0.2s ease; font-family: 'Outfit', sans-serif; resize: vertical; min-height: 50px; }
+.reflection-input:focus { outline: none; border-color: var(--amber); }
+.reflection-input::placeholder { color: var(--fg-muted); opacity: 0.6; }
+.stagger-1 { animation: slideUp 0.6s ease-out 0.1s both; }
+.stagger-2 { animation: slideUp 0.6s ease-out 0.2s both; }
+.stagger-3 { animation: slideUp 0.6s ease-out 0.3s both; }
+.stagger-4 { animation: slideUp 0.6s ease-out 0.4s both; }
+.stagger-5 { animation: slideUp 0.6s ease-out 0.5s both; }
+
+.problem-svg { 
+  background: #fffbeb; 
+  border: 2px solid var(--border); 
+  border-radius: 12px; 
+  padding: 8px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  margin-bottom: 12px; 
+  overflow: hidden; 
+  min-height: 100px;
+}
+.problem-svg svg { 
+  max-width: 100%; 
+  max-height: 200px; 
+  width: auto;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .cover-hero { padding: 32px 20px; }
+  .game-arena { padding: 20px; }
+  .shape-grid { grid-template-columns: repeat(2, 1fr); }
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-2); border-radius: 5px; }
+::-webkit-scrollbar-thumb { background: var(--amber); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--amber-2); }
+</style>
+</head>
+<body>
+
+<nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[rgba(254,249,231,0.9)] border-b border-[var(--border)]">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold shadow-lg"><i class="fa-solid fa-shapes"></i></div>
+      <div><div class="font-display font-bold text-base leading-none">Petualangan Geometri</div><div class="text-xs text-[var(--fg-muted)]">Keliling & Luas Bangun Datar</div></div>
+    </div>
+    <div class="hidden md:flex items-center gap-2">
+      <button class="nav-dot active" data-slide="1"></button><button class="nav-dot" data-slide="2"></button><button class="nav-dot" data-slide="3"></button><button class="nav-dot" data-slide="4"></button><button class="nav-dot" data-slide="5"></button><button class="nav-dot" data-slide="6"></button><button class="nav-dot" data-slide="7"></button><button class="nav-dot" data-slide="8"></button>
+    </div>
+    <div class="text-sm font-semibold text-[var(--fg-muted)]"><span id="currentSlide">1</span> / 8</div>
+  </div>
+</nav>
+
+<main class="pt-24 pb-32 max-w-7xl mx-auto px-6">
+
+<!-- SLIDE 1 -->
+<section class="slide active" data-slide="1">
+  <div class="cover-hero relative">
+    <div class="shape-float" style="top: 20px; left: 5%;"><svg width="80" height="80" viewBox="0 0 80 80"><polygon points="40,10 70,70 10,70" fill="#f59e0b"/></svg></div>
+    <div class="shape-float" style="top: 40%; right: 5%; animation-delay: 1s;"><svg width="90" height="90" viewBox="0 0 90 90"><rect x="10" y="10" width="70" height="70" fill="#fb7185"/></svg></div>
+    <div class="shape-float" style="bottom: 20px; left: 15%; animation-delay: 2s;"><svg width="70" height="70" viewBox="0 0 70 70"><polygon points="35,5 65,25 55,60 15,60 5,25" fill="#0d9488"/></svg></div>
+    <div class="cover-content max-w-4xl mx-auto text-center py-8">
+      <div class="inline-block mb-6 px-4 py-2 rounded-full bg-white/10 backdrop-blur border border-white/20 text-amber-200 text-xs font-semibold tracking-widest"><i class="fa-solid fa-compass mr-2"></i>MEDIA PEMBELAJARAN INTERAKTIF</div>
+      <h1 class="font-display font-black text-5xl md:text-7xl leading-tight mb-4">Petualangan<br><span class="text-amber-400">Geometri</span></h1>
+      <p class="text-base md:text-xl text-teal-100 mb-8 max-w-2xl mx-auto leading-relaxed">Jelajahi dunia keliling dan luas bangun datar! Belajar konsep, latihan soal, dan adu cepat dengan temanmu!</p>
+      <div class="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-8">
+        <div class="text-left"><label class="block text-amber-200 text-sm font-semibold mb-2"><i class="fa-solid fa-user-astronaut mr-2"></i>Nama Pemain 1</label><input type="text" id="player1Name" class="input-name" placeholder="Masukkan nama pemain 1..." maxlength="20"></div>
+        <div class="text-left"><label class="block text-pink-200 text-sm font-semibold mb-2"><i class="fa-solid fa-user-ninja mr-2"></i>Nama Pemain 2</label><input type="text" id="player2Name" class="input-name" placeholder="Masukkan nama pemain 2..." maxlength="20"></div>
+      </div>
+      <button onclick="startAdventure()" class="btn-primary text-lg"><i class="fa-solid fa-play"></i>Mulai Petualangan</button>
+      <div class="grid grid-cols-4 gap-3 max-w-3xl mx-auto mt-12">
+        <div class="text-center"><div class="bg-white/10 backdrop-blur rounded-xl p-3 border border-white/10"><i class="fa-solid fa-book-open text-2xl text-amber-300 mb-1"></i><div class="text-xs text-teal-100">Konsep</div></div></div>
+        <div class="text-center"><div class="bg-white/10 backdrop-blur rounded-xl p-3 border border-white/10"><i class="fa-solid fa-square-root-variable text-2xl text-pink-300 mb-1"></i><div class="text-xs text-teal-100">Rumus</div></div></div>
+        <div class="text-center"><div class="bg-white/10 backdrop-blur rounded-xl p-3 border border-white/10"><i class="fa-solid fa-list-check text-2xl text-teal-300 mb-1"></i><div class="text-xs text-teal-100">50 Soal</div></div></div>
+        <div class="text-center"><div class="bg-white/10 backdrop-blur rounded-xl p-3 border border-white/10"><i class="fa-solid fa-gamepad text-2xl text-amber-300 mb-1"></i><div class="text-xs text-teal-100">Game 2 Pemain</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2 -->
+<section class="slide" data-slide="2">
+  <div class="text-center mb-12 stagger-1">
+    <div class="inline-block px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold tracking-widest mb-4">SLIDE 02</div>
+    <h2 class="font-display font-black text-4xl md:text-5xl mb-4">Tujuan Pembelajaran</h2>
+    <p class="text-[var(--fg-muted)] max-w-2xl mx-auto">Setelah mengikuti pembelajaran ini, peserta didik diharapkan mampu mencapai kompetensi berikut.</p>
+  </div>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="numbered-item stagger-1"><div class="number-badge">1</div><div><h3 class="font-display font-bold text-lg mb-1">Memahami Konsep Keliling</h3><p class="text-sm text-[var(--fg-muted)] leading-relaxed">Peserta didik mampu memahami konsep keliling sebagai total panjang batas luar bangun datar.</p></div></div>
+    <div class="numbered-item stagger-2"><div class="number-badge">2</div><div><h3 class="font-display font-bold text-lg mb-1">Memahami Konsep Luas</h3><p class="text-sm text-[var(--fg-muted)] leading-relaxed">Peserta didik mampu memahami konsep luas sebagai ukuran permukaan bangun datar dengan satuan persegi.</p></div></div>
+    <div class="numbered-item stagger-3"><div class="number-badge">3</div><div><h3 class="font-display font-bold text-lg mb-1">Menguasai Rumus Bangun Datar</h3><p class="text-sm text-[var(--fg-muted)] leading-relaxed">Peserta didik mampu menggunakan rumus keliling dan luas pada segitiga, persegi, persegi panjang, jajar genjang, belah ketupat, layang-layang, dan trapesium.</p></div></div>
+    <div class="numbered-item stagger-4"><div class="number-badge">4</div><div><h3 class="font-display font-bold text-lg mb-1">Menyelesaikan Soal Aplikasi</h3><p class="text-sm text-[var(--fg-muted)] leading-relaxed">Peserta didik mampu menyelesaikan soal-soal aplikasi dan soal cerita terkait keliling dan luas bangun datar.</p></div></div>
+    <div class="numbered-item stagger-5"><div class="number-badge">5</div><div><h3 class="font-display font-bold text-lg mb-1">Menerapkan dalam Kehidupan</h3><p class="text-sm text-[var(--fg-muted)] leading-relaxed">Peserta didik mampu menerapkan konsep keliling dan luas dalam situasi kehidupan sehari-hari.</p></div></div>
+    <div class="numbered-item stagger-5"><div class="number-badge">6</div><div><h3 class="font-display font-bold text-lg mb-1">Berkolaborasi dan Berkompetisi</h3><p class="text-sm text-[var(--fg-muted)] leading-relaxed">Peserta didik mampu bekerja sama dan berkompetisi sehat melalui permainan geometri interaktif.</p></div></div>
+  </div>
+</section>
+
+<!-- SLIDE 3 -->
+<section class="slide" data-slide="3">
+  <div class="text-center mb-10 stagger-1">
+    <div class="inline-block px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold tracking-widest mb-4">SLIDE 03</div>
+    <h2 class="font-display font-black text-4xl md:text-5xl mb-3">Penggunaan dalam Kehidupan Sehari-hari</h2>
+    <p class="text-[var(--fg-muted)] max-w-2xl mx-auto">Konsep keliling dan luas sangat sering kita jumpai dalam aktivitas sehari-hari. Mari lihat contohnya!</p>
+  </div>
+  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="life-example stagger-1"><div class="icon-circle bg-amber-100 text-amber-700"><i class="fa-solid fa-fence"></i></div><h3 class="font-display font-bold text-lg mb-2">Memagari Taman</h3><p class="text-sm text-[var(--fg-muted)] mb-2">Untuk membuat pagar di sekeliling taman, kita menghitung <strong>keliling</strong> taman tersebut.</p><div class="text-xs bg-amber-50 text-amber-700 rounded-lg p-2 font-semibold"><i class="fa-solid fa-ruler mr-1"></i>Keliling = Total panjang pagar</div></div>
+    <div class="life-example stagger-2"><div class="icon-circle bg-pink-100 text-pink-700"><i class="fa-solid fa-bed"></i></div><h3 class="font-display font-bold text-lg mb-2">Memasang Keramik Lantai</h3><p class="text-sm text-[var(--fg-muted)] mb-2">Untuk membeli keramik, kita perlu menghitung <strong>luas</strong> lantai kamar yang akan dipasang.</p><div class="text-xs bg-pink-50 text-pink-700 rounded-lg p-2 font-semibold"><i class="fa-solid fa-th mr-1"></i>Luas = Jumlah keramik dibutuhkan</div></div>
+    <div class="life-example stagger-3"><div class="icon-circle bg-teal-100 text-teal-700"><i class="fa-solid fa-tshirt"></i></div><h3 class="font-display font-bold text-lg mb-2">Membuat Pakaian</h3><p class="text-sm text-[var(--fg-muted)] mb-2">Penjahit mengukur <strong>keliling</strong> badan dan <strong>luas</strong> kain untuk membuat baju.</p><div class="text-xs bg-teal-50 text-teal-700 rounded-lg p-2 font-semibold"><i class="fa-solid fa-scissors mr-1"></i>Keliling badan & luas kain</div></div>
+    <div class="life-example stagger-4"><div class="icon-circle bg-purple-100 text-purple-700"><i class="fa-solid fa-house-circle-check"></i></div><h3 class="font-display font-bold text-lg mb-2">Mengecat Dinding</h3><p class="text-sm text-[var(--fg-muted)] mb-2">Untuk mengecat dinding, kita hitung <strong>luas</strong> dinding agar tahu berapa cat yang dibeli.</p><div class="text-xs bg-purple-50 text-purple-700 rounded-lg p-2 font-semibold"><i class="fa-solid fa-paint-roller mr-1"></i>Luas dinding = Jumlah cat</div></div>
+    <div class="life-example stagger-1"><div class="icon-circle bg-orange-100 text-orange-700"><i class="fa-solid fa-running"></i></div><h3 class="font-display font-bold text-lg mb-2">Lapangan Olahraga</h3><p class="text-sm text-[var(--fg-muted)] mb-2">Lari keliling lapangan menggunakan konsep <strong>keliling</strong>. Luas lapangan untuk menanam rumput.</p><div class="text-xs bg-orange-50 text-orange-700 rounded-lg p-2 font-semibold"><i class="fa-solid fa-flag mr-1"></i>Keliling & luas lapangan</div></div>
+    <div class="life-example stagger-2"><div class="icon-circle bg-green-100 text-green-700"><i class="fa-solid fa-seedling"></i></div><h3 class="font-display font-bold text-lg mb-2">Bertani</h3><p class="text-sm text-[var(--fg-muted)] mb-2">Petani menghitung <strong>luas</strong> sawah untuk mengetahui jumlah bibit dan pupuk yang dibutuhkan.</p><div class="text-xs bg-green-50 text-green-700 rounded-lg p-2 font-semibold"><i class="fa-solid fa-wheat-awn mr-1"></i>Luas sawah = jumlah bibit</div></div>
+    <div class="life-example stagger-3"><div class="icon-circle bg-blue-100 text-blue-700"><i class="fa-solid fa-gift"></i></div><h3 class="font-display font-bold text-lg mb-2">Membungkus Kado</h3><p class="text-sm text-[var(--fg-muted)] mb-2">Kita hitung <strong>luas</strong> kertas kado dan <strong>keliling</strong> pita untuk membungkus kado.</p><div class="text-xs bg-blue-50 text-blue-700 rounded-lg p-2 font-semibold"><i class="fa-solid fa-ribbon mr-1"></i>Luas kertas & keliling pita</div></div>
+    <div class="life-example stagger-4"><div class="icon-circle bg-rose-100 text-rose-700"><i class="fa-solid fa-map"></i></div><h3 class="font-display font-bold text-lg mb-2">Membaca Peta</h3><p class="text-sm text-[var(--fg-muted)] mb-2">Mengukur <strong>keliling</strong> wilayah dan <strong>luas</strong> daerah pada peta untuk perencanaan kota.</p><div class="text-xs bg-rose-50 text-rose-700 rounded-lg p-2 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i>Perencanaan kota</div></div>
+  </div>
+  <div class="card p-6 stagger-5">
+    <div class="flex items-start gap-4">
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-lightbulb text-xl"></i></div>
+      <div>
+        <h3 class="font-display font-bold text-xl mb-2">Ringkasan</h3>
+        <p class="text-sm text-[var(--fg-muted)] mb-3">Dari contoh di atas, dapat kita simpulkan:</p>
+        <div class="grid md:grid-cols-2 gap-3">
+          <div class="bg-amber-50 rounded-xl p-4 border border-amber-200"><div class="font-bold text-amber-800 mb-1"><i class="fa-solid fa-ruler-horizontal mr-2"></i>Keliling</div><p class="text-sm text-amber-700">Digunakan saat kita perlu mengukur <strong>batas luar</strong> atau <strong>keliling</strong> suatu benda: pagar, pita, bingkai, lintasan lari.</p></div>
+          <div class="bg-pink-50 rounded-xl p-4 border border-pink-200"><div class="font-bold text-pink-800 mb-1"><i class="fa-solid fa-fill-drip mr-2"></i>Luas</div><p class="text-sm text-pink-700">Digunakan saat kita perlu menghitung <strong>permukaan</strong> atau <strong>isi</strong> suatu bidang: keramik, cat, bibit, kain, karpet.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4 -->
+<section class="slide" data-slide="4">
+  <div class="text-center mb-8 stagger-1">
+    <div class="inline-block px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold tracking-widest mb-4">SLIDE 04</div>
+    <h2 class="font-display font-black text-4xl md:text-5xl mb-3">Konsep Dasar</h2>
+    <p class="text-[var(--fg-muted)] max-w-2xl mx-auto">Pelajari konsep keliling dan luas melalui gambar, lalu kerjakan latihan soal berbasis gambar!</p>
+  </div>
+  <div class="flex flex-wrap gap-2 mb-6 justify-center">
+    <button class="tab-btn active" data-tab="keliling"><i class="fa-solid fa-ruler-horizontal mr-1"></i>Konsep Keliling</button>
+    <button class="tab-btn" data-tab="luas"><i class="fa-solid fa-fill-drip mr-1"></i>Konsep Luas</button>
+  </div>
+  <div id="conceptContent"></div>
+</section>
+
+<!-- SLIDE 5 -->
+<section class="slide" data-slide="5">
+  <div class="text-center mb-8 stagger-1">
+    <div class="inline-block px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold tracking-widest mb-4">SLIDE 05</div>
+    <h2 class="font-display font-black text-4xl md:text-5xl mb-3">Rumus Keliling & Luas Bangun Datar</h2>
+    <p class="text-[var(--fg-muted)] max-w-2xl mx-auto">Klik kartu untuk melihat rumus lengkapnya. Pelajari baik-baik!</p>
+  </div>
+  <div class="shape-grid" id="shapesGrid"></div>
+</section>
+
+<!-- SLIDE 6 -->
+<section class="slide" data-slide="6">
+  <div class="text-center mb-8 stagger-1">
+    <div class="inline-block px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold tracking-widest mb-4">SLIDE 06</div>
+    <h2 class="font-display font-black text-4xl md:text-5xl mb-3">Latihan Soal Pilihan Ganda</h2>
+    <p class="text-[var(--fg-muted)] max-w-2xl mx-auto">50 soal dari mudah (berbasis gambar) hingga soal cerita. Soal luas menggunakan grid satuan persegi.</p>
+  </div>
+  <div class="card p-4 mb-6 stagger-2">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-4">
+        <div><div class="text-xs text-[var(--fg-muted)]">Skor Benar</div><div class="font-display font-bold text-2xl text-green-600"><span id="scoreCorrect">0</span></div></div>
+        <div class="w-px h-10 bg-[var(--border)]"></div>
+        <div><div class="text-xs text-[var(--fg-muted)]">Total Dijawab</div><div class="font-display font-bold text-2xl text-amber-600"><span id="scoreAnswered">0</span></div></div>
+        <div class="w-px h-10 bg-[var(--border)]"></div>
+        <div><div class="text-xs text-[var(--fg-muted)]">Total Soal</div><div class="font-display font-bold text-2xl text-teal-600">50</div></div>
+      </div>
+      <div class="flex-1 max-w-xs"><div class="text-xs text-[var(--fg-muted)] mb-1">Progress</div><div class="progress-bar"><div class="progress-fill" id="overallProgress" style="width: 0%"></div></div></div>
+    </div>
+  </div>
+  <div class="flex flex-wrap gap-2 mb-6 justify-center">
+    <button class="tab-btn active" data-tab="mudah">Mudah (1-15)</button>
+    <button class="tab-btn" data-tab="sedang">Sedang (16-35)</button>
+    <button class="tab-btn" data-tab="cerita">Soal Cerita (36-50)</button>
+  </div>
+  <div id="mcqContainer"></div>
+</section>
+
+<!-- SLIDE 7 -->
+<section class="slide" data-slide="7">
+  <div class="text-center mb-8 stagger-1">
+    <div class="inline-block px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold tracking-widest mb-4">SLIDE 07</div>
+    <h2 class="font-display font-black text-4xl md:text-5xl mb-3">Game: Adu Cepat Rumus Geometri!</h2>
+    <p class="text-[var(--fg-muted)] max-w-2xl mx-auto">Bersainglah dengan temanmu! Siapa yang paling hafal rumus keliling dan luas bangun datar?</p>
+  </div>
+  <div class="game-arena" id="gameArena">
+    <div id="gameStartScreen" class="text-center py-8">
+      <div class="mb-8">
+        <i class="fa-solid fa-trophy text-6xl text-amber-500 mb-4" style="animation: bounce 2s ease-in-out infinite;"></i>
+        <h3 class="font-display font-bold text-3xl mb-3">Selamat Datang, Petualang!</h3>
+        <p class="text-[var(--fg-muted)] max-w-xl mx-auto mb-6">Aturan main: 10 ronde bergantian. Setiap soal punya 20 detik. Jawaban benar = +10 poin. Salah atau tidak jawab = 0 poin. Pemain dengan skor tertinggi menang!</p>
+        <div class="bg-teal-50 border border-teal-200 rounded-xl p-4 max-w-xl mx-auto mb-6"><p class="text-sm text-teal-700"><i class="fa-solid fa-circle-info mr-2"></i><strong>Catatan:</strong> Soal game ini berisi pertanyaan tentang <strong>rumus</strong> keliling dan luas bangun datar, bukan perhitungan angka. Hafalkan rumusmu di Slide 5!</p></div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-8">
+        <div class="player-card p1"><div class="flex items-center gap-4"><div class="player-avatar"><i class="fa-solid fa-user-astronaut"></i></div><div class="text-left flex-1"><div class="text-xs text-amber-700 font-semibold">PEMAIN 1</div><div class="font-display font-bold text-xl" id="gamePlayer1Name">Pemain 1</div><div class="score-display">0</div></div></div></div>
+        <div class="player-card p2"><div class="flex items-center gap-4"><div class="player-avatar"><i class="fa-solid fa-user-ninja"></i></div><div class="text-left flex-1"><div class="text-xs text-pink-700 font-semibold">PEMAIN 2</div><div class="font-display font-bold text-xl" id="gamePlayer2Name">Pemain 2</div><div class="score-display">0</div></div></div></div>
+      </div>
+      <button onclick="startGame()" class="btn-primary text-lg"><i class="fa-solid fa-play"></i>Mulai Bertanding!</button>
+    </div>
+    <div id="gamePlayScreen" style="display: none;">
+      <div class="grid md:grid-cols-2 gap-4 mb-6">
+        <div class="player-card p1" id="gameP1Card"><div class="flex items-center gap-3"><div class="player-avatar"><i class="fa-solid fa-user-astronaut"></i></div><div class="flex-1"><div class="text-xs font-semibold">PEMAIN 1</div><div class="font-display font-bold text-lg" id="gameP1NameDisplay">Pemain 1</div></div><div class="score-display" id="gameP1Score">0</div></div></div>
+        <div class="player-card p2" id="gameP2Card"><div class="flex items-center gap-3"><div class="player-avatar"><i class="fa-solid fa-user-ninja"></i></div><div class="flex-1"><div class="text-xs font-semibold">PEMAIN 2</div><div class="font-display font-bold text-lg" id="gameP2NameDisplay">Pemain 2</div></div><div class="score-display" id="gameP2Score">0</div></div></div>
+      </div>
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <div class="text-sm font-semibold text-[var(--fg-muted)]">Ronde <span id="gameRound" class="text-[var(--fg)] font-bold">1</span> dari 10</div>
+        <div class="text-sm font-semibold">Giliran: <span id="gameCurrentPlayer" class="text-[var(--amber-2)] font-bold">Pemain 1</span></div>
+        <div class="text-sm font-semibold text-[var(--coral-2)]"><i class="fa-solid fa-clock mr-1"></i>Waktu: <span id="gameTimer">20</span>s</div>
+      </div>
+      <div class="timer-bar mb-6"><div class="timer-fill" id="gameTimerFill" style="width: 100%;"></div></div>
+      <div class="game-question">
+        <div class="text-center mb-4"><span class="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold"><i class="fa-solid fa-shapes mr-1"></i><span id="gameShape">PERSEGI</span></span></div>
+        <h3 class="font-display font-bold text-xl md:text-2xl mb-6 text-center" id="gameQuestion">Soal akan muncul di sini...</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="gameOptions"></div>
+        <div class="mt-6 text-center"><div id="gameFeedback" class="text-lg font-bold mb-3" style="min-height: 28px;"></div><button onclick="nextGameRound()" class="btn-primary" id="gameNextBtn" style="display: none;">Ronde Berikutnya<i class="fa-solid fa-arrow-right ml-2"></i></button></div>
+      </div>
+    </div>
+    <div id="gameEndScreen" style="display: none;" class="text-center py-8">
+      <i class="fa-solid fa-trophy text-7xl text-amber-500 mb-4" style="animation: bounce 1s ease-in-out infinite;"></i>
+      <h3 class="font-display font-bold text-4xl mb-2">Permainan Selesai!</h3>
+      <p class="text-[var(--fg-muted)] mb-8" id="gameWinnerText">Selamat untuk pemenangnya!</p>
+      <div class="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-8">
+        <div class="player-card p1" id="endP1Card"><div class="flex items-center gap-4"><div class="player-avatar"><i class="fa-solid fa-user-astronaut"></i></div><div class="text-left flex-1"><div class="text-xs text-amber-700 font-semibold">PEMAIN 1</div><div class="font-display font-bold text-xl" id="endP1Name">Pemain 1</div><div class="score-display" id="endP1Score">0</div></div></div></div>
+        <div class="player-card p2" id="endP2Card"><div class="flex items-center gap-4"><div class="player-avatar"><i class="fa-solid fa-user-ninja"></i></div><div class="text-left flex-1"><div class="text-xs text-pink-700 font-semibold">PEMAIN 2</div><div class="font-display font-bold text-xl" id="endP2Name">Pemain 2</div><div class="score-display" id="endP2Score">0</div></div></div></div>
+      </div>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <button onclick="restartGame()" class="btn-primary"><i class="fa-solid fa-rotate-right"></i>Main Lagi</button>
+        <button onclick="goToSlide(8)" class="btn-secondary"><i class="fa-solid fa-forward"></i>Lanjut ke Kesimpulan</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8 -->
+<section class="slide" data-slide="8">
+  <div class="text-center mb-10 stagger-1">
+    <div class="inline-block px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold tracking-widest mb-4">SLIDE 08</div>
+    <h2 class="font-display font-black text-4xl md:text-5xl mb-3">Kesimpulan & Refleksi</h2>
+    <p class="text-[var(--fg-muted)] max-w-2xl mx-auto">Mari rangkum apa yang telah kita pelajari dan lakukan refleksi diri.</p>
+  </div>
+  <div class="mb-10">
+    <h3 class="font-display font-bold text-2xl mb-4 flex items-center gap-2 stagger-1"><i class="fa-solid fa-flag-checkered text-amber-600"></i>Kesimpulan</h3>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="card p-5 stagger-2"><div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-3"><i class="fa-solid fa-ruler-horizontal"></i></div><h4 class="font-display font-bold text-lg mb-2">Keliling = Batas Luar</h4><p class="text-sm text-[var(--fg-muted)] leading-relaxed">Keliling adalah total panjang batas luar bangun datar. Satuan keliling sama dengan satuan panjang (cm, m, km).</p></div>
+      <div class="card p-5 stagger-2"><div class="w-10 h-10 rounded-xl bg-pink-100 text-pink-700 flex items-center justify-center mb-3"><i class="fa-solid fa-fill-drip"></i></div><h4 class="font-display font-bold text-lg mb-2">Luas = Permukaan</h4><p class="text-sm text-[var(--fg-muted)] leading-relaxed">Luas adalah ukuran permukaan bangun datar. Luas dihitung dengan menghitung jumlah satuan persegi yang menutupi bangun.</p></div>
+      <div class="card p-5 stagger-3"><div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center mb-3"><i class="fa-solid fa-square-root-variable"></i></div><h4 class="font-display font-bold text-lg mb-2">7 Bangun Datar</h4><p class="text-sm text-[var(--fg-muted)] leading-relaxed">Kita telah mempelajari 7 bangun datar: segitiga, persegi, persegi panjang, jajar genjang, belah ketupat, layang-layang, dan trapesium.</p></div>
+      <div class="card p-5 stagger-3"><div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center mb-3"><i class="fa-solid fa-lightbulb"></i></div><h4 class="font-display font-bold text-lg mb-2">Penerapan Nyata</h4><p class="text-sm text-[var(--fg-muted)] leading-relaxed">Konsep keliling dan luas sangat berguna dalam kehidupan sehari-hari: memagari, mengecat, bertani, dan banyak lagi.</p></div>
+    </div>
+  </div>
+  <div class="mb-10">
+    <h3 class="font-display font-bold text-2xl mb-4 flex items-center gap-2 stagger-3"><i class="fa-solid fa-comments text-teal-600"></i>Refleksi Diri</h3>
+    <div class="card p-6 md:p-8 stagger-4">
+      <p class="text-sm text-[var(--fg-muted)] mb-6">Jawablah pertanyaan refleksi berikut dengan jujur untuk mengevaluasi pembelajaranmu.</p>
+      <div class="space-y-6">
+        <div><label class="block text-sm font-semibold mb-2"><i class="fa-solid fa-circle-check text-green-600 mr-2"></i>1. Konsep apa yang paling kamu pahami dari materi keliling dan luas bangun datar?</label><textarea class="reflection-input" placeholder="Tuliskan jawabanmu di sini..." rows="2"></textarea></div>
+        <div><label class="block text-sm font-semibold mb-2"><i class="fa-solid fa-triangle-exclamation text-amber-600 mr-2"></i>2. Bagian mana yang masih kamu rasa sulit atau perlu dipelajari lagi?</label><textarea class="reflection-input" placeholder="Tuliskan jawabanmu di sini..." rows="2"></textarea></div>
+        <div><label class="block text-sm font-semibold mb-2"><i class="fa-solid fa-gamepad text-pink-600 mr-2"></i>3. Bagaimana perasaanmu saat bermain game adu cepat dengan temanmu? Apa yang kamu pelajari dari permainan tersebut?</label><textarea class="reflection-input" placeholder="Tuliskan jawabanmu di sini..." rows="2"></textarea></div>
+        <div><label class="block text-sm font-semibold mb-2"><i class="fa-solid fa-star text-amber-600 mr-2"></i>4. Bagaimana kamu akan menerapkan ilmu ini dalam kehidupan sehari-hari?</label><textarea class="reflection-input" placeholder="Tuliskan jawabanmu di sini..." rows="2"></textarea></div>
+      </div>
+      <div class="mt-6 flex justify-end"><button onclick="saveReflection()" class="btn-primary"><i class="fa-solid fa-paper-plane"></i>Simpan Refleksi</button></div>
+    </div>
+  </div>
+  <div class="cover-hero text-center relative stagger-5">
+    <div class="cover-content py-8">
+      <div class="inline-block mb-4 px-4 py-2 rounded-full bg-white/10 backdrop-blur border border-white/20 text-amber-200 text-xs font-semibold tracking-widest"><i class="fa-solid fa-check-circle mr-2"></i>MATERI SELESAI</div>
+      <h2 class="font-display font-black text-4xl md:text-6xl mb-4">Thank You<br><span class="text-amber-400">For Today</span></h2>
+      <p class="text-base md:text-lg text-teal-100 mb-6 max-w-xl mx-auto">Terima kasih telah mengikuti petualangan geometri ini dengan sungguh-sungguh. Teruslah berlatih dan jelajahi keindahan matematika!</p>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <button onclick="goToSlide(1)" class="btn-secondary bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-amber-300"><i class="fa-solid fa-rotate-left"></i>Ulang dari Awal</button>
+        <button onclick="goToSlide(7)" class="btn-primary"><i class="fa-solid fa-gamepad"></i>Main Game Lagi</button>
+      </div>
+      <div class="mt-8 text-amber-300 text-sm italic font-display">"Geometri adalah bahasa alam semesta."</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="fixed bottom-0 left-0 right-0 z-40 backdrop-blur-md bg-[rgba(254,249,231,0.92)] border-t border-[var(--border)]">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <button id="prevBtn" onclick="prevSlide()" class="btn-secondary" disabled><i class="fa-solid fa-arrow-left"></i>Sebelumnya</button>
+    <div class="text-sm font-semibold hidden md:block"><span id="currentSlideBottom">1</span> dari 8</div>
+    <button id="nextBtn" onclick="nextSlide()" class="btn-primary">Selanjutnya<i class="fa-solid fa-arrow-right"></i></button>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+// ============ SVG SHAPES (KELILING - TANPA GRID) ============
+function svgSquare(s, unit='cm') {
+  return `<svg viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg">
+    <rect x="30" y="20" width="100" height="100" fill="#fef3c7" stroke="#1a2e2a" stroke-width="3" rx="2"/>
+    <text x="80" y="75" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="16" font-family="Outfit">${s}${unit}</text>
+    <line x1="55" y1="130" x2="105" y2="130" stroke="#d97706" stroke-width="2"/>
+    <text x="80" y="138" text-anchor="middle" fill="#d97706" font-size="11" font-weight="600">${s}${unit}</text>
+  </svg>`;
+}
+function svgRect(p, l, unit='cm') {
+  const w = 120, h = Math.max(50, (l/p)*100);
+  const x = 20, y = 50;
+  return `<svg viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fce7f3" stroke="#1a2e2a" stroke-width="3" rx="2"/>
+    <text x="${x+w/2}" y="${y+h/2+5}" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="14" font-family="Outfit">${p}×${l}</text>
+    <line x1="${x}" y1="${y+h+8}" x2="${x+w}" y2="${y+h+8}" stroke="#e11d48" stroke-width="2"/>
+    <text x="${x+w/2}" y="${y+h+22}" text-anchor="middle" fill="#e11d48" font-size="10" font-weight="600">p=${p}${unit}</text>
+    <line x1="${x-8}" y1="${y}" x2="${x-8}" y2="${y+h}" stroke="#0d9488" stroke-width="2"/>
+    <text x="${x-14}" y="${y+h/2+4}" text-anchor="end" fill="#0d9488" font-size="10" font-weight="600">l=${l}</text>
+  </svg>`;
+}
+function svgTriangle3Sides(a, b, c, unit='cm') {
+  return `<svg viewBox="0 0 180 140" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="20,120 160,120 90,25" fill="#d1fae5" stroke="#1a2e2a" stroke-width="3"/>
+    <text x="90" y="135" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="12" font-family="Outfit">${c}${unit}</text>
+    <text x="30" y="80" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="12" font-family="Outfit" transform="rotate(-60 30 80)">${a}${unit}</text>
+    <text x="150" y="80" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="12" font-family="Outfit" transform="rotate(60 150 80)">${b}${unit}</text>
+  </svg>`;
+}
+function svgTriangleEquilateral(s, unit='cm') {
+  return `<svg viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="80,20 140,120 20,120" fill="#d1fae5" stroke="#1a2e2a" stroke-width="3"/>
+    <text x="80" y="135" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="12" font-family="Outfit">${s}${unit}</text>
+    <text x="35" y="75" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="11" font-family="Outfit">${s}</text>
+    <text x="125" y="75" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="11" font-family="Outfit">${s}</text>
+  </svg>`;
+}
+function svgParallelogram(a, m, t, unit='cm') {
+  return `<svg viewBox="0 0 180 130" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="50,30 150,30 130,110 30,110" fill="#ede9fe" stroke="#1a2e2a" stroke-width="3"/>
+    <text x="80" y="125" text-anchor="middle" fill="#d97706" font-weight="bold" font-size="11" font-family="Outfit">a=${a}${unit}</text>
+    <text x="155" y="75" text-anchor="middle" fill="#0d9488" font-weight="bold" font-size="11" font-family="Outfit">m=${m}</text>
+    <line x1="20" y1="30" x2="20" y2="110" stroke="#e11d48" stroke-width="2" stroke-dasharray="4,2"/>
+    <text x="14" y="75" text-anchor="end" fill="#e11d48" font-weight="bold" font-size="10" font-family="Outfit">t=${t}</text>
+  </svg>`;
+}
+function svgRhombus(s, d1, d2, unit='cm') {
+  return `<svg viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="80,15 145,70 80,125 15,70" fill="#fed7aa" stroke="#1a2e2a" stroke-width="3"/>
+    <line x1="80" y1="15" x2="80" y2="125" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <line x1="15" y1="70" x2="145" y2="70" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <text x="80" y="8" text-anchor="middle" fill="#7c3aed" font-weight="bold" font-size="11" font-family="Outfit">d₁=${d1}</text>
+    <text x="152" y="74" text-anchor="start" fill="#7c3aed" font-weight="bold" font-size="11" font-family="Outfit">d₂=${d2}</text>
+    <text x="40" y="44" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="11" font-family="Outfit">s=${s}</text>
+  </svg>`;
+}
+function svgKite(s1, s2, d1, d2, unit='cm') {
+  return `<svg viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="80,10 130,60 80,130 30,60" fill="#bbf7d0" stroke="#1a2e2a" stroke-width="3"/>
+    <line x1="80" y1="10" x2="80" y2="130" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <line x1="30" y1="60" x2="130" y2="60" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <text x="80" y="6" text-anchor="middle" fill="#7c3aed" font-weight="bold" font-size="10" font-family="Outfit">d₁=${d1}</text>
+    <text x="137" y="64" text-anchor="start" fill="#7c3aed" font-weight="bold" font-size="10" font-family="Outfit">d₂=${d2}</text>
+    <text x="55" y="40" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="10" font-family="Outfit">${s1}</text>
+    <text x="105" y="40" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="10" font-family="Outfit">${s1}</text>
+    <text x="55" y="88" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="10" font-family="Outfit">${s2}</text>
+    <text x="105" y="88" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="10" font-family="Outfit">${s2}</text>
+  </svg>`;
+}
+function svgTrapezoid(a, b, s1, s2, t, unit='cm') {
+  return `<svg viewBox="0 0 180 130" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="40,30 140,30 160,110 20,110" fill="#cffafe" stroke="#1a2e2a" stroke-width="3"/>
+    <text x="90" y="22" text-anchor="middle" fill="#d97706" font-weight="bold" font-size="11" font-family="Outfit">a=${a}${unit}</text>
+    <text x="90" y="125" text-anchor="middle" fill="#d97706" font-weight="bold" font-size="11" font-family="Outfit">b=${b}${unit}</text>
+    <text x="18" y="75" text-anchor="end" fill="#0d9488" font-weight="bold" font-size="10" font-family="Outfit">${s1}</text>
+    <text x="168" y="75" text-anchor="start" fill="#0d9488" font-weight="bold" font-size="10" font-family="Outfit">${s2}</text>
+    <line x1="100" y1="30" x2="100" y2="110" stroke="#e11d48" stroke-width="2" stroke-dasharray="4,2"/>
+    <text x="108" y="75" text-anchor="start" fill="#e11d48" font-weight="bold" font-size="10" font-family="Outfit">t=${t}</text>
+  </svg>`;
+}
+function svgTriangleWithHeight(a, t, unit='cm') {
+  return `<svg viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="20,120 140,120 80,30" fill="#d1fae5" stroke="#1a2e2a" stroke-width="3"/>
+    <text x="80" y="136" text-anchor="middle" fill="#d97706" font-weight="bold" font-size="12" font-family="Outfit">a=${a}${unit}</text>
+    <line x1="80" y1="30" x2="80" y2="120" stroke="#e11d48" stroke-width="2" stroke-dasharray="4,2"/>
+    <text x="88" y="78" text-anchor="start" fill="#e11d48" font-weight="bold" font-size="12" font-family="Outfit">t=${t}</text>
+  </svg>`;
+}
+
+// ============ SVG SHAPES WITH GRID (LUAS) ============
+function svgSquareGrid(s, unit='cm') {
+  const maxDim = 220; // Naikkan dari 180 ke 220 agar font lebih besar
+  const cs = Math.min(20, maxDim / s); 
+  const off = 25;
+  const w = s * cs;
+  let grid = '';
+  for (let i = 1; i < s; i++) {
+    grid += `<line x1="${off + i*cs}" y1="${off}" x2="${off + i*cs}" y2="${off + w}" stroke="#d97706" stroke-width="0.6" opacity="0.5"/>`;
+    grid += `<line x1="${off}" y1="${off + i*cs}" x2="${off + w}" y2="${off + i*cs}" stroke="#d97706" stroke-width="0.6" opacity="0.5"/>`;
+  }
+  return `<svg viewBox="0 0 ${off*2 + w} ${off*2 + w}" xmlns="http://www.w3.org/2000/svg">
+    <rect x="${off}" y="${off}" width="${w}" height="${w}" fill="#fef3c7" stroke="#1a2e2a" stroke-width="3" rx="2"/>
+    ${grid}
+    <text x="${off + w/2}" y="${off + w + 18}" text-anchor="middle" fill="#d97706" font-size="14" font-weight="600">${s} ${unit}</text>
+  </svg>`;
+}
+
+function svgRectGrid(p, l, unit='cm') {
+  const maxW = 220, maxH = 180;
+  const cs = Math.min(15, maxW / p, maxH / l); 
+  const off = 25;
+  const w = p * cs;
+  const h = l * cs;
+  let grid = '';
+  for (let i = 1; i < p; i++) {
+    grid += `<line x1="${off + i*cs}" y1="${off}" x2="${off + i*cs}" y2="${off + h}" stroke="#e11d48" stroke-width="0.6" opacity="0.5"/>`;
+  }
+  for (let j = 1; j < l; j++) {
+    grid += `<line x1="${off}" y1="${off + j*cs}" x2="${off + w}" y2="${off + j*cs}" stroke="#e11d48" stroke-width="0.6" opacity="0.5"/>`;
+  }
+  return `<svg viewBox="0 0 ${off*2 + w} ${off*2 + h}" xmlns="http://www.w3.org/2000/svg">
+    <rect x="${off}" y="${off}" width="${w}" height="${h}" fill="#fce7f3" stroke="#1a2e2a" stroke-width="3" rx="2"/>
+    ${grid}
+    <text x="${off + w/2}" y="${off + h + 18}" text-anchor="middle" fill="#e11d48" font-size="12" font-weight="600">p=${p} ${unit}</text>
+    <text x="${off - 8}" y="${off + h/2 + 3}" text-anchor="end" fill="#0d9488" font-size="12" font-weight="600">l=${l}</text>
+  </svg>`;
+}
+
+// ============ DATA ============
+const playerNames = { p1: 'Pemain 1', p2: 'Pemain 2' };
+
+const shapes = [
+  { name: 'Persegi', icon: 'fa-square', svg: '<svg viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="60" fill="#f59e0b" stroke="#1a2e2a" stroke-width="3"/><text x="50" y="55" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="14">s</text></svg>', kFormula: 'K = 4 × s', lFormula: 'L = s × s', kDesc: 'Keliling persegi = 4 kali panjang sisi', lDesc: 'Luas persegi = sisi × sisi' },
+  { name: 'Persegi Panjang', icon: 'fa-rectangle-list', svg: '<svg viewBox="0 0 120 80"><rect x="10" y="15" width="100" height="50" fill="#fb7185" stroke="#1a2e2a" stroke-width="3"/><text x="60" y="45" text-anchor="middle" fill="#1a2e2a" font-weight="bold" font-size="12">p × l</text></svg>', kFormula: 'K = 2 × (p + l)', lFormula: 'L = p × l', kDesc: 'Keliling = 2 kali (panjang + lebar)', lDesc: 'Luas = panjang × lebar' },
+  { name: 'Segitiga', icon: 'fa-play', svg: '<svg viewBox="0 0 100 100"><polygon points="50,15 85,80 15,80" fill="#0d9488" stroke="#1a2e2a" stroke-width="3"/></svg>', kFormula: 'K = s₁ + s₂ + s₃', lFormula: 'L = ½ × a × t', kDesc: 'Keliling = jumlah ketiga sisi', lDesc: 'Luas = setengah × alas × tinggi' },
+  { name: 'Jajar Genjang', icon: 'fa-arrow-up-right-from-square', svg: '<svg viewBox="0 0 120 80"><polygon points="30,15 110,15 90,65 10,65" fill="#7c3aed" stroke="#1a2e2a" stroke-width="3"/></svg>', kFormula: 'K = 2 × (a + m)', lFormula: 'L = a × t', kDesc: 'Keliling = 2 × (alas + sisi miring)', lDesc: 'Luas = alas × tinggi' },
+  { name: 'Belah Ketupat', icon: 'fa-diamond', svg: '<svg viewBox="0 0 100 100"><polygon points="50,10 90,50 50,90 10,50" fill="#f97316" stroke="#1a2e2a" stroke-width="3"/></svg>', kFormula: 'K = 4 × s', lFormula: 'L = ½ × d₁ × d₂', kDesc: 'Keliling = 4 × sisi', lDesc: 'Luas = setengah × diagonal1 × diagonal2' },
+  { name: 'Layang-Layang', icon: 'fa-kite', svg: '<svg viewBox="0 0 100 100"><polygon points="50,10 85,45 50,90 15,45" fill="#16a34a" stroke="#1a2e2a" stroke-width="3"/></svg>', kFormula: 'K = 2 × (s₁ + s₂)', lFormula: 'L = ½ × d₁ × d₂', kDesc: 'Keliling = 2 × (sisi pendek + sisi panjang)', lDesc: 'Luas = setengah × diagonal1 × diagonal2' },
+  { name: 'Trapesium', icon: 'fa-table-cells', svg: '<svg viewBox="0 0 120 80"><polygon points="30,15 90,15 110,65 10,65" fill="#0891b2" stroke="#1a2e2a" stroke-width="3"/></svg>', kFormula: 'K = a + b + s₁ + s₂', lFormula: 'L = ½ × (a + b) × t', kDesc: 'Keliling = jumlah semua sisi', lDesc: 'Luas = setengah × (sisi atas + sisi bawah) × tinggi' },
+];
+
+// Soal KELILING (20 soal) - Tanpa grid
+const kelilingConceptQuestions = [
+  { svg: svgSquare(5), ask: 'Keliling?', ans: '20', unit: 'cm', exp: 'K = 4 × s = 4 × 5 = 20 cm.' },
+  { svg: svgSquare(7), ask: 'Keliling?', ans: '28', unit: 'cm', exp: 'K = 4 × 7 = 28 cm.' },
+  { svg: svgSquare(9), ask: 'Keliling?', ans: '36', unit: 'cm', exp: 'K = 4 × 9 = 36 cm.' },
+  { svg: svgRect(8, 3), ask: 'Keliling?', ans: '22', unit: 'cm', exp: 'K = 2 × (8+3) = 22 cm.' },
+  { svg: svgRect(10, 4), ask: 'Keliling?', ans: '28', unit: 'cm', exp: 'K = 2 × (10+4) = 28 cm.' },
+  { svg: svgRect(12, 5), ask: 'Keliling?', ans: '34', unit: 'cm', exp: 'K = 2 × (12+5) = 34 cm.' },
+  { svg: svgTriangle3Sides(3, 4, 5), ask: 'Keliling?', ans: '12', unit: 'cm', exp: 'K = 3+4+5 = 12 cm.' },
+  { svg: svgTriangleEquilateral(6), ask: 'Keliling?', ans: '18', unit: 'cm', exp: 'K = 3 × 6 = 18 cm.' },
+  { svg: svgTriangle3Sides(5, 7, 8), ask: 'Keliling?', ans: '20', unit: 'cm', exp: 'K = 5+7+8 = 20 cm.' },
+  { svg: svgTriangleEquilateral(9), ask: 'Keliling?', ans: '27', unit: 'cm', exp: 'K = 3 × 9 = 27 cm.' },
+  { svg: svgRhombus(8, 12, 16), ask: 'Keliling?', ans: '32', unit: 'cm', exp: 'K = 4 × 8 = 32 cm.' },
+  { svg: svgRhombus(6, 8, 10), ask: 'Keliling?', ans: '24', unit: 'cm', exp: 'K = 4 × 6 = 24 cm.' },
+  { svg: svgParallelogram(7, 5, 4), ask: 'Keliling?', ans: '24', unit: 'cm', exp: 'K = 2 × (7+5) = 24 cm.' },
+  { svg: svgParallelogram(10, 6, 5), ask: 'Keliling?', ans: '32', unit: 'cm', exp: 'K = 2 × (10+6) = 32 cm.' },
+  { svg: svgKite(4, 7, 10, 12), ask: 'Keliling?', ans: '22', unit: 'cm', exp: 'K = 2 × (4+7) = 22 cm.' },
+  { svg: svgKite(5, 8, 12, 14), ask: 'Keliling?', ans: '26', unit: 'cm', exp: 'K = 2 × (5+8) = 26 cm.' },
+  { svg: svgTrapezoid(5, 8, 4, 5, 4), ask: 'Keliling?', ans: '22', unit: 'cm', exp: 'K = 5+8+4+5 = 22 cm.' },
+  { svg: svgTrapezoid(6, 10, 5, 5, 4), ask: 'Keliling?', ans: '26', unit: 'cm', exp: 'K = 6+10+5+5 = 26 cm.' },
+  { svg: svgSquare(15, 'm'), ask: 'Keliling?', ans: '60', unit: 'm', exp: 'K = 4 × 15 = 60 m.' },
+  { svg: svgRect(8, 5, 'm'), ask: 'Keliling?', ans: '26', unit: 'm', exp: 'K = 2 × (8+5) = 26 m.' },
+];
+
+// Soal LUAS (20 soal) - HANYA PERSEGI & PERSEGI PANJANG DENGAN GRID
+const luasConceptQuestions = [
+  { svg: svgSquareGrid(4), ask: 'Hitung jumlah kotak! Luas?', ans: '16', unit: 'cm²', exp: 'Ada 16 kotak penuh. L = 4 × 4 = 16 cm².' },
+  { svg: svgSquareGrid(5), ask: 'Hitung jumlah kotak! Luas?', ans: '25', unit: 'cm²', exp: 'Ada 25 kotak penuh. L = 5 × 5 = 25 cm².' },
+  { svg: svgSquareGrid(6), ask: 'Hitung jumlah kotak! Luas?', ans: '36', unit: 'cm²', exp: 'Ada 36 kotak penuh. L = 6 × 6 = 36 cm².' },
+  { svg: svgSquareGrid(7), ask: 'Hitung jumlah kotak! Luas?', ans: '49', unit: 'cm²', exp: 'Ada 49 kotak penuh. L = 7 × 7 = 49 cm².' },
+  { svg: svgSquareGrid(8), ask: 'Hitung jumlah kotak! Luas?', ans: '64', unit: 'cm²', exp: 'Ada 64 kotak penuh. L = 8 × 8 = 64 cm².' },
+  { svg: svgSquareGrid(9), ask: 'Hitung jumlah kotak! Luas?', ans: '81', unit: 'cm²', exp: 'Ada 81 kotak penuh. L = 9 × 9 = 81 cm².' },
+  { svg: svgSquareGrid(10), ask: 'Hitung jumlah kotak! Luas?', ans: '100', unit: 'cm²', exp: 'Ada 100 kotak penuh. L = 10 × 10 = 100 cm².' },
+  { svg: svgSquareGrid(11), ask: 'Hitung jumlah kotak! Luas?', ans: '121', unit: 'cm²', exp: 'Ada 121 kotak penuh. L = 11 × 11 = 121 cm².' },
+  { svg: svgSquareGrid(12), ask: 'Hitung jumlah kotak! Luas?', ans: '144', unit: 'cm²', exp: 'Ada 144 kotak penuh. L = 12 × 12 = 144 cm².' },
+  { svg: svgSquareGrid(15, 'm'), ask: 'Hitung jumlah kotak! Luas?', ans: '225', unit: 'm²', exp: 'Ada 225 kotak penuh. L = 15 × 15 = 225 m².' },
+  { svg: svgRectGrid(6, 4), ask: 'Hitung jumlah kotak! Luas?', ans: '24', unit: 'cm²', exp: 'Ada 24 kotak penuh. L = 6 × 4 = 24 cm².' },
+  { svg: svgRectGrid(8, 3), ask: 'Hitung jumlah kotak! Luas?', ans: '24', unit: 'cm²', exp: 'Ada 24 kotak penuh. L = 8 × 3 = 24 cm².' },
+  { svg: svgRectGrid(10, 5), ask: 'Hitung jumlah kotak! Luas?', ans: '50', unit: 'cm²', exp: 'Ada 50 kotak penuh. L = 10 × 5 = 50 cm².' },
+  { svg: svgRectGrid(12, 6), ask: 'Hitung jumlah kotak! Luas?', ans: '72', unit: 'cm²', exp: 'Ada 72 kotak penuh. L = 12 × 6 = 72 cm².' },
+  { svg: svgRectGrid(10, 7), ask: 'Hitung jumlah kotak! Luas?', ans: '70', unit: 'cm²', exp: 'Ada 70 kotak penuh. L = 10 × 7 = 70 cm².' },
+  { svg: svgRectGrid(14, 5), ask: 'Hitung jumlah kotak! Luas?', ans: '70', unit: 'cm²', exp: 'Ada 70 kotak penuh. L = 14 × 5 = 70 cm².' },
+  { svg: svgRectGrid(15, 8), ask: 'Hitung jumlah kotak! Luas?', ans: '120', unit: 'cm²', exp: 'Ada 120 kotak penuh. L = 15 × 8 = 120 cm².' },
+  { svg: svgRectGrid(9, 4), ask: 'Hitung jumlah kotak! Luas?', ans: '36', unit: 'cm²', exp: 'Ada 36 kotak penuh. L = 9 × 4 = 36 cm².' },
+  { svg: svgRectGrid(8, 8), ask: 'Hitung jumlah kotak! Luas?', ans: '64', unit: 'cm²', exp: 'Ada 64 kotak penuh. L = 8 × 8 = 64 cm².' },
+  { svg: svgRectGrid(7, 5), ask: 'Hitung jumlah kotak! Luas?', ans: '35', unit: 'cm²', exp: 'Ada 35 kotak penuh. L = 7 × 5 = 35 cm².' },
+];
+
+// 50 soal pilihan ganda
+const mcqQuestions = [
+  // MUDAH (1-15) - HANYA PERSEGI & PERSEGI PANJANG
+  { cat: 'mudah', shape: 'Persegi', svg: svgSquare(7), q: 'Hitung keliling bangun di samping!', options: ['14 cm', '21 cm', '28 cm', '49 cm'], answer: 2, clue: 'K = 4 × s', exp: 'K = 4 × 7 = 28 cm.' },
+  { cat: 'mudah', shape: 'Persegi', svg: svgSquareGrid(5), q: 'Hitung jumlah kotak! Luas bangun di samping?', options: ['10 cm²', '20 cm²', '25 cm²', '50 cm²'], answer: 2, clue: 'L = s × s (hitung kotak)', exp: 'Ada 25 kotak penuh. L = 5 × 5 = 25 cm².' },
+  { cat: 'mudah', shape: 'Persegi Panjang', svg: svgRect(8, 3), q: 'Hitung keliling bangun di samping!', options: ['11 cm', '22 cm', '24 cm', '30 cm'], answer: 1, clue: 'K = 2 × (p + l)', exp: 'K = 2 × (8+3) = 22 cm.' },
+  { cat: 'mudah', shape: 'Persegi Panjang', svg: svgRectGrid(6, 4), q: 'Hitung jumlah kotak! Luas bangun di samping?', options: ['10 cm²', '20 cm²', '24 cm²', '48 cm²'], answer: 2, clue: 'L = p × l (hitung kotak)', exp: 'Ada 24 kotak penuh. L = 6 × 4 = 24 cm².' },
+  { cat: 'mudah', shape: 'Persegi', svg: svgSquare(9), q: 'Hitung keliling bangun di samping!', options: ['18 cm', '27 cm', '36 cm', '81 cm'], answer: 2, clue: 'K = 4 × s', exp: 'K = 4 × 9 = 36 cm.' },
+  { cat: 'mudah', shape: 'Persegi Panjang', svg: svgRectGrid(10, 4), q: 'Hitung jumlah kotak! Luas bangun di samping?', options: ['14 cm²', '28 cm²', '40 cm²', '80 cm²'], answer: 2, clue: 'L = p × l (hitung kotak)', exp: 'Ada 40 kotak penuh. L = 10 × 4 = 40 cm².' },
+  { cat: 'mudah', shape: 'Persegi Panjang', svg: svgRect(7, 5), q: 'Hitung keliling bangun di samping!', options: ['12 cm', '24 cm', '35 cm', '70 cm'], answer: 1, clue: 'K = 2 × (p + l)', exp: 'K = 2 × (7+5) = 24 cm.' },
+  { cat: 'mudah', shape: 'Persegi', svg: svgSquareGrid(11), q: 'Hitung jumlah kotak! Luas bangun di samping?', options: ['22 cm²', '44 cm²', '121 cm²', '88 cm²'], answer: 2, clue: 'L = s × s (hitung kotak)', exp: 'Ada 121 kotak penuh. L = 11 × 11 = 121 cm².' },
+  { cat: 'mudah', shape: 'Persegi', svg: svgSquare(12), q: 'Hitung keliling bangun di samping!', options: ['24 cm', '36 cm', '48 cm', '144 cm'], answer: 2, clue: 'K = 4 × s', exp: 'K = 4 × 12 = 48 cm.' },
+  { cat: 'mudah', shape: 'Persegi Panjang', svg: svgRectGrid(9, 5), q: 'Hitung jumlah kotak! Luas bangun di samping?', options: ['14 cm²', '28 cm²', '45 cm²', '90 cm²'], answer: 2, clue: 'L = p × l (hitung kotak)', exp: 'Ada 45 kotak penuh. L = 9 × 5 = 45 cm².' },
+  { cat: 'mudah', shape: 'Persegi Panjang', svg: svgRect(10, 6), q: 'Hitung keliling bangun di samping!', options: ['16 cm', '32 cm', '60 cm', '120 cm'], answer: 1, clue: 'K = 2 × (p + l)', exp: 'K = 2 × (10+6) = 32 cm.' },
+  { cat: 'mudah', shape: 'Persegi', svg: svgSquareGrid(8), q: 'Hitung jumlah kotak! Luas bangun di samping?', options: ['16 cm²', '32 cm²', '64 cm²', '88 cm²'], answer: 2, clue: 'L = s × s (hitung kotak)', exp: 'Ada 64 kotak penuh. L = 8 × 8 = 64 cm².' },
+  { cat: 'mudah', shape: 'Persegi', svg: svgSquare(15), q: 'Hitung keliling bangun di samping!', options: ['30 cm', '45 cm', '60 cm', '90 cm'], answer: 2, clue: 'K = 4 × s', exp: 'K = 4 × 15 = 60 cm.' },
+  { cat: 'mudah', shape: 'Persegi Panjang', svg: svgRectGrid(12, 7), q: 'Hitung jumlah kotak! Luas bangun di samping?', options: ['19 cm²', '38 cm²', '84 cm²', '168 cm²'], answer: 2, clue: 'L = p × l (hitung kotak)', exp: 'Ada 84 kotak penuh. L = 12 × 7 = 84 cm².' },
+  { cat: 'mudah', shape: 'Persegi Panjang', svg: svgRect(15, 10), q: 'Hitung keliling bangun di samping!', options: ['25 cm', '50 cm', '150 cm', '300 cm'], answer: 1, clue: 'K = 2 × (p + l)', exp: 'K = 2 × (15+10) = 50 cm.' },
+  
+  // SEDANG (16-35)
+  { cat: 'sedang', shape: 'Jajar Genjang', q: 'Jajar genjang alas 10 cm, sisi miring 6 cm. Kelilingnya?', options: ['16 cm', '26 cm', '32 cm', '60 cm'], answer: 2, clue: 'K = 2 × (a + m)', exp: 'K = 2 × (10+6) = 32 cm.' },
+  { cat: 'sedang', shape: 'Layang-Layang', q: 'Layang-layang sisi pendek 5 cm, sisi panjang 8 cm. Kelilingnya?', options: ['13 cm', '20 cm', '26 cm', '40 cm'], answer: 2, clue: 'K = 2 × (s₁ + s₂)', exp: 'K = 2 × (5+8) = 26 cm.' },
+  { cat: 'sedang', shape: 'Trapesium', q: 'Trapesium sisi: 5, 8, 5, 6 cm. Kelilingnya?', options: ['19 cm', '24 cm', '28 cm', '40 cm'], answer: 1, clue: 'K = jumlah semua sisi', exp: 'K = 5+8+5+6 = 24 cm.' },
+  { cat: 'sedang', shape: 'Layang-Layang', q: 'Layang-layang diagonal 10 cm dan 14 cm. Luasnya?', options: ['24 cm²', '70 cm²', '140 cm²', '35 cm²'], answer: 1, clue: 'L = ½ × d₁ × d₂', exp: 'L = ½ × 10 × 14 = 70 cm².' },
+  { cat: 'sedang', shape: 'Trapesium', q: 'Trapesium sisi sejajar 6 cm dan 10 cm, tinggi 5 cm. Luasnya?', options: ['40 cm²', '20 cm²', '50 cm²', '80 cm²'], answer: 0, clue: 'L = ½ × (a + b) × t', exp: 'L = ½ × (6+10) × 5 = 40 cm².' },
+  { cat: 'sedang', shape: 'Persegi', q: 'Persegi keliling 48 cm. Panjang sisinya?', options: ['6 cm', '8 cm', '12 cm', '16 cm'], answer: 2, clue: 's = K ÷ 4', exp: 's = 48 ÷ 4 = 12 cm.' },
+  { cat: 'sedang', shape: 'Persegi Panjang', q: 'Persegi panjang keliling 30 cm, p=10 cm. Lebarnya?', options: ['5 cm', '8 cm', '10 cm', '15 cm'], answer: 0, clue: 'l = (K ÷ 2) - p', exp: 'l = (30÷2) - 10 = 5 cm.' },
+  { cat: 'sedang', shape: 'Segitiga', q: 'Segitiga luas 24 cm², alas 8 cm. Tingginya?', options: ['3 cm', '4 cm', '6 cm', '12 cm'], answer: 2, clue: 't = (2L) ÷ a', exp: 't = (2×24) ÷ 8 = 6 cm.' },
+  { cat: 'sedang', shape: 'Persegi', q: 'Persegi luas 64 cm². Kelilingnya?', options: ['16 cm', '24 cm', '32 cm', '64 cm'], answer: 2, clue: 's = √L, lalu K = 4s', exp: 's = √64 = 8, K = 4×8 = 32 cm.' },
+  { cat: 'sedang', shape: 'Jajar Genjang', q: 'Jajar genjang luas 56 cm², tinggi 7 cm. Alasnya?', options: ['8 cm', '9 cm', '14 cm', '49 cm'], answer: 0, clue: 'a = L ÷ t', exp: 'a = 56 ÷ 7 = 8 cm.' },
+  { cat: 'sedang', shape: 'Belah Ketupat', q: 'Belah ketupat luas 48 cm², diagonal pertama 8 cm. Diagonal kedua?', options: ['6 cm', '8 cm', '12 cm', '24 cm'], answer: 2, clue: 'd₂ = (2L) ÷ d₁', exp: 'd₂ = (2×48) ÷ 8 = 12 cm.' },
+  { cat: 'sedang', shape: 'Trapesium', q: 'Trapesium luas 45 cm², sisi sejajar 4 dan 8 cm. Tingginya?', options: ['5 cm', '7.5 cm', '9 cm', '15 cm'], answer: 1, clue: 't = (2L) ÷ (a+b)', exp: 't = (2×45) ÷ (4+8) = 7.5 cm.' },
+  { cat: 'sedang', shape: 'Persegi Panjang', q: 'Persegi panjang luas 72 cm², p=12 cm. Lebarnya?', options: ['5 cm', '6 cm', '8 cm', '10 cm'], answer: 1, clue: 'l = L ÷ p', exp: 'l = 72 ÷ 12 = 6 cm.' },
+  { cat: 'sedang', shape: 'Segitiga', q: 'Segitiga siku-siku sisi 6, 8, 10 cm. Kelilingnya?', options: ['18 cm', '24 cm', '28 cm', '48 cm'], answer: 1, clue: 'K = s₁ + s₂ + s₃', exp: 'K = 6+8+10 = 24 cm.' },
+  { cat: 'sedang', shape: 'Segitiga', q: 'Segitiga sama sisi keliling 27 cm. Panjang sisi?', options: ['6 cm', '9 cm', '12 cm', '54 cm'], answer: 1, clue: 's = K ÷ 3', exp: 's = 27 ÷ 3 = 9 cm.' },
+  { cat: 'sedang', shape: 'Layang-Layang', q: 'Layang-layang keliling 40 cm, sisi pendek 8 cm. Sisi panjang?', options: ['10 cm', '12 cm', '14 cm', '20 cm'], answer: 1, clue: 's₂ = (K÷2) - s₁', exp: 's₂ = (40÷2) - 8 = 12 cm.' },
+  { cat: 'sedang', shape: 'Persegi', q: 'Persegi keliling 60 cm. Luasnya?', options: ['120 cm²', '225 cm²', '240 cm²', '900 cm²'], answer: 1, clue: 's = K÷4, L = s²', exp: 's = 15, L = 225 cm².' },
+  { cat: 'sedang', shape: 'Jajar Genjang', q: 'Jajar genjang alas 9, tinggi 6, miring 7. Kelilingnya?', options: ['30 cm', '32 cm', '54 cm', '63 cm'], answer: 1, clue: 'K = 2(a+m)', exp: 'K = 2(9+7) = 32 cm.' },
+  { cat: 'sedang', shape: 'Trapesium', q: 'Trapesium samakaki sisi sejajar 10 dan 16, sisi miring 5. Kelilingnya?', options: ['26 cm', '31 cm', '36 cm', '52 cm'], answer: 2, clue: 'K = a+b+s₁+s₂', exp: 'K = 10+16+5+5 = 36 cm.' },
+  { cat: 'sedang', shape: 'Belah Ketupat', q: 'Belah ketupat diagonal 12 dan 16. Sisinya?', options: ['8 cm', '10 cm', '14 cm', '20 cm'], answer: 1, clue: 's = ½√(d₁²+d₂²)', exp: 's = ½√(144+256) = ½×20 = 10 cm.' },
+  
+  // SOAL CERITA (36-50)
+  { cat: 'cerita', shape: 'Persegi Panjang', q: 'Pak Andi akan memagari kebun persegi panjang berukuran 25 m × 15 m. Berapa meter pagar yang dibutuhkan?', options: ['40 m', '80 m', '375 m', '150 m'], answer: 1, clue: 'K = 2 × (p + l)', exp: 'K = 2 × (25+15) = 80 m.' },
+  { cat: 'cerita', shape: 'Persegi', q: 'Sebuah kolam berbentuk persegi dengan sisi 12 m akan diberi keramik. Berapa m² keramik dibutuhkan?', options: ['24 m²', '48 m²', '144 m²', '169 m²'], answer: 2, clue: 'L = s × s', exp: 'L = 12 × 12 = 144 m².' },
+  { cat: 'cerita', shape: 'Segitiga', q: 'Sebuah taman berbentuk segitiga dengan alas 20 m dan tinggi 12 m akan ditanami rumput. Luas rumput?', options: ['60 m²', '120 m²', '240 m²', '32 m²'], answer: 1, clue: 'L = ½ × a × t', exp: 'L = ½ × 20 × 12 = 120 m².' },
+  { cat: 'cerita', shape: 'Persegi Panjang', q: 'Ibu mengecat dinding sepanjang 8 m dan setinggi 3 m. Luas yang dicat adalah...', options: ['11 m²', '22 m²', '24 m²', '48 m²'], answer: 2, clue: 'L = p × l', exp: 'L = 8 × 3 = 24 m².' },
+  { cat: 'cerita', shape: 'Persegi Panjang', q: 'Sepeda Ardi menempuh 5 keliling lapangan persegi panjang 60 m × 40 m. Berapa meter total?', options: ['100 m', '500 m', '1000 m', '5000 m'], answer: 2, clue: 'K = 2(p+l), total = 5×K', exp: 'K = 2(60+40) = 200 m. Total = 5×200 = 1000 m.' },
+  { cat: 'cerita', shape: 'Trapesium', q: 'Atap rumah berbentuk trapesium dengan sisi sejajar 8 m dan 12 m, tinggi 4 m. Luas atap?', options: ['20 m²', '40 m²', '48 m²', '80 m²'], answer: 1, clue: 'L = ½ × (a + b) × t', exp: 'L = ½ × (8+12) × 4 = 40 m².' },
+  { cat: 'cerita', shape: 'Belah Ketupat', q: 'Sebuah layang-layang berbentuk belah ketupat dengan diagonal 30 cm dan 40 cm. Luas kertasnya?', options: ['600 cm²', '1200 cm²', '70 cm²', '35 cm²'], answer: 0, clue: 'L = ½ × d₁ × d₂', exp: 'L = ½ × 30 × 40 = 600 cm².' },
+  { cat: 'cerita', shape: 'Layang-Layang', q: 'Budi membuat layang-layang dengan diagonal 24 cm dan 18 cm. Luas layang-layang?', options: ['42 cm²', '84 cm²', '216 cm²', '432 cm²'], answer: 2, clue: 'L = ½ × d₁ × d₂', exp: 'L = ½ × 24 × 18 = 216 cm².' },
+  { cat: 'cerita', shape: 'Jajar Genjang', q: 'Sebidang tanah jajar genjang alas 30 m dan tinggi 18 m akan ditanami jagung. Luasnya?', options: ['48 m²', '96 m²', '270 m²', '540 m²'], answer: 3, clue: 'L = a × t', exp: 'L = 30 × 18 = 540 m².' },
+  { cat: 'cerita', shape: 'Persegi', q: 'Kotak kado berbentuk persegi dengan sisi 25 cm dihias pita mengelilingi. Panjang pita minimal?', options: ['50 cm', '100 cm', '625 cm', '125 cm'], answer: 1, clue: 'K = 4 × s', exp: 'K = 4 × 25 = 100 cm.' },
+  { cat: 'cerita', shape: 'Segitiga', q: 'Selembar kain berbentuk segitiga alas 4 m dan tinggi 3 m. Luas kain tersebut?', options: ['6 m²', '7 m²', '12 m²', '4 m²'], answer: 0, clue: 'L = ½ × a × t', exp: 'L = ½ × 4 × 3 = 6 m².' },
+  { cat: 'cerita', shape: 'Trapesium', q: 'Lapangan trapesium sisi sejajar 50 m dan 70 m, sisi miring masing-masing 20 m. Keliling lapangan?', options: ['150 m', '160 m', '170 m', '210 m'], answer: 1, clue: 'K = a+b+s₁+s₂', exp: 'K = 50+70+20+20 = 160 m.' },
+  { cat: 'cerita', shape: 'Persegi Panjang', q: 'Ruang kelas berukuran 9 m × 7 m akan dipasang ubin. Jika tiap ubin 0.5 m², berapa ubin diperlukan?', options: ['63', '126', '32', '16'], answer: 1, clue: 'L ruang ÷ L ubin', exp: 'L = 9×7 = 63 m². Ubin = 63 ÷ 0.5 = 126.' },
+  { cat: 'cerita', shape: 'Belah Ketupat', q: 'Sebuah belah ketupat keliling 100 cm. Panjang sisi belah ketupat?', options: ['20 cm', '25 cm', '50 cm', '100 cm'], answer: 1, clue: 's = K ÷ 4', exp: 's = 100 ÷ 4 = 25 cm.' },
+  { cat: 'cerita', shape: 'Persegi', q: 'Sebuah taman persegi sisi 20 m dikelilingi jalan selebar 2 m. Luas jalan tersebut?', options: ['40 m²', '88 m²', '144 m²', '176 m²'], answer: 3, clue: 'Luas luar - Luas dalam', exp: 'Luar (24×24=576) - Dalam (20×20=400) = 176 m².' },
+];
+
+// Soal game: PERTANYAAN RUMUS
+const gameQuestions = [
+  { shape: 'Persegi', q: 'Apa rumus keliling persegi?', options: ['K = 4 × s', 'K = 2 × s', 'K = s × s', 'K = s + s'], answer: 0 },
+  { shape: 'Persegi', q: 'Apa rumus luas persegi?', options: ['L = 4 × s', 'L = s × s', 'L = 2 × s', 'L = s + s'], answer: 1 },
+  { shape: 'Persegi Panjang', q: 'Apa rumus keliling persegi panjang?', options: ['K = p × l', 'K = 2 × (p + l)', 'K = p + l', 'K = 4 × p'], answer: 1 },
+  { shape: 'Persegi Panjang', q: 'Apa rumus luas persegi panjang?', options: ['L = 2 × (p + l)', 'L = p + l', 'L = p × l', 'L = 4 × p'], answer: 2 },
+  { shape: 'Segitiga', q: 'Apa rumus keliling segitiga?', options: ['K = 3 × s', 'K = s₁ + s₂ + s₃', 'K = ½ × a × t', 'K = a × t'], answer: 1 },
+  { shape: 'Segitiga', q: 'Apa rumus luas segitiga?', options: ['L = a × t', 'L = ½ × a × t', 'L = s₁ + s₂ + s₃', 'L = 3 × s'], answer: 1 },
+  { shape: 'Jajar Genjang', q: 'Apa rumus keliling jajar genjang?', options: ['K = 4 × s', 'K = 2 × (a + m)', 'K = a × t', 'K = a + m'], answer: 1 },
+  { shape: 'Jajar Genjang', q: 'Apa rumus luas jajar genjang?', options: ['L = ½ × a × t', 'L = 2 × (a + m)', 'L = a × t', 'L = ½ × d₁ × d₂'], answer: 2 },
+  { shape: 'Belah Ketupat', q: 'Apa rumus keliling belah ketupat?', options: ['K = 4 × s', 'K = 2 × (s₁ + s₂)', 'K = s₁ + s₂ + s₃', 'K = a + b + s₁ + s₂'], answer: 0 },
+  { shape: 'Belah Ketupat', q: 'Apa rumus luas belah ketupat?', options: ['L = a × t', 'L = s × s', 'L = ½ × d₁ × d₂', 'L = ½ × (a + b) × t'], answer: 2 },
+  { shape: 'Layang-Layang', q: 'Apa rumus keliling layang-layang?', options: ['K = 4 × s', 'K = 2 × (s₁ + s₂)', 'K = 2 × (a + m)', 'K = a + b + s₁ + s₂'], answer: 1 },
+  { shape: 'Layang-Layang', q: 'Apa rumus luas layang-layang?', options: ['L = ½ × d₁ × d₂', 'L = a × t', 'L = ½ × a × t', 'L = ½ × (a + b) × t'], answer: 0 },
+  { shape: 'Trapesium', q: 'Apa rumus keliling trapesium?', options: ['K = 4 × s', 'K = 2 × (a + m)', 'K = a + b + s₁ + s₂', 'K = s₁ + s₂ + s₃'], answer: 2 },
+  { shape: 'Trapesium', q: 'Apa rumus luas trapesium?', options: ['L = ½ × d₁ × d₂', 'L = ½ × (a + b) × t', 'L = a × t', 'L = ½ × a × t'], answer: 1 },
+  { shape: 'Umum', q: 'Bangun datar yang rumus luasnya L = ½ × d₁ × d₂ adalah...', options: ['Persegi & Persegi Panjang', 'Belah Ketupat & Layang-Layang', 'Segitiga & Jajar Genjang', 'Trapesium & Persegi'], answer: 1 },
+  { shape: 'Umum', q: 'Bangun yang semua sisinya sama panjang adalah...', options: ['Persegi dan Belah Ketupat', 'Persegi Panjang dan Trapesium', 'Segitiga dan Jajar Genjang', 'Layang-Layang dan Trapesium'], answer: 0 },
+  { shape: 'Umum', q: 'Rumus L = ½ × a × t digunakan untuk luas...', options: ['Persegi', 'Segitiga', 'Belah Ketupat', 'Trapesium'], answer: 1 },
+  { shape: 'Umum', q: 'Rumus K = 2 × (p + l) adalah keliling dari...', options: ['Persegi', 'Persegi Panjang', 'Belah Ketupat', 'Trapesium'], answer: 1 },
+  { shape: 'Umum', q: 'Diagonal d₁ dan d₂ digunakan untuk menghitung luas...', options: ['Persegi & Persegi Panjang', 'Belah Ketupat & Layang-Layang', 'Segitiga & Jajar Genjang', 'Trapesium & Persegi'], answer: 1 },
+  { shape: 'Umum', q: 'Rumus L = a × t adalah luas dari...', options: ['Persegi', 'Jajar Genjang', 'Segitiga', 'Trapesium'], answer: 1 },
+];
+
+// ============ SLIDE NAVIGATION ============
+let currentSlide = 1;
+const totalSlides = 8;
+function goToSlide(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.querySelector(`.slide[data-slide="${n}"]`).classList.add('active');
+  document.querySelectorAll('.nav-dot').forEach(d => d.classList.remove('active'));
+  document.querySelector(`.nav-dot[data-slide="${n}"]`).classList.add('active');
+  document.getElementById('currentSlide').textContent = n;
+  document.getElementById('currentSlideBottom').textContent = n;
+  document.getElementById('prevBtn').disabled = n === 1;
+  document.getElementById('nextBtn').disabled = n === totalSlides;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  currentSlide = n;
+}
+function nextSlide() { if (currentSlide < totalSlides) goToSlide(currentSlide + 1); }
+function prevSlide() { if (currentSlide > 1) goToSlide(currentSlide - 1); }
+document.querySelectorAll('.nav-dot').forEach(dot => { dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.slide))); });
+document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') nextSlide(); else if (e.key === 'ArrowLeft') prevSlide(); });
+
+// ============ TOAST ============
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast');
+  const icons = { success: 'check-circle', error: 'circle-xmark', info: 'circle-info' };
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<i class="fa-solid fa-${icons[type]}"></i><span>${message}</span>`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ============ START ADVENTURE ============
+function startAdventure() {
+  const p1 = document.getElementById('player1Name').value.trim();
+  const p2 = document.getElementById('player2Name').value.trim();
+  if (!p1 || !p2) { showToast('Isi nama kedua pemain dulu!', 'error'); return; }
+  playerNames.p1 = p1; playerNames.p2 = p2;
+  document.getElementById('gamePlayer1Name').textContent = p1;
+  document.getElementById('gamePlayer2Name').textContent = p2;
+  showToast(`Selamat datang, ${p1} & ${p2}!`, 'success');
+  goToSlide(2);
+}
+
+// ============ SLIDE 4: CONCEPT ============
+let currentConceptTab = 'keliling';
+function renderConcept(tab) {
+  currentConceptTab = tab;
+  const container = document.getElementById('conceptContent');
+  if (tab === 'keliling') {
+    container.innerHTML = `
+      <div class="concept-box mb-6 stagger-1">
+        <h3 class="font-display font-bold text-2xl mb-3 flex items-center gap-2"><i class="fa-solid fa-ruler-horizontal text-amber-600"></i>Konsep Keliling</h3>
+        <p class="mb-3"><strong>Keliling</strong> adalah total panjang batas luar dari suatu bangun datar. Bayangkan kamu berjalan mengelilingi sebuah taman — jarak total yang kamu tempuh itulah keliling taman tersebut.</p>
+        <div class="grid md:grid-cols-3 gap-3 mt-4">
+          <div class="bg-amber-50 rounded-xl p-4 border border-amber-200"><div class="font-bold text-amber-800 mb-1"><i class="fa-solid fa-1 mr-2"></i>Identifikasi Sisi</div><p class="text-sm text-amber-700">Tentukan jumlah dan panjang setiap sisi bangun datar.</p></div>
+          <div class="bg-amber-50 rounded-xl p-4 border border-amber-200"><div class="font-bold text-amber-800 mb-1"><i class="fa-solid fa-2 mr-2"></i>Jumlahkan</div><p class="text-sm text-amber-700">Tambahkan panjang semua sisi untuk mendapatkan keliling.</p></div>
+          <div class="bg-amber-50 rounded-xl p-4 border border-amber-200"><div class="font-bold text-amber-800 mb-1"><i class="fa-solid fa-3 mr-2"></i>Satuan</div><p class="text-sm text-amber-700">Keliling memiliki satuan yang sama dengan panjang (cm, m, km).</p></div>
+        </div>
+      </div>
+      <div class="concept-box amber mb-6 stagger-2">
+        <h4 class="font-display font-bold text-xl mb-3"><i class="fa-solid fa-lightbulb mr-2"></i>Contoh Soal</h4>
+        <div class="grid md:grid-cols-2 gap-4 items-center">
+          <div class="problem-svg">${svgSquare(5)}</div>
+          <div><p class="mb-2">Hitung keliling persegi di samping!</p><div class="formula-display mb-3">K = 4 × s = 4 × 5 = 20 cm</div><p class="text-sm">Jadi, keliling persegi tersebut adalah <strong>20 cm</strong>.</p></div>
+        </div>
+      </div>
+      <div class="stagger-3">
+        <h4 class="font-display font-bold text-xl mb-4"><i class="fa-solid fa-pen-to-square mr-2"></i>Latihan Soal Keliling (20 Soal Berbasis Gambar)</h4>
+        <p class="text-sm text-[var(--fg-muted)] mb-4">Perhatikan gambar pada setiap soal, lalu hitung kelilingnya!</p>
+        <div class="grid md:grid-cols-2 gap-3" id="kelilingLatihan"></div>
+      </div>
+    `;
+    renderLatihan('keliling');
+  } else {
+    container.innerHTML = `
+      <div class="concept-box coral mb-6 stagger-1">
+        <h3 class="font-display font-bold text-2xl mb-3 flex items-center gap-2"><i class="fa-solid fa-fill-drip text-pink-600"></i>Konsep Luas</h3>
+        <p class="mb-3"><strong>Luas</strong> adalah ukuran besarnya permukaan suatu bangun datar. Bayangkan kamu menutup permukaan lantai dengan ubin — jumlah ubin yang kamu butuhkan itulah luas lantai tersebut.</p>
+        <div class="bg-pink-50 rounded-xl p-4 border border-pink-200 mt-4">
+          <div class="font-bold text-pink-800 mb-2"><i class="fa-solid fa-th mr-2"></i>Satuan Persegi</div>
+          <p class="text-sm text-pink-700 mb-3">Luas diukur dalam satuan persegi: cm², m², km². Artinya, luas adalah jumlah satuan persegi yang menutupi bangun.</p>
+          <div class="grid-visual" style="grid-template-columns: repeat(4, 32px);">
+            <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+            <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+            <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+          </div>
+          <p class="text-xs text-pink-700 mt-2">Persegi 4×3 = 12 satuan persegi → Luas = 12 cm²</p>
+        </div>
+      </div>
+      <div class="concept-box teal mb-6 stagger-2">
+        <h4 class="font-display font-bold text-xl mb-3"><i class="fa-solid fa-lightbulb mr-2"></i>Contoh Soal</h4>
+        <div class="grid md:grid-cols-2 gap-4 items-center">
+          <div class="problem-svg">${svgRectGrid(6, 4)}</div>
+          <div><p class="mb-2">Hitung jumlah kotak! Luas persegi panjang di samping?</p><div class="formula-display mb-3">L = p × l = 6 × 4 = 24 cm²</div><p class="text-sm">Ada 24 kotak penuh di dalam bangun. Jadi, luasnya adalah <strong>24 cm²</strong>.</p></div>
+        </div>
+      </div>
+      <div class="stagger-3">
+        <h4 class="font-display font-bold text-xl mb-4"><i class="fa-solid fa-pen-to-square mr-2"></i>Latihan Soal Luas (20 Soal Berbasis Grid)</h4>
+        <p class="text-sm text-[var(--fg-muted)] mb-4">Hitung jumlah kotak di dalam setiap bangun untuk menemukan luasnya!</p>
+        <div class="grid md:grid-cols-2 gap-3" id="luasLatihan"></div>
+      </div>
+    `;
+    renderLatihan('luas');
+  }
+}
+function renderLatihan(type) {
+  const questions = type === 'keliling' ? kelilingConceptQuestions : luasConceptQuestions;
+  const container = document.getElementById(`${type}Latihan`);
+  container.innerHTML = questions.map((q, i) => `
+    <div class="q-card" id="latihan-${type}-${i}">
+      <div class="flex items-start gap-3 mb-3"><span class="q-number">${i + 1}</span><div class="flex-1"><p class="q-text">${q.ask}</p></div></div>
+      <div class="problem-svg">${q.svg}</div>
+      <div class="flex items-center gap-3 mt-3 flex-wrap">
+        <input type="text" class="input-answer" id="input-${type}-${i}" placeholder="Jawaban..." onkeypress="if(event.key==='Enter') checkLatihan('${type}', ${i})">
+        ${q.unit ? `<span class="text-sm text-[var(--fg-muted)] font-medium">${q.unit}</span>` : ''}
+      </div>
+      <div class="flex items-center gap-2 mt-3">
+        <button onclick="checkLatihan('${type}', ${i})" class="btn-primary text-sm" style="padding: 8px 16px;"><i class="fa-solid fa-check"></i>Periksa</button>
+        <button onclick="toggleLatihanExp('${type}', ${i})" class="btn-ghost"><i class="fa-solid fa-lightbulb"></i>Pembahasan</button>
+      </div>
+      <div class="explanation-box" id="exp-${type}-${i}"><div class="exp-title"><i class="fa-solid fa-circle-info"></i> Pembahasan</div><div>${q.exp}</div></div>
+    </div>
+  `).join('');
+}
+function checkLatihan(type, idx) {
+  const questions = type === 'keliling' ? kelilingConceptQuestions : luasConceptQuestions;
+  const q = questions[idx];
+  const input = document.getElementById(`input-${type}-${idx}`);
+  if (!input.value.trim()) { showToast('Isi jawaban dulu!', 'error'); return; }
+  const userAns = input.value.trim().toLowerCase().replace(/\s/g, '').replace(/,/g, '.');
+  const correctAns = q.ans.toLowerCase().replace(/\s/g, '').replace(/,/g, '.');
+  input.classList.remove('correct', 'incorrect');
+  if (userAns === correctAns || (!isNaN(parseFloat(userAns)) && !isNaN(parseFloat(correctAns)) && Math.abs(parseFloat(userAns) - parseFloat(correctAns)) < 0.01)) {
+    input.classList.add('correct'); showToast('Benar! Bagus!', 'success');
+  } else { input.classList.add('incorrect'); showToast('Belum tepat. Coba lagi!', 'error'); }
+  document.getElementById(`exp-${type}-${idx}`).classList.add('show');
+}
+function toggleLatihanExp(type, idx) { document.getElementById(`exp-${type}-${idx}`).classList.toggle('show'); }
+document.querySelectorAll('.slide[data-slide="4"] .tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.slide[data-slide="4"] .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); renderConcept(btn.dataset.tab);
+  });
+});
+
+// ============ SLIDE 5: RUMUS ============
+function renderShapes() {
+  const grid = document.getElementById('shapesGrid');
+  grid.innerHTML = shapes.map((s, i) => `
+    <div class="shape-card" onclick="flipShape(${i})" id="shape-${i}">
+      <div class="shape-svg mb-3">${s.svg}</div>
+      <h3 class="font-display font-bold text-lg text-center shape-name">${s.name}</h3>
+      <div class="mt-3 text-center text-sm font-semibold" id="shape-content-${i}">Klik untuk lihat rumus</div>
+    </div>
+  `).join('');
+}
+function flipShape(i) {
+  const card = document.getElementById(`shape-${i}`);
+  const content = document.getElementById(`shape-content-${i}`);
+  const s = shapes[i];
+  if (card.classList.contains('flipped')) { card.classList.remove('flipped'); content.innerHTML = 'Klik untuk lihat rumus'; }
+  else {
+    card.classList.add('flipped');
+    content.innerHTML = `<div class="bg-white/10 rounded-lg p-2 mb-2"><div class="text-amber-300 text-xs font-bold mb-1">KELILING</div><div class="font-display font-bold text-base">${s.kFormula}</div><div class="text-xs opacity-80 mt-1">${s.kDesc}</div></div><div class="bg-white/10 rounded-lg p-2"><div class="text-pink-300 text-xs font-bold mb-1">LUAS</div><div class="font-display font-bold text-base">${s.lFormula}</div><div class="text-xs opacity-80 mt-1">${s.lDesc}</div></div>`;
+  }
+}
+
+// ============ SLIDE 6: MCQ ============
+let currentMCQTab = 'mudah';
+let answeredMCQ = new Set();
+function renderMCQ(cat) {
+  currentMCQTab = cat;
+  const container = document.getElementById('mcqContainer');
+  const questions = mcqQuestions.filter(q => q.cat === cat);
+  container.innerHTML = questions.map((q, i) => {
+    const realIdx = mcqQuestions.indexOf(q);
+    const hasSvg = q.svg && q.svg.trim();
+    return `
+      <div class="q-card mb-3" id="mcq-${realIdx}">
+        <div class="flex items-start gap-3 mb-2">
+          <span class="q-number">${realIdx + 1}</span>
+          <div class="flex-1 ${hasSvg ? 'md:flex md:gap-4 md:items-start' : ''}">
+            <div class="${hasSvg ? 'flex-1' : ''}">
+              <div class="flex items-center gap-2 mb-1"><span class="inline-block px-2 py-0.5 rounded-full bg-teal-100 text-teal-700 text-xs font-bold">${q.shape}</span></div>
+              <p class="q-text">${q.q}</p>
+            </div>
+            ${hasSvg ? `<div class="problem-svg md:w-52 md:flex-shrink-0 mt-3 md:mt-0">${q.svg}</div>` : ''}
+          </div>
+        </div>
+        <div class="clue-box mb-3"><i class="fa-solid fa-lightbulb"></i><span><strong>Clue:</strong> ${q.clue}</span></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          ${q.options.map((opt, j) => `<button class="option-btn" data-mcq="${realIdx}" data-opt="${j}" onclick="selectMCQ(${realIdx}, ${j})"><span class="option-letter">${String.fromCharCode(65 + j)}</span><span>${opt}</span></button>`).join('')}
+        </div>
+        <div class="flex items-center gap-2 mt-4 flex-wrap">
+          <button onclick="checkMCQ(${realIdx})" class="btn-primary text-sm" style="padding: 8px 16px;"><i class="fa-solid fa-check"></i>Periksa</button>
+          <button onclick="toggleMCQExp(${realIdx})" class="btn-ghost"><i class="fa-solid fa-lightbulb"></i>Pembahasan</button>
+        </div>
+        <div class="explanation-box" id="mcq-exp-${realIdx}"><div class="exp-title"><i class="fa-solid fa-circle-info"></i> Pembahasan</div><div>${q.exp}</div></div>
+      </div>
+    `;
+  }).join('');
+}
+function selectMCQ(idx, opt) {
+  const buttons = document.querySelectorAll(`.option-btn[data-mcq="${idx}"]`);
+  buttons.forEach(b => b.classList.remove('selected'));
+  buttons[opt].classList.add('selected');
+  buttons[opt].dataset.selected = 'true';
+  buttons.forEach((b, i) => { if (i !== opt) delete b.dataset.selected; });
+}
+function checkMCQ(idx) {
+  const q = mcqQuestions[idx];
+  const card = document.getElementById(`mcq-${idx}`);
+  const selected = card.querySelector('.option-btn[data-selected="true"]');
+  if (!selected) { showToast('Pilih jawaban dulu!', 'error'); return; }
+  const selIdx = parseInt(selected.dataset.opt);
+  card.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'incorrect'));
+  if (selIdx === q.answer) { selected.classList.add('correct'); if (!answeredMCQ.has(idx)) answeredMCQ.add(idx); showToast('Benar! Mantap!', 'success'); }
+  else { selected.classList.add('incorrect'); card.querySelector(`.option-btn[data-opt="${q.answer}"]`).classList.add('correct'); showToast('Belum tepat. Lihat pembahasan!', 'error'); }
+  document.getElementById(`mcq-exp-${idx}`).classList.add('show');
+  updateMCQScore();
+}
+function toggleMCQExp(idx) { document.getElementById(`mcq-exp-${idx}`).classList.toggle('show'); }
+function updateMCQScore() {
+  document.getElementById('scoreCorrect').textContent = answeredMCQ.size;
+  document.getElementById('scoreAnswered').textContent = answeredMCQ.size;
+  document.getElementById('overallProgress').style.width = `${(answeredMCQ.size / 50) * 100}%`;
+  if (answeredMCQ.size === 50) celebrate();
+}
+document.querySelectorAll('.slide[data-slide="6"] .tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.slide[data-slide="6"] .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); renderMCQ(btn.dataset.tab);
+  });
+});
+
+// ============ SLIDE 7: GAME ============
+let gameState = { active: false, currentPlayer: 1, round: 0, maxRounds: 10, scores: [0, 0], currentQ: null, timer: null, timeLeft: 20, answered: false, qOrder: [] };
+function startGame() {
+  gameState = { active: true, currentPlayer: 1, round: 1, maxRounds: 10, scores: [0, 0], currentQ: null, timer: null, timeLeft: 20, answered: false, qOrder: [] };
+  gameState.qOrder = [...Array(gameQuestions.length).keys()].sort(() => Math.random() - 0.5);
+  document.getElementById('gamePlayer1Name').textContent = playerNames.p1;
+  document.getElementById('gamePlayer2Name').textContent = playerNames.p2;
+  document.getElementById('gameP1NameDisplay').textContent = playerNames.p1;
+  document.getElementById('gameP2NameDisplay').textContent = playerNames.p2;
+  document.getElementById('gameStartScreen').style.display = 'none';
+  document.getElementById('gameEndScreen').style.display = 'none';
+  document.getElementById('gamePlayScreen').style.display = 'block';
+  loadGameQuestion();
+}
+function loadGameQuestion() {
+  const qIdx = gameState.qOrder[(gameState.round - 1) % gameQuestions.length];
+  const q = gameQuestions[qIdx];
+  gameState.currentQ = q; gameState.answered = false; gameState.timeLeft = 20;
+  document.getElementById('gameRound').textContent = gameState.round;
+  document.getElementById('gameShape').textContent = q.shape.toUpperCase();
+  document.getElementById('gameQuestion').textContent = q.q;
+  document.getElementById('gameCurrentPlayer').textContent = gameState.currentPlayer === 1 ? playerNames.p1 : playerNames.p2;
+  document.getElementById('gameCurrentPlayer').style.color = gameState.currentPlayer === 1 ? 'var(--amber-2)' : 'var(--coral-2)';
+  document.getElementById('gameP1Card').classList.toggle('active', gameState.currentPlayer === 1);
+  document.getElementById('gameP2Card').classList.toggle('active', gameState.currentPlayer === 2);
+  document.getElementById('gameP1Score').textContent = gameState.scores[0];
+  document.getElementById('gameP2Score').textContent = gameState.scores[1];
+  const optsContainer = document.getElementById('gameOptions');
+  optsContainer.innerHTML = q.options.map((opt, i) => `<button class="option-btn" onclick="answerGameQuestion(${i})" data-game-opt="${i}"><span class="option-letter">${String.fromCharCode(65 + i)}</span><span>${opt}</span></button>`).join('');
+  document.getElementById('gameFeedback').textContent = '';
+  document.getElementById('gameFeedback').style.color = '';
+  document.getElementById('gameNextBtn').style.display = 'none';
+  updateTimerDisplay();
+  if (gameState.timer) clearInterval(gameState.timer);
+  gameState.timer = setInterval(() => {
+    gameState.timeLeft--; updateTimerDisplay();
+    if (gameState.timeLeft <= 0) {
+      clearInterval(gameState.timer);
+      if (!gameState.answered) {
+        gameState.answered = true;
+        document.getElementById('gameFeedback').textContent = '⏰ Waktu habis!';
+        document.getElementById('gameFeedback').style.color = 'var(--error)';
+        document.querySelectorAll('[data-game-opt]').forEach(b => b.style.pointerEvents = 'none');
+        const correctBtn = document.querySelector(`[data-game-opt="${q.answer}"]`);
+        if (correctBtn) correctBtn.classList.add('correct');
+        document.getElementById('gameNextBtn').style.display = 'inline-flex';
+      }
+    }
+  }, 1000);
+}
+function updateTimerDisplay() {
+  document.getElementById('gameTimer').textContent = gameState.timeLeft;
+  document.getElementById('gameTimerFill').style.width = `${(gameState.timeLeft / 20) * 100}%`;
+}
+function answerGameQuestion(optIdx) {
+  if (gameState.answered) return;
+  gameState.answered = true; clearInterval(gameState.timer);
+  const q = gameState.currentQ;
+  const buttons = document.querySelectorAll('[data-game-opt]');
+  buttons.forEach(b => b.style.pointerEvents = 'none');
+  const feedback = document.getElementById('gameFeedback');
+  if (optIdx === q.answer) {
+    gameState.scores[gameState.currentPlayer - 1] += 10;
+    buttons[optIdx].classList.add('correct');
+    feedback.textContent = '✓ Benar! +10 poin!'; feedback.style.color = 'var(--success)';
+    confettiBurst();
+  } else {
+    buttons[optIdx].classList.add('incorrect');
+    if (buttons[q.answer]) buttons[q.answer].classList.add('correct');
+    feedback.textContent = '✗ Salah! Jawaban benar disorot hijau.'; feedback.style.color = 'var(--error)';
+  }
+  document.getElementById('gameP1Score').textContent = gameState.scores[0];
+  document.getElementById('gameP2Score').textContent = gameState.scores[1];
+  document.getElementById('gameNextBtn').style.display = 'inline-flex';
+}
+function nextGameRound() {
+  gameState.round++;
+  if (gameState.round > gameState.maxRounds) { endGame(); return; }
+  gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1;
+  loadGameQuestion();
+}
+function endGame() {
+  gameState.active = false;
+  document.getElementById('gamePlayScreen').style.display = 'none';
+  document.getElementById('gameEndScreen').style.display = 'block';
+  document.getElementById('endP1Name').textContent = playerNames.p1;
+  document.getElementById('endP2Name').textContent = playerNames.p2;
+  document.getElementById('endP1Score').textContent = gameState.scores[0];
+  document.getElementById('endP2Score').textContent = gameState.scores[1];
+  const winnerText = document.getElementById('gameWinnerText');
+  if (gameState.scores[0] > gameState.scores[1]) {
+    winnerText.innerHTML = `🏆 <strong>${playerNames.p1}</strong> adalah pemenangnya! Selamat!`;
+    document.getElementById('endP1Card').style.transform = 'scale(1.05)';
+    document.getElementById('endP1Card').style.boxShadow = '0 12px 30px rgba(245,158,11,0.4)';
+  } else if (gameState.scores[1] > gameState.scores[0]) {
+    winnerText.innerHTML = `🏆 <strong>${playerNames.p2}</strong> adalah pemenangnya! Selamat!`;
+    document.getElementById('endP2Card').style.transform = 'scale(1.05)';
+    document.getElementById('endP2Card').style.boxShadow = '0 12px 30px rgba(251,113,133,0.4)';
+  } else { winnerText.innerHTML = '🤝 Hasil seri! Kalian berdua hebat!'; }
+  confettiBurst(80);
+}
+function restartGame() {
+  document.getElementById('gameEndScreen').style.display = 'none';
+  document.getElementById('gameStartScreen').style.display = 'block';
+}
+
+// ============ CELEBRATIONS ============
+function confettiBurst(count = 30) {
+  const colors = ['#f59e0b', '#fb7185', '#0d9488', '#7c3aed', '#16a34a', '#f97316'];
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.background = colors[Math.floor(Math.random() * colors.length)];
+      c.style.animationDelay = Math.random() * 0.5 + 's';
+      c.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+      c.style.width = (8 + Math.random() * 8) + 'px';
+      c.style.height = c.style.width;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3000);
+    }, i * 30);
+  }
+}
+function celebrate() { confettiBurst(60); showToast('🎉 Luar biasa! Semua soal selesai!', 'success'); }
+function saveReflection() { showToast('Refleksi tersimpan! Terima kasih atas partisipasimu.', 'success'); }
+
+// ============ INIT ============
+window.addEventListener('DOMContentLoaded', () => {
+  renderConcept('keliling');
+  renderShapes();
+  renderMCQ('mudah');
+});
+</script>
+</body>
+</html>
