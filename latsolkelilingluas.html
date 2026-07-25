@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Bangun Datar - Luas & Keliling</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg: #fff8ec;
+  --bg2: #ffead0;
+  --bg3: #fef0e0;
+  --primary: #ff5e5b;
+  --secondary: #00cecb;
+  --accent: #ffd93d;
+  --dark: #1d1b4a;
+  --dark2: #2d2b5a;
+  --success: #06a77d;
+  --error: #e63946;
+  --muted: #6b6896;
+  --s1: #ff5e5b;
+  --s2: #00cecb;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--dark);
+  min-height: 100vh;
+  overflow: hidden;
+}
+.font-display { font-family: 'Fredoka', sans-serif; letter-spacing: -0.02em; }
+
+.bg-pattern {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: 
+    radial-gradient(circle at 15% 20%, rgba(255, 94, 91, 0.12) 0%, transparent 35%),
+    radial-gradient(circle at 85% 75%, rgba(0, 206, 203, 0.12) 0%, transparent 35%),
+    radial-gradient(circle at 50% 50%, rgba(255, 217, 61, 0.08) 0%, transparent 50%);
+}
+.bg-grid {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: 
+    linear-gradient(rgba(29, 27, 74, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(29, 27, 74, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+.float-shape {
+  position: fixed; pointer-events: none; z-index: 0; opacity: 0.5;
+  animation: float 14s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-30px) rotate(8deg); }
+  66% { transform: translateY(20px) rotate(-5deg); }
+}
+.slide {
+  position: fixed; inset: 0; opacity: 0; pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(20px);
+  z-index: 1; overflow-y: auto; padding: 20px;
+}
+.slide.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 26px; border-radius: 14px;
+  font-weight: 700; font-size: 15px; cursor: pointer;
+  border: none; transition: all 0.2s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.btn-primary {
+  background: var(--dark); color: white;
+  box-shadow: 0 4px 0 #0d0b2a, 0 8px 20px rgba(29, 27, 74, 0.3);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #0d0b2a, 0 12px 24px rgba(29, 27, 74, 0.4); }
+.btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 #0d0b2a; }
+.btn-accent {
+  background: var(--accent); color: var(--dark);
+  box-shadow: 0 4px 0 #c9aa1f, 0 8px 20px rgba(255, 217, 61, 0.4);
+}
+.btn-accent:hover { transform: translateY(-2px); }
+.btn-accent:active { transform: translateY(2px); box-shadow: 0 2px 0 #c9aa1f; }
+.btn-outline {
+  background: white; color: var(--dark);
+  border: 2px solid rgba(29, 27, 74, 0.15);
+  box-shadow: 0 2px 0 rgba(29, 27, 74, 0.1);
+}
+.btn-outline:hover { border-color: var(--dark); }
+.btn-success {
+  background: var(--success); color: white;
+  box-shadow: 0 4px 0 #048059, 0 8px 20px rgba(6, 167, 125, 0.4);
+}
+.btn-success:hover { transform: translateY(-2px); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: 0 2px 0 rgba(29, 27, 74, 0.1) !important; }
+
+.name-input {
+  background: white; border: 3px solid transparent;
+  border-radius: 16px; padding: 16px 20px;
+  font-size: 18px; font-weight: 600; width: 100%;
+  transition: all 0.3s; box-shadow: 0 4px 16px rgba(29, 27, 74, 0.06);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.name-input:focus { outline: none; }
+.name-input.s1:focus { border-color: var(--s1); box-shadow: 0 0 0 4px rgba(255, 94, 91, 0.2); }
+.name-input.s2:focus { border-color: var(--s2); box-shadow: 0 0 0 4px rgba(0, 206, 203, 0.2); }
+
+.card {
+  background: white; border-radius: 24px; padding: 24px;
+  box-shadow: 0 8px 32px rgba(29, 27, 74, 0.08);
+}
+.student-panel {
+  background: white; border-radius: 20px; padding: 20px;
+  border: 3px solid; transition: all 0.3s; position: relative;
+}
+.student-panel.s1 { border-color: var(--s1); }
+.student-panel.s2 { border-color: var(--s2); }
+.student-panel.correct { 
+  background: linear-gradient(135deg, rgba(6, 167, 125, 0.12), rgba(6, 167, 125, 0.04));
+  border-color: var(--success) !important;
+  animation: pulseSuccess 0.6s;
+}
+.student-panel.wrong {
+  background: linear-gradient(135deg, rgba(230, 57, 70, 0.12), rgba(230, 57, 70, 0.04));
+  border-color: var(--error) !important;
+  animation: shake 0.4s;
+}
+@keyframes pulseSuccess { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+.answer-input {
+  width: 100%; padding: 14px 16px;
+  border: 2px solid rgba(29, 27, 74, 0.15); border-radius: 12px;
+  font-size: 24px; font-weight: 700; text-align: center;
+  font-family: 'Fredoka', sans-serif; transition: all 0.2s;
+  color: var(--dark);
+}
+.answer-input:focus { outline: none; }
+.s1 .answer-input:focus { border-color: var(--s1); box-shadow: 0 0 0 3px rgba(255, 94, 91, 0.15); }
+.s2 .answer-input:focus { border-color: var(--s2); box-shadow: 0 0 0 3px rgba(0, 206, 203, 0.15); }
+.answer-input:disabled { background: #f5f3ed; color: var(--muted); cursor: not-allowed; }
+.answer-input.correct { border-color: var(--success) !important; background: rgba(6, 167, 125, 0.1) !important; color: var(--success) !important; }
+.answer-input.wrong { border-color: var(--error) !important; background: rgba(230, 57, 70, 0.1) !important; color: var(--error) !important; }
+
+.timer-text {
+  font-family: 'Fredoka', sans-serif; font-size: 28px; font-weight: 700;
+  transition: color 0.3s;
+}
+.timer-text.warning { color: var(--error); animation: timerPulse 0.6s infinite; }
+.timer-text.caution { color: #ff9800; }
+@keyframes timerPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+.shape-container {
+  background: linear-gradient(135deg, #fffdf7, #fff5e0);
+  border-radius: 24px; padding: 20px;
+  border: 2px dashed rgba(29, 27, 74, 0.12);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 320px; position: relative;
+  animation: shapeEnter 0.4s ease-out;
+}
+@keyframes shapeEnter {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.progress-bar {
+  height: 8px; background: rgba(29, 27, 74, 0.08); border-radius: 4px; overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 4px; transition: width 0.4s ease;
+}
+
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(29, 27, 74, 0.6);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  padding: 20px;
+}
+.modal-overlay.show { opacity: 1; pointer-events: auto; }
+.modal {
+  background: white; border-radius: 24px; padding: 28px;
+  max-width: 640px; width: 100%; max-height: 85vh; overflow-y: auto;
+  transform: scale(0.9); transition: transform 0.3s;
+}
+.modal-overlay.show .modal { transform: scale(1); }
+
+.toast {
+  position: fixed; top: 20px; left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: var(--dark); color: white;
+  padding: 14px 24px; border-radius: 12px;
+  font-weight: 600; z-index: 1000;
+  transition: transform 0.3s;
+  box-shadow: 0 8px 24px rgba(29, 27, 74, 0.3);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+.confetti {
+  position: absolute; width: 10px; height: 10px;
+  animation: confetti-fall 3s linear forwards;
+  pointer-events: none;
+}
+@keyframes confetti-fall {
+  0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(800px) rotate(720deg); opacity: 0; }
+}
+
+.result-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.result-table th { 
+  background: var(--bg2); padding: 12px 8px; text-align: left;
+  font-weight: 700; font-family: 'Fredoka', sans-serif;
+  position: sticky; top: 0; z-index: 1;
+}
+.result-table td { padding: 10px 8px; border-bottom: 1px solid rgba(29, 27, 74, 0.06); }
+.result-table tr:hover td { background: rgba(255, 234, 208, 0.4); }
+
+.status-badge {
+  display: inline-block; padding: 4px 10px; border-radius: 8px;
+  font-size: 12px; font-weight: 700;
+}
+.status-badge.correct { background: rgba(6, 167, 125, 0.15); color: var(--success); }
+.status-badge.wrong { background: rgba(230, 57, 70, 0.15); color: var(--error); }
+.status-badge.empty { background: rgba(29, 27, 74, 0.08); color: var(--muted); }
+
+.quiz-grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(320px, 1.4fr) minmax(240px, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+@media (max-width: 1100px) {
+  .quiz-grid { grid-template-columns: 1fr; }
+}
+
+@keyframes cellFadeIn {
+  from { opacity: 0; transform: scale(0.3); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(29, 27, 74, 0.2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(29, 27, 74, 0.3); }
+
+.dim-label { font-family: 'Fredoka', sans-serif; font-size: 14px; font-weight: 600; fill: #1d1b4a; }
+.dim-label-small { font-family: 'Fredoka', sans-serif; font-size: 12px; font-weight: 500; fill: #6b6896; }
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<div class="bg-grid"></div>
+
+<!-- Floating shapes -->
+<svg class="float-shape" style="top: 8%; left: 4%; width: 60px; height: 60px; animation-delay: 0s;" viewBox="0 0 60 60"><rect x="5" y="5" width="50" height="50" fill="#ff5e5b" rx="8" opacity="0.6"/></svg>
+<svg class="float-shape" style="top: 20%; right: 8%; width: 80px; height: 80px; animation-delay: 2s;" viewBox="0 0 80 80"><circle cx="40" cy="40" r="35" fill="#00cecb" opacity="0.5"/></svg>
+<svg class="float-shape" style="bottom: 15%; left: 10%; width: 70px; height: 70px; animation-delay: 4s;" viewBox="0 0 70 70"><polygon points="35,5 65,55 5,55" fill="#ffd93d" opacity="0.7"/></svg>
+<svg class="float-shape" style="bottom: 25%; right: 5%; width: 50px; height: 50px; animation-delay: 6s;" viewBox="0 0 50 50"><rect x="5" y="15" width="20" height="30" fill="#ff5e5b" opacity="0.5"/><rect x="15" y="5" width="30" height="20" fill="#ff5e5b" opacity="0.5"/></svg>
+<svg class="float-shape" style="top: 50%; left: 50%; width: 40px; height: 40px; animation-delay: 8s;" viewBox="0 0 40 40"><rect x="5" y="5" width="30" height="30" fill="#00cecb" opacity="0.4" rx="4"/></svg>
+
+<!-- Slide 1: Cover -->
+<section id="slide1" class="slide active">
+  <div class="min-h-screen flex items-center justify-center">
+    <div class="max-w-4xl w-full">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm mb-6">
+          <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+          <span class="text-sm font-semibold text-muted">Matematika SD — Keliling & Luas</span>
+        </div>
+        <h1 class="font-display text-6xl md:text-7xl font-bold mb-4 leading-none">
+          Petualangan
+          <span class="block" style="color: var(--primary);">Bangun Datar</span>
+        </h1>
+        <p class="text-xl text-muted mb-2">Duell seru berdua — 40 soal menanti!</p>
+        <p class="text-base text-muted">Persegi • Persegi Panjang • Bangun Gabungan</p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-6 mb-8">
+        <div class="card" style="border-top: 4px solid var(--s1);">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-white text-lg" style="background: var(--s1);">1</div>
+            <div>
+              <h3 class="font-display text-xl font-bold">Siswa 1</h3>
+              <p class="text-xs text-muted">Akan mengerjakan di panel kanan</p>
+            </div>
+          </div>
+          <input type="text" id="input-name-1" class="name-input s1" placeholder="Tulis namamu..." maxlength="20" autocomplete="off">
+        </div>
+        <div class="card" style="border-top: 4px solid var(--s2);">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-white text-lg" style="background: var(--s2);">2</div>
+            <div>
+              <h3 class="font-display text-xl font-bold">Siswa 2</h3>
+              <p class="text-xs text-muted">Akan mengerjakan di panel kiri</p>
+            </div>
+          </div>
+          <input type="text" id="input-name-2" class="name-input s2" placeholder="Tulis namamu..." maxlength="20" autocomplete="off">
+        </div>
+      </div>
+      
+      <div class="text-center">
+        <button class="btn btn-primary text-lg" onclick="startQuiz()">
+          <i class="fas fa-play"></i> Mulai Petualangan
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-3 gap-4 mt-10 max-w-2xl mx-auto">
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center mx-auto mb-2"><i class="fas fa-square text-primary"></i></div>
+          <p class="text-sm font-semibold">Persegi</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center mx-auto mb-2"><i class="fas fa-rectangle-list text-secondary"></i></div>
+          <p class="text-sm font-semibold">Persegi Panjang</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center mx-auto mb-2"><i class="fas fa-shapes" style="color: #c9aa1f;"></i></div>
+          <p class="text-sm font-semibold">Gabungan</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 2: Explanation -->
+<section id="slide2" class="slide">
+  <div class="max-w-6xl mx-auto py-6">
+    <div class="text-center mb-8">
+      <span class="inline-block px-3 py-1 bg-accent rounded-full text-xs font-bold uppercase tracking-wider mb-3" style="background: rgba(255, 217, 61, 0.4);">Mengingat Kembali</span>
+      <h2 class="font-display text-5xl font-bold mb-2">Apa itu Keliling & Luas?</h2>
+      <p class="text-muted">Sebelum berpetualang, mari ingat sekali lagi!</p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 gap-6 mb-6">
+      <!-- Keliling -->
+      <div class="card">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(255, 94, 91, 0.15);">
+            <i class="fas fa-route text-xl" style="color: var(--primary);"></i>
+          </div>
+          <div>
+            <h3 class="font-display text-3xl font-bold">Keliling</h3>
+            <p class="text-xs text-muted">Jarak mengelilingi bangun</p>
+          </div>
+        </div>
+        <p class="mb-4">Keliling adalah <strong>panjang total jika kita berjalan menyusuri tepi</strong> bangun datar, dari titik awal kembali ke titik awal.</p>
+        
+        <div class="rounded-2xl p-4 mb-4" style="background: linear-gradient(135deg, #fff5f4, #ffe8e6);">
+          <svg viewBox="0 0 320 220" class="w-full">
+            <defs>
+              <marker id="arrow-k" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#ff5e5b"/>
+              </marker>
+            </defs>
+            <rect x="60" y="50" width="200" height="120" fill="rgba(255,94,91,0.08)" stroke="#ff5e5b" stroke-width="3" rx="6"/>
+            <path d="M 60 50 L 260 50 L 260 170 L 60 170 Z" fill="none" stroke="#ff5e5b" stroke-width="4" stroke-dasharray="640" stroke-dashoffset="640" marker-end="url(#arrow-k)">
+              <animate attributeName="stroke-dashoffset" from="640" to="0" dur="4s" repeatCount="indefinite"/>
+            </path>
+            <text x="160" y="40" text-anchor="middle" class="dim-label">5 cm</text>
+            <text x="285" y="115" text-anchor="middle" dominant-baseline="middle" class="dim-label">3 cm</text>
+            <g transform="translate(155, 105)">
+              <circle cx="0" cy="-8" r="6" fill="#1d1b4a"/>
+              <rect x="-5" y="-2" width="10" height="12" rx="2" fill="#1d1b4a"/>
+              <rect x="-5" y="10" width="3" height="6" fill="#1d1b4a"/>
+              <rect x="2" y="10" width="3" height="6" fill="#1d1b4a"/>
+            </g>
+          </svg>
+        </div>
+        
+        <div class="p-4 rounded-xl" style="background: rgba(255, 94, 91, 0.06);">
+          <p class="font-display text-lg font-bold mb-1">Rumus Keliling:</p>
+          <div class="space-y-1 text-sm">
+            <p><strong>Persegi:</strong> K = 4 × s</p>
+            <p><strong>Persegi Panjang:</strong> K = 2 × (p + l)</p>
+            <p class="pt-2"><strong>Contoh:</strong> K = 2 × (5 + 3) = 2 × 8 = <span style="color: var(--primary);" class="font-bold">16 cm</span></p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Luas -->
+      <div class="card">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(0, 206, 203, 0.15);">
+            <i class="fas fa-th text-xl" style="color: var(--secondary);"></i>
+          </div>
+          <div>
+            <h3 class="font-display text-3xl font-bold">Luas</h3>
+            <p class="text-xs text-muted">Banyak satuan persegi di dalam</p>
+          </div>
+        </div>
+        <p class="mb-4">Luas adalah <strong>banyaknya satuan persegi</strong> yang dibutuhkan untuk menutupi seluruh bagian dalam bangun datar.</p>
+        
+        <div class="rounded-2xl p-4 mb-4" style="background: linear-gradient(135deg, #f0fffe, #d8f7f5);">
+          <svg viewBox="0 0 320 220" class="w-full">
+            <g id="luas-grid-cells"></g>
+            <rect x="60" y="50" width="200" height="120" fill="none" stroke="#00cecb" stroke-width="3" rx="4"/>
+            <text x="160" y="40" text-anchor="middle" class="dim-label">5 satuan</text>
+            <text x="285" y="115" text-anchor="middle" dominant-baseline="middle" class="dim-label">4 satuan</text>
+            <text x="160" y="115" text-anchor="middle" class="dim-label" id="luas-count" style="font-size: 22px; font-weight: 700; fill: #00cecb;">20</text>
+          </svg>
+        </div>
+        
+        <div class="p-4 rounded-xl" style="background: rgba(0, 206, 203, 0.06);">
+          <p class="font-display text-lg font-bold mb-1">Rumus Luas:</p>
+          <div class="space-y-1 text-sm">
+            <p><strong>Persegi:</strong> L = s × s</p>
+            <p><strong>Persegi Panjang:</strong> L = p × l</p>
+            <p class="pt-2"><strong>Contoh:</strong> L = 5 × 4 = <span style="color: var(--secondary);" class="font-bold">20 satuan persegi</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card mb-6" style="background: linear-gradient(135deg, var(--dark), var(--dark2)); color: white;">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background: var(--accent);">
+          <i class="fas fa-info text-xl" style="color: var(--dark);"></i>
+        </div>
+        <div>
+          <h4 class="font-display text-xl font-bold mb-1">Aturan Bermain</h4>
+          <p class="text-sm opacity-90">Setiap soal dikerjakan berdua. Siswa 1 dan 2 akan mengerjakan tugas berbeda (keliling/luas) secara bergantian setiap nomor. Waktunya 2 menit per soal, dan bisa minta tambahan +15 detik!</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex justify-between items-center">
+      <button class="btn btn-outline" onclick="goToSlide(1)"><i class="fas fa-arrow-left"></i> Kembali</button>
+      <button class="btn btn-primary" onclick="goToSlide(3)">Lanjut ke Soal <i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 3: Quiz -->
+<section id="slide3" class="slide">
+  <div class="max-w-7xl mx-auto">
+    <div class="card mb-4" style="padding: 14px 22px;">
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <div class="flex items-center gap-4">
+          <div>
+            <div class="text-xs text-muted font-semibold uppercase tracking-wider">Soal</div>
+            <div class="font-display text-2xl font-bold"><span id="q-current">1</span> / 40</div>
+          </div>
+          <div class="w-32">
+            <div class="progress-bar mb-1"><div class="progress-bar-fill" id="q-progress" style="width: 2.5%;"></div></div>
+            <div class="text-xs text-muted" id="q-type-label">Persegi</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="text-center">
+            <div class="text-xs text-muted font-semibold uppercase tracking-wider">Waktu</div>
+            <div class="timer-text" id="timer-text">02:00</div>
+          </div>
+          <button class="btn btn-accent" onclick="addTime(15)" id="btn-add-time"><i class="fas fa-plus"></i> 15 detik</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="quiz-grid mb-4">
+      <!-- Student 2 (left) -->
+      <div class="student-panel s2" id="panel-s2">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center font-display font-bold text-white" style="background: var(--s2);">2</div>
+            <div>
+              <div class="font-display font-bold text-lg leading-tight" id="panel-s2-name">Siswa 2</div>
+              <div class="text-xs text-muted">Panel Kiri</div>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-bold" id="panel-s2-task" style="background: rgba(0, 206, 203, 0.15); color: var(--s2);">Luas</span>
+        </div>
+        <div class="mb-3 p-3 rounded-xl" style="background: rgba(0, 206, 203, 0.05);">
+          <p class="text-sm">Tugasmu: Hitung <strong id="panel-s2-task-text">luas</strong> bangun di tengah!</p>
+        </div>
+        <label class="block text-sm font-semibold mb-2 text-muted">Jawaban (cm atau cm²)</label>
+        <input type="number" class="answer-input" id="input-s2" placeholder="?" autocomplete="off">
+        <div class="mt-3 text-sm hidden" id="feedback-s2"></div>
+      </div>
+      
+      <!-- Shape (center) -->
+      <div>
+        <div class="shape-container" id="shape-container"></div>
+        <div class="text-center mt-3">
+          <p class="text-sm text-muted">Perhatikan gambar dan hitung dengan teliti!</p>
+        </div>
+      </div>
+      
+      <!-- Student 1 (right) -->
+      <div class="student-panel s1" id="panel-s1">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center font-display font-bold text-white" style="background: var(--s1);">1</div>
+            <div>
+              <div class="font-display font-bold text-lg leading-tight" id="panel-s1-name">Siswa 1</div>
+              <div class="text-xs text-muted">Panel Kanan</div>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-bold" id="panel-s1-task" style="background: rgba(255, 94, 91, 0.15); color: var(--s1);">Keliling</span>
+        </div>
+        <div class="mb-3 p-3 rounded-xl" style="background: rgba(255, 94, 91, 0.05);">
+          <p class="text-sm">Tugasmu: Hitung <strong id="panel-s1-task-text">keliling</strong> bangun di tengah!</p>
+        </div>
+        <label class="block text-sm font-semibold mb-2 text-muted">Jawaban (cm atau cm²)</label>
+        <input type="number" class="answer-input" id="input-s1" placeholder="?" autocomplete="off">
+        <div class="mt-3 text-sm hidden" id="feedback-s1"></div>
+      </div>
+    </div>
+    
+    <div class="card" style="padding: 14px 22px;">
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <button class="btn btn-outline" onclick="prevQuestion()" id="btn-prev"><i class="fas fa-arrow-left"></i> Sebelumnya</button>
+        <div class="flex gap-2">
+          <button class="btn btn-success" onclick="checkAnswers()" id="btn-check"><i class="fas fa-check-circle"></i> Cek Jawaban</button>
+          <button class="btn btn-accent" onclick="showPembahasan()"><i class="fas fa-lightbulb"></i> Pembahasan</button>
+        </div>
+        <button class="btn btn-primary" onclick="nextQuestion()" id="btn-next">Berikutnya <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 4: Results -->
+<section id="slide4" class="slide">
+  <div class="max-w-6xl mx-auto py-6">
+    <div class="text-center mb-8">
+      <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3" style="background: rgba(255, 217, 61, 0.4);">Hasil Latihan</span>
+      <h2 class="font-display text-5xl font-bold mb-2">Catatan Kebenaran</h2>
+      <p class="text-muted">Lihat hasil kerja keras kalian berdua!</p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 gap-6 mb-6">
+      <div class="card" style="border-top: 4px solid var(--s1);">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center font-display font-bold text-white text-lg" style="background: var(--s1);">1</div>
+          <div>
+            <h3 class="font-display text-2xl font-bold" id="results-s1-name">Siswa 1</h3>
+            <p class="text-xs text-muted">Panel Kanan</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="text-center p-3 rounded-xl" style="background: rgba(6, 167, 125, 0.1);">
+            <div class="font-display text-3xl font-bold" style="color: var(--success);" id="s1-correct">0</div>
+            <div class="text-xs text-muted font-semibold">Benar</div>
+          </div>
+          <div class="text-center p-3 rounded-xl" style="background: rgba(230, 57, 70, 0.1);">
+            <div class="font-display text-3xl font-bold" style="color: var(--error);" id="s1-wrong">0</div>
+            <div class="text-xs text-muted font-semibold">Salah</div>
+          </div>
+          <div class="text-center p-3 rounded-xl" style="background: rgba(29, 27, 74, 0.06);">
+            <div class="font-display text-3xl font-bold" id="s1-avg-time">0s</div>
+            <div class="text-xs text-muted font-semibold">Rata-rata</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card" style="border-top: 4px solid var(--s2);">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center font-display font-bold text-white text-lg" style="background: var(--s2);">2</div>
+          <div>
+            <h3 class="font-display text-2xl font-bold" id="results-s2-name">Siswa 2</h3>
+            <p class="text-xs text-muted">Panel Kiri</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="text-center p-3 rounded-xl" style="background: rgba(6, 167, 125, 0.1);">
+            <div class="font-display text-3xl font-bold" style="color: var(--success);" id="s2-correct">0</div>
+            <div class="text-xs text-muted font-semibold">Benar</div>
+          </div>
+          <div class="text-center p-3 rounded-xl" style="background: rgba(230, 57, 70, 0.1);">
+            <div class="font-display text-3xl font-bold" style="color: var(--error);" id="s2-wrong">0</div>
+            <div class="text-xs text-muted font-semibold">Salah</div>
+          </div>
+          <div class="text-center p-3 rounded-xl" style="background: rgba(29, 27, 74, 0.06);">
+            <div class="font-display text-3xl font-bold" id="s2-avg-time">0s</div>
+            <div class="text-xs text-muted font-semibold">Rata-rata</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h3 class="font-display text-2xl font-bold mb-4">Rincian Setiap Soal</h3>
+      <div class="overflow-x-auto rounded-xl" style="max-height: 420px; overflow-y: auto;">
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Bangun</th>
+              <th>S1 Tugas</th>
+              <th>S1 Jawaban</th>
+              <th>S1 Kunci</th>
+              <th>S1</th>
+              <th>S2 Tugas</th>
+              <th>S2 Jawaban</th>
+              <th>S2 Kunci</th>
+              <th>S2</th>
+              <th>Waktu</th>
+            </tr>
+          </thead>
+          <tbody id="results-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="flex justify-between items-center mt-6">
+      <button class="btn btn-outline" onclick="goToSlide(3)"><i class="fas fa-arrow-left"></i> Kembali ke Soal</button>
+      <button class="btn btn-primary" onclick="goToSlide(5)">Lihat Kesimpulan <i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 5: Thank You -->
+<section id="slide5" class="slide">
+  <div id="confetti-container" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;"></div>
+  <div class="min-h-screen flex items-center justify-center">
+    <div class="max-w-3xl w-full text-center">
+      <div class="inline-block p-6 rounded-full mb-6" style="background: var(--accent); box-shadow: 0 12px 32px rgba(255, 217, 61, 0.4);">
+        <i class="fas fa-trophy text-6xl" style="color: var(--dark);"></i>
+      </div>
+      <h2 class="font-display text-6xl font-bold mb-4">Selamat!</h2>
+      <p class="text-xl text-muted mb-2">Kalian telah menyelesaikan 40 soal latihan</p>
+      <p class="text-base text-muted mb-8">tentang luas dan keliling bangun datar.</p>
+      
+      <div class="card mb-6 text-left">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(255, 217, 61, 0.25);">
+            <i class="fas fa-lightbulb" style="color: #c9aa1f;"></i>
+          </div>
+          <h3 class="font-display text-2xl font-bold">Refleksi Pembelajaran</h3>
+        </div>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-1" style="color: var(--success);"></i><span>Soal jenis apa yang paling mudah bagimu? Mana yang paling sulit?</span></li>
+          <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-1" style="color: var(--success);"></i><span>Apakah kamu lebih cepat menghitung keliling atau luas?</span></li>
+          <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-1" style="color: var(--success);"></i><span>Pada bangun gabungan, strategi apa yang kamu gunakan?</span></li>
+          <li class="flex items-start gap-3"><i class="fas fa-check-circle mt-1" style="color: var(--success);"></i><span>Apa yang akan kamu lakukan untuk meningkatkan kecepatan dan ketelitian?</span></li>
+        </ul>
+      </div>
+      
+      <div class="card mb-8" style="background: linear-gradient(135deg, var(--dark), var(--dark2)); color: white;">
+        <h3 class="font-display text-4xl font-bold mb-2">Thank you for today!</h3>
+        <p class="opacity-90">Sampai jumpa di petualangan matematika berikutnya. Tetap semangat belajar!</p>
+      </div>
+      
+      <button class="btn btn-primary" onclick="restart()"><i class="fas fa-redo"></i> Mulai Lagi</button>
+    </div>
+  </div>
+</section>
+
+<!-- Pembahasan Modal -->
+<div class="modal-overlay" id="pembahasan-modal">
+  <div class="modal">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-display text-2xl font-bold">Pembahasan Soal <span id="pembahasan-num">1</span></h3>
+      <button class="btn btn-outline" onclick="closePembahasan()" style="padding: 8px 14px;"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="pembahasan-content"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const COLORS = {
+  primary: '#ff5e5b',
+  secondary: '#00cecb',
+  accent: '#c9aa1f',
+  dark: '#1d1b4a',
+  muted: '#6b6896',
+};
+
+const state = {
+  currentSlide: 1,
+  student1Name: '',
+  student2Name: '',
+  questions: [],
+  currentIndex: 0,
+  timer: {
+    interval: null,
+    currentTime: 120,
+    initialTime: 120,
+    active: false,
+    questionStartTime: 0,
+    questionEndTime: 0,
+    addedTime: 0,
+  },
+};
+
+// ============ GENERATE 40 QUESTIONS ============
+function generateQuestions() {
+  const questions = [];
+  const types = ['square', 'rectangle', 'combined'];
+  let lastType = null, lastLastType = null;
+  
+  for (let i = 0; i < 40; i++) {
+    let available = types.filter(t => !(t === lastType && t === lastLastType));
+    const type = available[Math.floor(Math.random() * available.length)];
+    
+    let shape, keliling, luas;
+    if (type === 'square') {
+      const s = 3 + Math.floor(Math.random() * 8);
+      shape = { side: s };
+      keliling = 4 * s;
+      luas = s * s;
+    } else if (type === 'rectangle') {
+      const l = 4 + Math.floor(Math.random() * 8);
+      const w = 3 + Math.floor(Math.random() * 6);
+      shape = { length: l, width: w };
+      keliling = 2 * (l + w);
+      luas = l * w;
+    } else {
+      const wTop = 3 + Math.floor(Math.random() * 4);
+      const hTop = 2 + Math.floor(Math.random() * 3);
+      const wBot = wTop + 2 + Math.floor(Math.random() * 4);
+      const hBot = 2 + Math.floor(Math.random() * 3);
+      shape = { wTop, hTop, wBot, hBot };
+      keliling = 2 * (wBot + hTop + hBot);
+      luas = wTop * hTop + wBot * hBot;
+    }
+    
+    const isOdd = (i + 1) % 2 === 1;
+    const s1Task = isOdd ? 'keliling' : 'luas';
+    const s2Task = isOdd ? 'luas' : 'keliling';
+    
+    questions.push({
+      id: i + 1, type, shape, keliling, luas,
+      s1Task, s2Task,
+      s1Answer: '', s2Answer: '',
+      s1Correct: false, s2Correct: false,
+      timeTaken: 0, checked: false,
+    });
+    
+    lastLastType = lastType;
+    lastType = type;
+  }
+  return questions;
+}
+
+// ============ SHAPE RENDERING ============
+function getScale(type, shape) {
+  let maxDim;
+  if (type === 'square') maxDim = shape.side;
+  else if (type === 'rectangle') maxDim = Math.max(shape.length, shape.width);
+  else maxDim = Math.max(shape.wBot, shape.hTop + shape.hBot);
+  return Math.max(16, Math.min(28, 230 / maxDim));
+}
+
+function renderShape(question) {
+  const { type, shape } = question;
+  const SCALE = getScale(type, shape);
+  
+  if (type === 'square') {
+    const s = shape.side;
+    const size = s * SCALE;
+    const pad = 50;
+    const sw = size + pad * 2, sh = size + pad * 2;
+    return `<svg viewBox="0 0 ${sw} ${sh}" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-height: 290px;">
+      <defs><pattern id="g-sq-${question.id}" width="${SCALE}" height="${SCALE}" patternUnits="userSpaceOnUse">
+        <path d="M ${SCALE} 0 L 0 0 0 ${SCALE}" fill="none" stroke="rgba(29,27,74,0.1)" stroke-width="1"/>
+      </pattern></defs>
+      <rect x="${pad}" y="${pad}" width="${size}" height="${size}" fill="url(#g-sq-${question.id})" stroke="${COLORS.primary}" stroke-width="3" rx="4"/>
+      <text x="${pad + size/2}" y="${pad - 18}" text-anchor="middle" class="dim-label">${s} cm</text>
+      <text x="${pad + size + 22}" y="${pad + size/2}" text-anchor="middle" dominant-baseline="middle" class="dim-label">${s} cm</text>
+    </svg>`;
+  }
+  
+  if (type === 'rectangle') {
+    const l = shape.length, w = shape.width;
+    const lw = l * SCALE, lh = w * SCALE;
+    const pad = 50;
+    const sw = lw + pad * 2, sh = lh + pad * 2;
+    return `<svg viewBox="0 0 ${sw} ${sh}" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-height: 290px;">
+      <defs><pattern id="g-rect-${question.id}" width="${SCALE}" height="${SCALE}" patternUnits="userSpaceOnUse">
+        <path d="M ${SCALE} 0 L 0 0 0 ${SCALE}" fill="none" stroke="rgba(29,27,74,0.1)" stroke-width="1"/>
+      </pattern></defs>
+      <rect x="${pad}" y="${pad}" width="${lw}" height="${lh}" fill="url(#g-rect-${question.id})" stroke="${COLORS.secondary}" stroke-width="3" rx="4"/>
+      <text x="${pad + lw/2}" y="${pad - 18}" text-anchor="middle" class="dim-label">${l} cm</text>
+      <text x="${pad + lw + 22}" y="${pad + lh/2}" text-anchor="middle" dominant-baseline="middle" class="dim-label">${w} cm</text>
+    </svg>`;
+  }
+  
+  // combined
+  const { wTop, hTop, wBot, hBot } = shape;
+  const wTopPx = wTop * SCALE, hTopPx = hTop * SCALE;
+  const wBotPx = wBot * SCALE, hBotPx = hBot * SCALE;
+  const totalW = wBotPx, totalH = hTopPx + hBotPx;
+  const pad = 60;
+  const sw = totalW + pad * 2, sh = totalH + pad * 2;
+  const x0 = pad, y0 = pad;
+  const x1 = pad + wTopPx, y1 = pad;
+  const x2 = pad + wTopPx, y2 = pad + hTopPx;
+  const x3 = pad + wBotPx, y3 = pad + hTopPx;
+  const x4 = pad + wBotPx, y4 = pad + hTopPx + hBotPx;
+  const x5 = pad, y5 = pad + hTopPx + hBotPx;
+  const path = `M ${x0} ${y0} L ${x1} ${y1} L ${x2} ${y2} L ${x3} ${y3} L ${x4} ${y4} L ${x5} ${y5} Z`;
+  
+  return `<svg viewBox="0 0 ${sw} ${sh}" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-height: 290px;">
+    <defs><pattern id="g-comb-${question.id}" width="${SCALE}" height="${SCALE}" patternUnits="userSpaceOnUse">
+      <path d="M ${SCALE} 0 L 0 0 0 ${SCALE}" fill="none" stroke="rgba(29,27,74,0.08)" stroke-width="1"/>
+    </pattern></defs>
+    <path d="${path}" fill="url(#g-comb-${question.id})" stroke="${COLORS.accent}" stroke-width="3" stroke-linejoin="round"/>
+    <text x="${x0 + wTopPx/2}" y="${y0 - 18}" text-anchor="middle" class="dim-label">${wTop} cm</text>
+    <text x="${x1 + 22}" y="${(y0 + y2)/2}" text-anchor="middle" dominant-baseline="middle" class="dim-label">${hTop} cm</text>
+    <text x="${x5 + wBotPx/2}" y="${y5 + 28}" text-anchor="middle" class="dim-label">${wBot} cm</text>
+    <text x="${x4 + 22}" y="${(y3 + y4)/2}" text-anchor="middle" dominant-baseline="middle" class="dim-label">${hBot} cm</text>
+    <text x="${(x2 + x3)/2}" y="${y2 + 18}" text-anchor="middle" class="dim-label-small">${wBot - wTop} cm</text>
+    <text x="${x0 - 18}" y="${(y0 + y5)/2}" text-anchor="middle" dominant-baseline="middle" class="dim-label-small">${hTop + hBot} cm</text>
+  </svg>`;
+}
+
+// ============ SLIDE NAVIGATION ============
+function goToSlide(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('slide' + n).classList.add('active');
+  state.currentSlide = n;
+  if (n === 2) initLuasGrid();
+  if (n === 3) { renderQuestion(); startTimer(); }
+  if (n === 4) renderResults();
+  if (n === 5) startConfetti();
+}
+
+// ============ QUIZ ============
+function startQuiz() {
+  const name1 = document.getElementById('input-name-1').value.trim();
+  const name2 = document.getElementById('input-name-2').value.trim();
+  if (!name1 || !name2) {
+    showToast('Isi nama kedua siswa dulu ya!', 'warning');
+    if (!name1) document.getElementById('input-name-1').focus();
+    else document.getElementById('input-name-2').focus();
+    return;
+  }
+  state.student1Name = name1;
+  state.student2Name = name2;
+  state.questions = generateQuestions();
+  state.currentIndex = 0;
+  document.getElementById('panel-s1-name').textContent = name1;
+  document.getElementById('panel-s2-name').textContent = name2;
+  goToSlide(2);
+}
+
+function renderQuestion() {
+  const q = state.questions[state.currentIndex];
+  document.getElementById('q-current').textContent = q.id;
+  document.getElementById('q-progress').style.width = ((state.currentIndex + 1) / 40 * 100) + '%';
+  const typeLabels = { square: 'Persegi', rectangle: 'Persegi Panjang', combined: 'Bangun Gabungan' };
+  document.getElementById('q-type-label').textContent = typeLabels[q.type];
+  
+  const shapeContainer = document.getElementById('shape-container');
+  shapeContainer.innerHTML = renderShape(q);
+  shapeContainer.style.animation = 'none';
+  void shapeContainer.offsetWidth;
+  shapeContainer.style.animation = 'shapeEnter 0.4s ease-out';
+  
+  document.getElementById('panel-s1-task').textContent = q.s1Task === 'keliling' ? 'Keliling' : 'Luas';
+  document.getElementById('panel-s2-task').textContent = q.s2Task === 'keliling' ? 'Keliling' : 'Luas';
+  document.getElementById('panel-s1-task-text').textContent = q.s1Task;
+  document.getElementById('panel-s2-task-text').textContent = q.s2Task;
+  
+  document.getElementById('input-s1').value = q.s1Answer;
+  document.getElementById('input-s2').value = q.s2Answer;
+  document.getElementById('input-s1').disabled = q.checked;
+  document.getElementById('input-s2').disabled = q.checked;
+  document.getElementById('btn-check').disabled = q.checked;
+  document.getElementById('btn-add-time').disabled = q.checked;
+  
+  updateFeedback('s1', q);
+  updateFeedback('s2', q);
+  
+  document.getElementById('btn-prev').disabled = state.currentIndex === 0;
+  if (state.currentIndex === 39) {
+    document.getElementById('btn-next').innerHTML = 'Lihat Hasil <i class="fas fa-trophy"></i>';
+  } else {
+    document.getElementById('btn-next').innerHTML = 'Berikutnya <i class="fas fa-arrow-right"></i>';
+  }
+}
+
+function updateFeedback(student, q) {
+  const panel = document.getElementById('panel-' + student);
+  const input = document.getElementById('input-' + student);
+  const feedback = document.getElementById('feedback-' + student);
+  panel.classList.remove('correct', 'wrong');
+  input.classList.remove('correct', 'wrong');
+  
+  if (q.checked) {
+    const isCorrect = student === 's1' ? q.s1Correct : q.s2Correct;
+    const userAnswer = student === 's1' ? q.s1Answer : q.s2Answer;
+    const correctAnswer = student === 's1' ? (q.s1Task === 'keliling' ? q.keliling : q.luas) : (q.s2Task === 'keliling' ? q.keliling : q.luas);
+    const unit = (student === 's1' ? q.s1Task : q.s2Task) === 'keliling' ? 'cm' : 'cm²';
+    
+    if (userAnswer === '') {
+      feedback.classList.remove('hidden');
+      feedback.innerHTML = `<i class="fas fa-circle-info"></i> Tidak dijawab. Kunci: <strong>${correctAnswer} ${unit}</strong>`;
+      feedback.style.color = 'var(--muted)';
+    } else if (isCorrect) {
+      panel.classList.add('correct');
+      input.classList.add('correct');
+      feedback.classList.remove('hidden');
+      feedback.innerHTML = `<i class="fas fa-check-circle"></i> Benar! Jawaban: ${correctAnswer} ${unit}`;
+      feedback.style.color = 'var(--success)';
+    } else {
+      panel.classList.add('wrong');
+      input.classList.add('wrong');
+      feedback.classList.remove('hidden');
+      feedback.innerHTML = `<i class="fas fa-times-circle"></i> Salah. Kunci: <strong>${correctAnswer} ${unit}</strong>`;
+      feedback.style.color = 'var(--error)';
+    }
+  } else {
+    feedback.classList.add('hidden');
+  }
+}
+
+// ============ TIMER ============
+function startTimer() {
+  if (state.timer.interval) clearInterval(state.timer.interval);
+  const q = state.questions[state.currentIndex];
+  if (q.checked) {
+    state.timer.active = false;
+    document.getElementById('timer-text').textContent = 'Selesai';
+    document.getElementById('timer-text').classList.remove('warning', 'caution');
+    return;
+  }
+  state.timer.currentTime = 120;
+  state.timer.initialTime = 120;
+  state.timer.addedTime = 0;
+  state.timer.questionStartTime = Date.now();
+  state.timer.active = true;
+  updateTimerDisplay();
+  state.timer.interval = setInterval(() => {
+    if (!state.timer.active) return;
+    state.timer.currentTime -= 0.1;
+    if (state.timer.currentTime <= 0) {
+      state.timer.currentTime = 0;
+      state.timer.active = false;
+      onTimerEnd();
+    }
+    updateTimerDisplay();
+  }, 100);
+}
+
+function stopTimer() { state.timer.active = false; }
+
+function addTime(seconds) {
+  const q = state.questions[state.currentIndex];
+  if (q.checked) return;
+  state.timer.currentTime += seconds;
+  state.timer.addedTime += seconds;
+  updateTimerDisplay();
+  showToast(`+${seconds} detik ditambahkan!`, 'success');
+}
+
+function updateTimerDisplay() {
+  const t = Math.max(0, state.timer.currentTime);
+  const mins = Math.floor(t / 60);
+  const secs = Math.floor(t % 60);
+  document.getElementById('timer-text').textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  const timerEl = document.getElementById('timer-text');
+  timerEl.classList.remove('warning', 'caution');
+  if (t < 30) timerEl.classList.add('warning');
+  else if (t < 60) timerEl.classList.add('caution');
+}
+
+function onTimerEnd() {
+  showToast('Waktu habis! Jawaban diperiksa otomatis.', 'warning');
+  setTimeout(() => checkAnswers(), 400);
+}
+
+// ============ CHECK ANSWERS ============
+function checkAnswers() {
+  const q = state.questions[state.currentIndex];
+  if (q.checked) return;
+  if (state.timer.active) {
+    state.timer.questionEndTime = Date.now();
+    stopTimer();
+  } else if (state.timer.currentTime <= 0) {
+    state.timer.questionEndTime = state.timer.questionStartTime + 120000;
+  } else {
+    state.timer.questionEndTime = Date.now();
+  }
+  const timeTaken = (state.timer.questionEndTime - state.timer.questionStartTime) / 1000;
+  q.timeTaken = Math.max(0, timeTaken);
+  
+  const s1Input = document.getElementById('input-s1').value.trim();
+  const s2Input = document.getElementById('input-s2').value.trim();
+  q.s1Answer = s1Input;
+  q.s2Answer = s2Input;
+  const s1CorrectAnswer = q.s1Task === 'keliling' ? q.keliling : q.luas;
+  const s2CorrectAnswer = q.s2Task === 'keliling' ? q.keliling : q.luas;
+  q.s1Correct = s1Input !== '' && parseInt(s1Input) === s1CorrectAnswer;
+  q.s2Correct = s2Input !== '' && parseInt(s2Input) === s2CorrectAnswer;
+  q.checked = true;
+  
+  document.getElementById('input-s1').disabled = true;
+  document.getElementById('input-s2').disabled = true;
+  document.getElementById('btn-check').disabled = true;
+  document.getElementById('btn-add-time').disabled = true;
+  
+  updateFeedback('s1', q);
+  updateFeedback('s2', q);
+  
+  if (q.s1Correct && q.s2Correct) showToast('Keduanya benar! Hebat!', 'success');
+  else if (q.s1Correct || q.s2Correct) showToast('Hampir sempurna! Satu jawaban benar.', 'info');
+  else showToast('Belum tepat. Lihat pembahasan ya!', 'error');
+}
+
+// ============ PEMBAHASAN ============
+function showPembahasan() {
+  const q = state.questions[state.currentIndex];
+  document.getElementById('pembahasan-num').textContent = q.id;
+  let content = `<div class="mb-4 p-4 rounded-xl" style="background: var(--bg3);">${renderShape(q)}</div>`;
+  
+  if (q.type === 'square') {
+    const s = q.shape.side;
+    content += `<div class="space-y-3">
+      <div class="p-3 rounded-xl" style="background: rgba(255, 94, 91, 0.08);">
+        <h4 class="font-bold mb-2" style="color: var(--primary);">Keliling Persegi</h4>
+        <p class="text-sm">Rumus: <strong>K = 4 × s</strong></p>
+        <p class="text-sm">K = 4 × ${s} = <strong>${q.keliling} cm</strong></p>
+      </div>
+      <div class="p-3 rounded-xl" style="background: rgba(0, 206, 203, 0.08);">
+        <h4 class="font-bold mb-2" style="color: var(--secondary);">Luas Persegi</h4>
+        <p class="text-sm">Rumus: <strong>L = s × s</strong></p>
+        <p class="text-sm">L = ${s} × ${s} = <strong>${q.luas} cm²</strong></p>
+      </div>
+    </div>`;
+  } else if (q.type === 'rectangle') {
+    const l = q.shape.length, w = q.shape.width;
+    content += `<div class="space-y-3">
+      <div class="p-3 rounded-xl" style="background: rgba(255, 94, 91, 0.08);">
+        <h4 class="font-bold mb-2" style="color: var(--primary);">Keliling Persegi Panjang</h4>
+        <p class="text-sm">Rumus: <strong>K = 2 × (p + l)</strong></p>
+        <p class="text-sm">K = 2 × (${l} + ${w}) = 2 × ${l+w} = <strong>${q.keliling} cm</strong></p>
+      </div>
+      <div class="p-3 rounded-xl" style="background: rgba(0, 206, 203, 0.08);">
+        <h4 class="font-bold mb-2" style="color: var(--secondary);">Luas Persegi Panjang</h4>
+        <p class="text-sm">Rumus: <strong>L = p × l</strong></p>
+        <p class="text-sm">L = ${l} × ${w} = <strong>${q.luas} cm²</strong></p>
+      </div>
+    </div>`;
+  } else {
+    const { wTop, hTop, wBot, hBot } = q.shape;
+    content += `<div class="space-y-3">
+      <div class="p-3 rounded-xl" style="background: rgba(255, 217, 61, 0.18);">
+        <h4 class="font-bold mb-2" style="color: #c9aa1f;">Bangun Gabungan</h4>
+        <p class="text-sm">Bangun ini terdiri dari 2 bagian:</p>
+        <ul class="text-sm ml-4 mt-1 list-disc">
+          <li>Bagian atas: persegi panjang ${wTop} × ${hTop} = ${wTop*hTop} cm²</li>
+          <li>Bagian bawah: persegi panjang ${wBot} × ${hBot} = ${wBot*hBot} cm²</li>
+        </ul>
+      </div>
+      <div class="p-3 rounded-xl" style="background: rgba(255, 94, 91, 0.08);">
+        <h4 class="font-bold mb-2" style="color: var(--primary);">Keliling</h4>
+        <p class="text-sm">Total panjang semua sisi luar:</p>
+        <p class="text-sm">K = ${wTop} + ${hTop} + ${wBot-wTop} + ${hBot} + ${wBot} + ${hTop+hBot}</p>
+        <p class="text-sm">K = <strong>${q.keliling} cm</strong></p>
+      </div>
+      <div class="p-3 rounded-xl" style="background: rgba(0, 206, 203, 0.08);">
+        <h4 class="font-bold mb-2" style="color: var(--secondary);">Luas</h4>
+        <p class="text-sm">Luas = Luas atas + Luas bawah</p>
+        <p class="text-sm">L = (${wTop} × ${hTop}) + (${wBot} × ${hBot})</p>
+        <p class="text-sm">L = ${wTop*hTop} + ${wBot*hBot} = <strong>${q.luas} cm²</strong></p>
+      </div>
+    </div>`;
+  }
+  document.getElementById('pembahasan-content').innerHTML = content;
+  document.getElementById('pembahasan-modal').classList.add('show');
+}
+
+function closePembahasan() { document.getElementById('pembahasan-modal').classList.remove('show'); }
+
+// ============ NAVIGATION ============
+function nextQuestion() {
+  const q = state.questions[state.currentIndex];
+  if (!q.checked) {
+    state.timer.questionEndTime = Date.now();
+    q.timeTaken = (state.timer.questionEndTime - state.timer.questionStartTime) / 1000;
+    q.s1Answer = document.getElementById('input-s1').value.trim();
+    q.s2Answer = document.getElementById('input-s2').value.trim();
+    q.s1Correct = false;
+    q.s2Correct = false;
+    q.checked = true;
+  }
+  stopTimer();
+  if (state.currentIndex === 39) { goToSlide(4); return; }
+  state.currentIndex++;
+  renderQuestion();
+  startTimer();
+}
+
+function prevQuestion() {
+  if (state.currentIndex === 0) return;
+  stopTimer();
+  state.currentIndex--;
+  renderQuestion();
+  const q = state.questions[state.currentIndex];
+  if (!q.checked) startTimer();
+  else {
+    document.getElementById('timer-text').textContent = 'Selesai';
+    document.getElementById('timer-text').classList.remove('warning', 'caution');
+  }
+}
+
+// ============ RESULTS ============
+function renderResults() {
+  let s1Correct = 0, s1Wrong = 0, s1TotalTime = 0;
+  let s2Correct = 0, s2Wrong = 0, s2TotalTime = 0;
+  state.questions.forEach(q => {
+    if (q.s1Correct) s1Correct++; else s1Wrong++;
+    if (q.s2Correct) s2Correct++; else s2Wrong++;
+    s1TotalTime += q.timeTaken;
+    s2TotalTime += q.timeTaken;
+  });
+  document.getElementById('results-s1-name').textContent = state.student1Name;
+  document.getElementById('results-s2-name').textContent = state.student2Name;
+  document.getElementById('s1-correct').textContent = s1Correct;
+  document.getElementById('s1-wrong').textContent = s1Wrong;
+  document.getElementById('s1-avg-time').textContent = Math.round(s1TotalTime / 40) + 's';
+  document.getElementById('s2-correct').textContent = s2Correct;
+  document.getElementById('s2-wrong').textContent = s2Wrong;
+  document.getElementById('s2-avg-time').textContent = Math.round(s2TotalTime / 40) + 's';
+  
+  const tbody = document.getElementById('results-table-body');
+  tbody.innerHTML = '';
+  const typeLabels = { square: 'Persegi', rectangle: 'Persegi Panjang', combined: 'Gabungan' };
+  
+  state.questions.forEach(q => {
+    const s1CorrectAns = q.s1Task === 'keliling' ? q.keliling : q.luas;
+    const s2CorrectAns = q.s2Task === 'keliling' ? q.keliling : q.luas;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><strong>${q.id}</strong></td>
+      <td>${typeLabels[q.type]}</td>
+      <td>${q.s1Task === 'keliling' ? 'Keliling' : 'Luas'}</td>
+      <td>${q.s1Answer || '-'}</td>
+      <td>${s1CorrectAns}</td>
+      <td><span class="status-badge ${q.s1Answer === '' ? 'empty' : (q.s1Correct ? 'correct' : 'wrong')}">${q.s1Answer === '' ? 'Kosong' : (q.s1Correct ? 'Benar' : 'Salah')}</span></td>
+      <td>${q.s2Task === 'keliling' ? 'Keliling' : 'Luas'}</td>
+      <td>${q.s2Answer || '-'}</td>
+      <td>${s2CorrectAns}</td>
+      <td><span class="status-badge ${q.s2Answer === '' ? 'empty' : (q.s2Correct ? 'correct' : 'wrong')}">${q.s2Answer === '' ? 'Kosong' : (q.s2Correct ? 'Benar' : 'Salah')}</span></td>
+      <td>${Math.round(q.timeTaken)}s</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// ============ TOAST ============
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  const colors = { info: '#1d1b4a', success: '#06a77d', error: '#e63946', warning: '#ff9800' };
+  toast.style.background = colors[type] || colors.info;
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ============ LUAS GRID ANIMATION ============
+function initLuasGrid() {
+  const container = document.getElementById('luas-grid-cells');
+  if (!container) return;
+  container.innerHTML = '';
+  const cols = 5, rows = 4;
+  const cellW = 40, cellH = 30;
+  const startX = 60, startY = 50;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const cell = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      cell.setAttribute('x', startX + c * cellW);
+      cell.setAttribute('y', startY + r * cellH);
+      cell.setAttribute('width', cellW);
+      cell.setAttribute('height', cellH);
+      cell.setAttribute('fill', 'rgba(0,206,203,0.35)');
+      cell.setAttribute('stroke', '#00cecb');
+      cell.setAttribute('stroke-width', '1');
+      cell.style.opacity = '0';
+      cell.style.transformOrigin = 'center';
+      cell.style.transformBox = 'fill-box';
+      cell.style.animation = `cellFadeIn 0.4s forwards`;
+      cell.style.animationDelay = `${(r * cols + c) * 0.1}s`;
+      container.appendChild(cell);
+    }
+  }
+}
+
+// ============ CONFETTI ============
+function startConfetti() {
+  const container = document.getElementById('confetti-container');
+  if (!container) return;
+  container.innerHTML = '';
+  const colors = ['#ff5e5b', '#00cecb', '#ffd93d', '#06a77d', '#e63946'];
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + '%';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDelay = Math.random() * 2 + 's';
+    c.style.animationDuration = (2 + Math.random() * 2) + 's';
+    if (Math.random() > 0.5) c.style.borderRadius = '50%';
+    container.appendChild(c);
+  }
+  setTimeout(() => { if (state.currentSlide === 5) startConfetti(); }, 5000);
+}
+
+// ============ RESTART ============
+function restart() {
+  state.questions = [];
+  state.currentIndex = 0;
+  state.student1Name = '';
+  state.student2Name = '';
+  document.getElementById('input-name-1').value = '';
+  document.getElementById('input-name-2').value = '';
+  goToSlide(1);
+}
+
+// ============ EVENT LISTENERS ============
+document.getElementById('input-name-1').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') document.getElementById('input-name-2').focus();
+});
+document.getElementById('input-name-2').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') startQuiz();
+});
+document.getElementById('input-s1').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') checkAnswers();
+});
+document.getElementById('input-s2').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') checkAnswers();
+});
+document.getElementById('pembahasan-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'pembahasan-modal') closePembahasan();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePembahasan();
+});
+</script>
+</body>
+</html>
