@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Luas Bangun Datar - Kelas 2 & 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Fredoka:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --coral: #FF6B6B;
+  --mango: #FFA94D;
+  --sunshine: #FFD93D;
+  --mint: #6BCB77;
+  --teal: #4ECDC4;
+  --cream: #FFF8E7;
+  --paper: #FFFFFF;
+  --dark: #2D3047;
+  --pink: #FF9FF3;
+  --grape: #9B5DE5;
+  --sky: #95E1D3;
+  --shadow: 0 8px 24px rgba(45, 48, 71, 0.12);
+  --shadow-lg: 0 16px 40px rgba(45, 48, 71, 0.18);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { font-family: 'Fredoka', sans-serif; background: var(--cream); color: var(--dark); overflow-x: hidden; min-height: 100vh; }
+body {
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(255, 107, 107, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(78, 205, 196, 0.10) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255, 217, 61, 0.06) 0%, transparent 50%);
+}
+h1, h2, h3, h4, h5 { font-family: 'Baloo 2', cursive; line-height: 1.2; }
+button { font-family: inherit; cursor: pointer; }
+input { font-family: inherit; }
+
+.deco-bubble {
+  position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+  filter: blur(2px); opacity: 0.4; animation: float 8s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translate(0,0) rotate(0deg); }
+  50% { transform: translate(20px,-30px) rotate(180deg); }
+}
+
+.nav-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: rgba(255, 248, 231, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid rgba(45, 48, 71, 0.08);
+  padding: 10px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 100; box-shadow: var(--shadow);
+}
+.nav-title { font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 18px; color: var(--coral); display: flex; align-items: center; gap: 8px; }
+.nav-title .icon { width: 32px; height: 32px; background: var(--coral); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
+.nav-dots { display: flex; gap: 6px; }
+.dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; background: rgba(45, 48, 71, 0.12); cursor: pointer; transition: all 0.3s; font-size: 12px; font-weight: 700; color: var(--dark); display: flex; align-items: center; justify-content: center; }
+.dot.active { background: var(--coral); color: white; transform: scale(1.15); }
+.dot:hover { background: var(--mango); color: white; }
+.nav-buttons { display: flex; gap: 6px; }
+.nav-btn { width: 38px; height: 38px; border-radius: 50%; border: none; background: var(--coral); color: white; font-size: 18px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
+.nav-btn:hover { background: var(--mango); transform: scale(1.1); }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+.slides-container { padding-top: 70px; position: relative; z-index: 1; }
+.slide { display: none; padding: 24px 32px 80px; min-height: calc(100vh - 70px); animation: slideIn 0.5s ease; }
+.slide.active { display: block; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.cover-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 130px); text-align: center; position: relative; }
+.cover-title { font-size: clamp(40px, 7vw, 80px); font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+.cover-title .accent { color: var(--coral); position: relative; display: inline-block; }
+.cover-title .accent::after { content: ''; position: absolute; bottom: 8px; left: 0; right: 0; height: 12px; background: var(--sunshine); z-index: -1; border-radius: 6px; }
+.cover-subtitle { font-size: clamp(16px, 2vw, 22px); color: var(--dark); opacity: 0.7; margin-bottom: 32px; }
+.cover-shapes { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; justify-content: center; }
+.cover-shape { width: 70px; height: 70px; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px; font-family: 'Baloo 2', cursive; box-shadow: var(--shadow); animation: bounce 2s ease-in-out infinite; }
+.cover-shape:nth-child(1) { background: var(--coral); animation-delay: 0s; }
+.cover-shape:nth-child(2) { background: var(--mint); animation-delay: 0.2s; }
+.cover-shape:nth-child(3) { background: var(--mango); animation-delay: 0.4s; }
+.cover-shape:nth-child(4) { background: var(--teal); animation-delay: 0.6s; border-radius: 50%; }
+.cover-shape:nth-child(5) { background: var(--grape); animation-delay: 0.8s; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+.name-inputs { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-bottom: 32px; }
+.name-card { background: white; padding: 20px 24px; border-radius: 20px; box-shadow: var(--shadow); border: 3px solid var(--coral); min-width: 240px; }
+.name-card.s2 { border-color: var(--teal); }
+.name-card label { display: block; font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 18px; margin-bottom: 8px; color: var(--coral); }
+.name-card.s2 label { color: var(--teal); }
+.name-card input { width: 100%; padding: 12px 16px; border: 2px solid rgba(45, 48, 71, 0.15); border-radius: 12px; font-size: 16px; font-family: inherit; transition: all 0.3s; }
+.name-card input:focus { outline: none; border-color: var(--coral); box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.15); }
+.name-card.s2 input:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.15); }
+
+.btn-start { background: var(--coral); color: white; border: none; padding: 16px 48px; border-radius: 50px; font-size: 20px; font-weight: 700; font-family: 'Baloo 2', cursive; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 0 #d95555; }
+.btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #d95555; }
+.btn-start:active { transform: translateY(4px); box-shadow: 0 2px 0 #d95555; }
+
+.slide-header { text-align: center; margin-bottom: 24px; }
+.slide-badge { display: inline-block; background: var(--sunshine); color: var(--dark); padding: 6px 16px; border-radius: 50px; font-weight: 700; font-size: 14px; font-family: 'Baloo 2', cursive; margin-bottom: 12px; }
+.slide-title { font-size: clamp(28px, 4vw, 44px); font-weight: 800; color: var(--dark); }
+.slide-title .accent { color: var(--coral); }
+
+.objectives-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+.obj-card { background: white; padding: 24px; border-radius: 20px; box-shadow: var(--shadow); border-left: 6px solid var(--coral); transition: all 0.3s; }
+.obj-card:nth-child(2) { border-color: var(--mint); }
+.obj-card:nth-child(3) { border-color: var(--mango); }
+.obj-card:nth-child(4) { border-color: var(--teal); }
+.obj-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.obj-num { width: 44px; height: 44px; border-radius: 12px; background: var(--coral); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 22px; font-family: 'Baloo 2', cursive; margin-bottom: 12px; }
+.obj-card:nth-child(2) .obj-num { background: var(--mint); }
+.obj-card:nth-child(3) .obj-num { background: var(--mango); }
+.obj-card:nth-child(4) .obj-num { background: var(--teal); }
+.obj-card h3 { font-size: 18px; margin-bottom: 8px; }
+.obj-card p { font-size: 15px; line-height: 1.5; opacity: 0.8; }
+
+.trigger-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+.trigger-card { background: white; padding: 24px; border-radius: 20px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+.trigger-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: var(--coral); }
+.trigger-card:nth-child(2)::before { background: var(--mint); }
+.trigger-card:nth-child(3)::before { background: var(--mango); }
+.trigger-card:nth-child(4)::before { background: var(--teal); }
+.trigger-icon { font-size: 40px; margin-bottom: 12px; }
+.trigger-card h3 { font-size: 18px; margin-bottom: 10px; color: var(--dark); }
+.trigger-card p { font-size: 15px; line-height: 1.6; color: var(--dark); opacity: 0.8; font-style: italic; }
+
+.tabs-bar { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
+.tab-btn { background: white; border: 2px solid rgba(45, 48, 71, 0.1); padding: 10px 20px; border-radius: 50px; font-weight: 600; font-size: 14px; color: var(--dark); transition: all 0.3s; font-family: 'Baloo 2', cursive; }
+.tab-btn:hover { transform: translateY(-2px); }
+.tab-btn.active { background: var(--coral); color: white; border-color: var(--coral); }
+.tab-content { display: none; animation: fadeIn 0.4s; }
+.tab-content.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.def-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.def-card { background: white; padding: 24px; border-radius: 20px; box-shadow: var(--shadow); }
+.def-card h3 { font-size: 22px; margin-bottom: 12px; color: var(--coral); }
+.def-card p { font-size: 16px; line-height: 1.6; margin-bottom: 12px; }
+.def-card .highlight { background: var(--sunshine); padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+
+.interactive-area { background: linear-gradient(135deg, #fff8e7 0%, #ffe9c7 100%); border-radius: 16px; padding: 20px; text-align: center; }
+.interactive-grid { display: inline-grid; grid-template-columns: repeat(5, 50px); gap: 2px; background: var(--dark); padding: 4px; border-radius: 8px; margin: 16px auto; }
+.grid-cell { width: 50px; height: 50px; background: white; cursor: pointer; transition: all 0.2s; border-radius: 4px; }
+.grid-cell:hover { background: var(--sunshine); }
+.grid-cell.filled { background: var(--coral); }
+.grid-cell.filled.alt { background: var(--mint); }
+.area-counter { font-family: 'Baloo 2', cursive; font-size: 24px; font-weight: 800; color: var(--coral); }
+.instr { font-size: 14px; color: var(--dark); opacity: 0.7; margin-top: 8px; }
+
+.problems-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; max-width: 1200px; margin: 0 auto; }
+.problem-card { background: white; padding: 16px; border-radius: 16px; box-shadow: var(--shadow); border-top: 4px solid var(--coral); transition: all 0.3s; }
+.problem-card:hover { transform: translateY(-2px); }
+.problem-num { display: inline-block; background: var(--coral); color: white; padding: 4px 10px; border-radius: 50px; font-weight: 700; font-size: 12px; font-family: 'Baloo 2', cursive; margin-bottom: 8px; }
+.problem-question { font-size: 14px; margin-bottom: 10px; line-height: 1.5; }
+.shape-display { display: flex; justify-content: center; margin: 12px 0; }
+.shape-display svg { max-width: 100%; height: auto; }
+.input-row { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
+.input-row input { flex: 1; padding: 8px 12px; border: 2px solid rgba(45, 48, 71, 0.15); border-radius: 8px; font-size: 14px; min-width: 0; }
+.input-row input:focus { outline: none; border-color: var(--coral); }
+.btn-check { background: var(--mint); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 13px; transition: all 0.2s; white-space: nowrap; }
+.btn-check:hover { background: #5ab366; }
+.btn-explain { background: var(--mango); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 13px; transition: all 0.2s; width: 100%; margin-top: 6px; }
+.btn-explain:hover { background: #e89540; }
+.feedback { font-size: 13px; margin-top: 6px; padding: 6px 10px; border-radius: 8px; display: none; font-weight: 600; }
+.feedback.correct { background: rgba(107, 203, 119, 0.2); color: #2d7a3a; display: block; }
+.feedback.wrong { background: rgba(255, 107, 107, 0.2); color: #a83838; display: block; }
+.explanation { background: rgba(255, 169, 77, 0.12); padding: 10px; border-radius: 8px; margin-top: 8px; font-size: 13px; line-height: 1.5; display: none; border-left: 3px solid var(--mango); }
+.explanation.show { display: block; }
+
+.word-problems { max-width: 900px; margin: 0 auto; display: grid; gap: 16px; }
+.wp-card { background: white; padding: 20px; border-radius: 16px; box-shadow: var(--shadow); border-left: 5px solid var(--grape); }
+.wp-card h4 { font-size: 17px; margin-bottom: 8px; color: var(--grape); }
+.wp-card p { font-size: 15px; line-height: 1.6; margin-bottom: 12px; }
+
+.flashcards-wrap { max-width: 1100px; margin: 0 auto; }
+.flash-info { background: white; padding: 16px 20px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 16px; text-align: center; }
+.flash-info p { font-size: 15px; line-height: 1.5; }
+.flashcards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.flashcard { perspective: 1000px; height: 160px; cursor: pointer; }
+.flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+.flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+.flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: var(--shadow); }
+.flashcard-front { background: linear-gradient(135deg, var(--coral), var(--mango)); color: white; }
+.flashcard-back { background: linear-gradient(135deg, var(--mint), var(--teal)); color: white; transform: rotateY(180deg); }
+.flashcard-front .fc-num { background: rgba(255,255,255,0.25); padding: 2px 10px; border-radius: 50px; font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+.flashcard-front .fc-q { font-size: 14px; line-height: 1.4; font-weight: 500; }
+.flashcard-back .fc-a { font-family: 'Baloo 2', cursive; font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+.flashcard-back .fc-expl { font-size: 12px; opacity: 0.9; }
+.flashcard-hint { font-size: 11px; opacity: 0.7; margin-top: 6px; }
+
+.quiz-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; }
+.quiz-panel { background: white; padding: 20px; border-radius: 20px; box-shadow: var(--shadow); border-top: 6px solid var(--coral); }
+.quiz-panel.s2 { border-top-color: var(--teal); }
+.quiz-panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 2px dashed rgba(45, 48, 71, 0.1); }
+.student-badge { display: flex; align-items: center; gap: 10px; }
+.student-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--coral); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-family: 'Baloo 2', cursive; }
+.quiz-panel.s2 .student-avatar { background: var(--teal); }
+.student-name { font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 16px; }
+.student-grade { font-size: 12px; opacity: 0.6; }
+.score-badge { background: var(--sunshine); padding: 6px 12px; border-radius: 50px; font-weight: 700; font-size: 14px; font-family: 'Baloo 2', cursive; }
+.quiz-questions { display: grid; gap: 12px; max-height: 70vh; overflow-y: auto; padding-right: 6px; }
+.quiz-questions::-webkit-scrollbar { width: 6px; }
+.quiz-questions::-webkit-scrollbar-thumb { background: var(--coral); border-radius: 6px; }
+.quiz-q { background: rgba(255, 248, 231, 0.6); padding: 12px; border-radius: 12px; }
+.quiz-q-num { display: inline-block; background: var(--coral); color: white; padding: 2px 8px; border-radius: 50px; font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+.quiz-panel.s2 .quiz-q-num { background: var(--teal); }
+.quiz-q-text { font-size: 13px; margin-bottom: 8px; line-height: 1.4; }
+.quiz-q-img { display: flex; justify-content: center; margin: 6px 0; }
+.quiz-q-img svg { max-width: 100%; height: auto; max-height: 120px; }
+.quiz-options { display: grid; gap: 4px; }
+.quiz-option { display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: white; border: 2px solid rgba(45, 48, 71, 0.08); border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 13px; }
+.quiz-option:hover { background: var(--cream); }
+.quiz-option.selected { background: var(--coral); color: white; border-color: var(--coral); }
+.quiz-panel.s2 .quiz-option.selected { background: var(--teal); border-color: var(--teal); }
+.quiz-option input { display: none; }
+.quiz-actions { display: flex; gap: 6px; margin-top: 8px; }
+.quiz-actions button { flex: 1; padding: 6px; border: none; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; color: white; }
+.btn-q-check { background: var(--mint); }
+.btn-q-explain { background: var(--mango); }
+.quiz-feedback { font-size: 12px; margin-top: 6px; padding: 4px 8px; border-radius: 6px; display: none; font-weight: 600; }
+.quiz-feedback.correct { background: rgba(107, 203, 119, 0.25); color: #2d7a3a; display: block; }
+.quiz-feedback.wrong { background: rgba(255, 107, 107, 0.25); color: #a83838; display: block; }
+.quiz-explain { background: rgba(255, 169, 77, 0.15); padding: 6px 8px; border-radius: 6px; margin-top: 6px; font-size: 12px; display: none; }
+.quiz-explain.show { display: block; }
+
+.game-container { max-width: 1300px; margin: 0 auto; }
+.game-info { background: white; padding: 16px 20px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 16px; text-align: center; }
+.game-info p { font-size: 14px; line-height: 1.5; }
+.game-progress { display: flex; gap: 6px; justify-content: center; margin-top: 8px; flex-wrap: wrap; }
+.progress-dot { width: 26px; height: 26px; border-radius: 50%; background: rgba(45, 48, 71, 0.1); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.progress-dot.done { background: var(--mint); color: white; }
+.progress-dot.current { background: var(--coral); color: white; transform: scale(1.2); }
+
+.game-layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+.map-container { background: linear-gradient(180deg, #c5e8ff 0%, #e8f7ff 100%); border-radius: 20px; padding: 16px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+.map-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; }
+.map-svg { width: 100%; height: auto; position: relative; z-index: 1; }
+.island { fill: #b0b0b0; stroke: #707070; stroke-width: 1.5; cursor: pointer; transition: all 0.4s; }
+.island:hover { fill: var(--mango); }
+.island.colored { fill: var(--mint) !important; stroke: #2d7a3a; }
+.island.colored:hover { fill: var(--mint) !important; }
+.island-label { font-family: 'Baloo 2', cursive; font-size: 12px; fill: var(--dark); pointer-events: none; font-weight: 700; text-anchor: middle; }
+
+.game-panel { background: white; border-radius: 20px; padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 14px; min-height: 400px; }
+.game-panel h3 { font-size: 20px; color: var(--coral); }
+.game-state { text-align: center; padding: 20px; color: var(--dark); opacity: 0.7; }
+.game-state .big-icon { font-size: 50px; margin-bottom: 10px; }
+
+.spinner-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 14px; background: var(--cream); border-radius: 14px; }
+.spinner-wrap h4 { font-size: 15px; }
+.spinner { width: 200px; height: 200px; border-radius: 50%; position: relative; box-shadow: var(--shadow); overflow: hidden; }
+.spinner-pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 20px solid var(--coral); z-index: 5; }
+.btn-spin { background: var(--coral); color: white; border: none; padding: 8px 20px; border-radius: 50px; font-weight: 600; font-family: 'Baloo 2', cursive; cursor: pointer; }
+.btn-spin:disabled { opacity: 0.4; }
+.spin-result { background: var(--sunshine); padding: 8px 14px; border-radius: 10px; font-weight: 600; font-size: 13px; text-align: center; }
+
+.island-problem { display: none; flex-direction: column; gap: 10px; }
+.island-problem.show { display: flex; }
+.problem-context { background: var(--cream); padding: 12px; border-radius: 10px; font-size: 14px; line-height: 1.5; }
+.task-assignment { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.task-box { padding: 10px; border-radius: 10px; text-align: center; }
+.task-box.s1 { background: rgba(255, 107, 107, 0.15); border: 2px solid var(--coral); }
+.task-box.s2 { background: rgba(78, 205, 196, 0.15); border: 2px solid var(--teal); }
+.task-box .who { font-size: 12px; opacity: 0.7; }
+.task-box .what { font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 14px; color: var(--coral); }
+.task-box.s2 .what { color: var(--teal); }
+.task-input { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.task-input input { padding: 8px; border: 2px solid rgba(45, 48, 71, 0.15); border-radius: 8px; font-size: 14px; }
+.task-input input:focus { outline: none; border-color: var(--coral); }
+.task-input input.s2:focus { border-color: var(--teal); }
+.task-actions { display: flex; gap: 8px; }
+.task-actions button { flex: 1; padding: 8px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; color: white; }
+
+.conclusion-wrap { max-width: 1000px; margin: 0 auto; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.summary-card { background: white; padding: 20px; border-radius: 16px; box-shadow: var(--shadow); text-align: center; }
+.summary-card .icon-circle { width: 60px; height: 60px; border-radius: 50%; background: var(--coral); color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-family: 'Baloo 2', cursive; font-weight: 800; margin: 0 auto 12px; }
+.summary-card:nth-child(2) .icon-circle { background: var(--mint); }
+.summary-card:nth-child(3) .icon-circle { background: var(--mango); }
+.summary-card h4 { font-size: 18px; margin-bottom: 8px; }
+.summary-card p { font-size: 14px; line-height: 1.5; }
+.summary-card .formula { background: var(--sunshine); padding: 6px 10px; border-radius: 8px; font-family: 'Baloo 2', cursive; font-weight: 700; margin-top: 8px; display: inline-block; }
+
+.reflection-box { background: linear-gradient(135deg, var(--pink), var(--grape)); color: white; padding: 24px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 24px; }
+.reflection-box h3 { font-size: 24px; margin-bottom: 12px; }
+.reflection-box ul { list-style: none; }
+.reflection-box li { padding: 8px 0; font-size: 16px; line-height: 1.5; padding-left: 28px; position: relative; }
+.reflection-box li::before { content: '★'; position: absolute; left: 0; }
+
+.thank-you { text-align: center; padding: 30px; background: white; border-radius: 20px; box-shadow: var(--shadow); }
+.thank-you h2 { font-size: clamp(28px, 4vw, 42px); color: var(--coral); margin-bottom: 10px; }
+.thank-you p { font-size: 16px; opacity: 0.8; }
+.thank-you .emojis { font-size: 40px; margin: 12px 0; }
+
+.enrichment-wrap { max-width: 1200px; margin: 0 auto; }
+.triangle-demo { background: white; padding: 20px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; }
+.triangle-demo .demo-text h3 { font-size: 22px; color: var(--grape); margin-bottom: 10px; }
+.triangle-demo .demo-text p { font-size: 15px; line-height: 1.6; margin-bottom: 10px; }
+.triangle-demo .formula-box { background: var(--sunshine); padding: 14px; border-radius: 12px; text-align: center; font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 22px; }
+.triangle-svg { display: flex; justify-content: center; }
+.triangle-svg svg { max-width: 100%; }
+
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--dark); color: white; padding: 14px 24px; border-radius: 50px; box-shadow: var(--shadow-lg); z-index: 1000; transition: transform 0.4s; font-weight: 600; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.success { background: var(--mint); }
+.toast.error { background: var(--coral); }
+
+.confetti { position: fixed; width: 10px; height: 10px; pointer-events: none; z-index: 999; animation: confettiFall 2s linear forwards; }
+@keyframes confettiFall { to { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+
+@media (max-width: 900px) {
+  .quiz-layout, .game-layout, .triangle-demo, .def-container { grid-template-columns: 1fr; }
+  .nav-title { font-size: 14px; }
+  .nav-title .icon { width: 28px; height: 28px; }
+  .dot { width: 24px; height: 24px; font-size: 10px; }
+  .slide { padding: 16px; }
+  .interactive-grid { grid-template-columns: repeat(5, 40px); }
+  .grid-cell { width: 40px; height: 40px; }
+}
+</style>
+</head>
+<body>
+
+<div class="deco-bubble" style="width:120px;height:120px;background:var(--coral);top:15%;left:5%;"></div>
+<div class="deco-bubble" style="width:80px;height:80px;background:var(--mint);top:60%;right:8%;animation-delay:2s;"></div>
+<div class="deco-bubble" style="width:100px;height:100px;background:var(--sunshine);top:80%;left:15%;animation-delay:1s;"></div>
+
+<nav class="nav-bar">
+  <div class="nav-title">
+    <div class="icon">□</div>
+    <span>Petualangan Luas</span>
+  </div>
+  <div class="nav-dots" id="navDots"></div>
+  <div class="nav-buttons">
+    <button class="nav-btn" id="prevBtn">‹</button>
+    <button class="nav-btn" id="nextBtn">›</button>
+  </div>
+</nav>
+
+<div class="slides-container">
+
+<section class="slide active" id="s1">
+  <div class="cover-wrap">
+    <div class="cover-shapes">
+      <div class="cover-shape">PERSEGI</div>
+      <div class="cover-shape">PERSEGI<br>PANJANG</div>
+      <div class="cover-shape">GABUNGAN</div>
+      <div class="cover-shape">LUAS</div>
+      <div class="cover-shape"></div>
+    </div>
+    <h1 class="cover-title">Petualangan<br><span class="accent">Mengenal Luas</span> Benda</h1>
+    <p class="cover-subtitle">Belajar luas persegi, persegi panjang, dan gabungannya — untuk siswa kelas 2 & 3 SD</p>
+    <div class="name-inputs">
+      <div class="name-card">
+        <label>👤 Nama Siswa 1 (Kelas 2)</label>
+        <input type="text" id="name1" placeholder="Tulis namamu di sini..." maxlength="20">
+      </div>
+      <div class="name-card s2">
+        <label>👤 Nama Siswa 2 (Kelas 3)</label>
+        <input type="text" id="name2" placeholder="Tulis namamu di sini..." maxlength="20">
+      </div>
+    </div>
+    <button class="btn-start" onclick="startJourney()">🚀 Mulai Petualangan!</button>
+  </div>
+</section>
+
+<section class="slide" id="s2">
+  <div class="slide-header">
+    <span class="slide-badge">SLIDE 2</span>
+    <h2 class="slide-title">Tujuan <span class="accent">Pembelajaran</span></h2>
+  </div>
+  <div class="objectives-grid">
+    <div class="obj-card">
+      <div class="obj-num">1</div>
+      <h3>Memahami Konsep Luas</h3>
+      <p>Siswa mampu memahami konsep luas sebagai ukuran permukaan bangun datar dengan cara menghitung kotak-kotak satuan yang menutupi bangun tersebut.</p>
+    </div>
+    <div class="obj-card">
+      <div class="obj-num">2</div>
+      <h3>Menghitung Luas Bangun</h3>
+      <p>Siswa mampu menghitung luas persegi, persegi panjang, dan gabungan keduanya menggunakan satuan persegi maupun satuan baku panjang.</p>
+    </div>
+    <div class="obj-card">
+      <div class="obj-num">3</div>
+      <h3>Membedakan Luas & Keliling</h3>
+      <p>Siswa mampu membedakan konteks soal cerita yang menggunakan konsep luas dengan konsep keliling dalam kehidupan sehari-hari.</p>
+    </div>
+    <div class="obj-card">
+      <div class="obj-num">4</div>
+      <h3>Bekerja Sama</h3>
+      <p>Siswa mampu bekerja sama dalam menyelesaikan masalah kontekstual melalui permainan menyusun peta Pulau Jawa.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s3">
+  <div class="slide-header">
+    <span class="slide-badge">SLIDE 3</span>
+    <h2 class="slide-title">Pertanyaan <span class="accent">Pemantik</span></h2>
+    <p style="margin-top:8px;opacity:0.7;font-size:16px;">Yuk, berpikir sebentar... Pernahkah kamu merasakan hal ini?</p>
+  </div>
+  <div class="trigger-grid">
+    <div class="trigger-card">
+      <div class="trigger-icon">🪟</div>
+      <h3>Kaca Jendela</h3>
+      <p>"Mama mau beli kaca jendela. Tukang katakan ukurannya harus pas. Apa yang harus Mama ukur — keliling atau luas kaca?"</p>
+    </div>
+    <div class="trigger-card">
+      <div class="trigger-icon">🎨</div>
+      <h3>Mengecat Lantai</h3>
+      <p>"Pak Andi mau mengecat lantai kamar. Cat yang dibeli dihitung berdasarkan apa, ya? Keliling lantai atau luas lantai?"</p>
+    </div>
+    <div class="trigger-card">
+      <div class="trigger-icon">🪴</div>
+      <h3>Taman Rumah</h3>
+      <p>"Rumah Bu Tini punya taman. Bu Tini mau memasang rumput sintesis. Apa yang harus diukur — keliling atau luas taman?"</p>
+    </div>
+    <div class="trigger-card">
+      <div class="trigger-icon">🖼️</div>
+      <h3>Bingkai Foto</h3>
+      <p>"Adik mau memasang bingkai kayu di sekeliling foto. Kayu yang dibeli dihitung dari apa — keliling atau luas foto?"</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s4">
+  <div class="slide-header">
+    <span class="slide-badge">SLIDE 4</span>
+    <h2 class="slide-title">Materi <span class="accent">Inti</span></h2>
+  </div>
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab(event, 'tab1')">1. Konsep Luas</button>
+    <button class="tab-btn" onclick="switchTab(event, 'tab2')">2. Satuan Persegi (10 Soal)</button>
+    <button class="tab-btn" onclick="switchTab(event, 'tab3')">3. Satuan Baku (10 Soal)</button>
+    <button class="tab-btn" onclick="switchTab(event, 'tab4')">4. Soal Cerita (4 Soal)</button>
+    <button class="tab-btn" onclick="switchTab(event, 'tab5')">5. Luas vs Keliling (20 Kartu)</button>
+  </div>
+  <div class="tab-content active" id="tab1">
+    <div class="def-container">
+      <div class="def-card">
+        <h3>📖 Apa itu LUAS?</h3>
+        <p><span class="highlight">Luas</span> adalah ukuran yang menunjukkan seberapa besar permukaan sebuah bangun datar.</p>
+        <p>Bayangkan kamu menutupi lantai kamar dengan karpet. <strong>Jumlah karpet yang dipakai</strong> itulah luas lantai kamarmu!</p>
+        <p>Bayangkan juga kamu menempelkan stiker persegi kecil di atas meja. <strong>Semakin banyak stiker yang muat</strong>, semakin besar luas meja itu.</p>
+        <p>Untuk mengukur luas, kita pakai <span class="highlight">kotak-kotak persegi</span> yang menutupi seluruh permukaan bangun.</p>
+      </div>
+      <div class="def-card">
+        <h3>🎲 Ayo Cobain!</h3>
+        <p>Klik kotak-kotak di bawah untuk mengisi permukaan persegi panjang. Hitung berapa kotak yang kamu isi — itulah LUAS-nya!</p>
+        <div class="interactive-area">
+          <div class="interactive-grid" id="interactiveGrid"></div>
+          <div class="area-counter">Luas = <span id="areaCount">0</span> kotak</div>
+          <p class="instr">Klik kotak untuk mengisi / mengosongkan. Coba isi semua kotak!</p>
+          <button class="btn-check" onclick="resetGrid()" style="margin-top:8px;">🔄 Ulangi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-content" id="tab2">
+    <div class="def-card" style="max-width:1100px;margin:0 auto 16px;padding:14px 20px;">
+      <p style="font-size:15px;line-height:1.6;"><strong>📐 Cara mencari luas dengan satuan persegi:</strong> Hitung jumlah kotak persegi yang menutupi seluruh permukaan bangun. Setiap kotak = 1 satuan persegi (satuan luas).</p>
+    </div>
+    <div class="problems-grid" id="squareUnitProblems"></div>
+  </div>
+  <div class="tab-content" id="tab3">
+    <div class="def-card" style="max-width:1100px;margin:0 auto 16px;padding:14px 20px;">
+      <p style="font-size:15px;line-height:1.6;"><strong>📐 Rumus Luas dengan Satuan Baku (cm, m):</strong></p>
+      <p style="margin-top:8px;"><strong>Persegi:</strong> Luas = sisi × sisi (karena semua sisi sama panjang)</p>
+      <p><strong>Persegi Panjang:</strong> Luas = panjang × lebar</p>
+      <p><strong>Gabungan:</strong> Pisahkan menjadi dua bangun, hitung luas masing-masing, lalu jumlahkan!</p>
+    </div>
+    <div class="problems-grid" id="standardUnitProblems"></div>
+  </div>
+  <div class="tab-content" id="tab4">
+    <div class="def-card" style="max-width:900px;margin:0 auto 16px;padding:14px 20px;">
+      <p style="font-size:15px;line-height:1.6;">📖 <strong>Soal cerita</strong> membantu kita memahami bagaimana luas dipakai di kehidupan sehari-hari. Baca pelan-pelan, bayangkan, lalu hitung!</p>
+    </div>
+    <div class="word-problems" id="wordProblems"></div>
+  </div>
+  <div class="tab-content" id="tab5">
+    <div class="flashcards-wrap">
+      <div class="flash-info">
+        <p><strong>🎯 Perbedaan Soal Cerita Luas vs Keliling</strong></p>
+        <p>Klik kartu untuk membalik dan melihat jawabannya! Luas = permukaan yang ditutupi. Keliling = garis batas di sekeliling bangun.</p>
+      </div>
+      <div class="flashcards-grid" id="flashcards"></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s5">
+  <div class="slide-header">
+    <span class="slide-badge">SLIDE 5</span>
+    <h2 class="slide-title">Kuis <span class="accent">Berpasangan</span></h2>
+    <p style="margin-top:6px;opacity:0.7;font-size:15px;">Siswa 1 (kelas 2) di kiri — soal lebih mudah. Siswa 2 (kelas 3) di kanan — soal lebih menantang. 30 soal per siswa (5 soal terakhir berupa soal cerita)!</p>
+  </div>
+  <div class="quiz-layout">
+    <div class="quiz-panel">
+      <div class="quiz-panel-header">
+        <div class="student-badge">
+          <div class="student-avatar" id="avatar1">?</div>
+          <div>
+            <div class="student-name" id="displayName1">Siswa 1</div>
+            <div class="student-grade">Kelas 2 SD</div>
+          </div>
+        </div>
+        <div class="score-badge">Skor: <span id="score1">0</span>/30</div>
+      </div>
+      <div class="quiz-questions" id="quiz1"></div>
+    </div>
+    <div class="quiz-panel s2">
+      <div class="quiz-panel-header">
+        <div class="student-badge">
+          <div class="student-avatar" id="avatar2">?</div>
+          <div>
+            <div class="student-name" id="displayName2">Siswa 2</div>
+            <div class="student-grade">Kelas 3 SD</div>
+          </div>
+        </div>
+        <div class="score-badge">Skor: <span id="score2">0</span>/30</div>
+      </div>
+      <div class="quiz-questions" id="quiz2"></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s6">
+  <div class="slide-header">
+    <span class="slide-badge">SLIDE 6</span>
+    <h2 class="slide-title">Game: <span class="accent">Peta Pulau Jawa</span></h2>
+    <p style="margin-top:6px;opacity:0.7;font-size:15px;">Kerja sama untuk mewarnai peta Pulau Jawa! Pilih provinsi → spin tugas → kerjakan → provinsi berwarna!</p>
+  </div>
+  <div class="game-container">
+    <div class="game-info">
+      <p><strong>Provinsi yang sudah diwarnai:</strong> <span id="islandsDone">0</span> dari 6</p>
+      <div class="game-progress" id="gameProgress"></div>
+    </div>
+    <div class="game-layout">
+      <div class="map-container">
+        <svg class="map-svg" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+          <rect width="900" height="400" fill="transparent"/>
+          
+          <!-- Banten -->
+          <path class="island" data-province="banten" d="M 50 180 Q 80 170 120 180 Q 140 200 120 220 Q 80 230 50 210 Z"/>
+          <text class="island-label" x="85" y="205">BANTEN</text>
+          
+          <!-- DKI Jakarta -->
+          <path class="island" data-province="jakarta" d="M 120 185 Q 150 180 160 195 Q 155 215 130 215 Q 115 205 120 185 Z"/>
+          <text class="island-label" x="138" y="202" style="font-size:9px;">DKI JAKARTA</text>
+          
+          <!-- Jawa Barat -->
+          <path class="island" data-province="jabar" d="M 160 190 Q 220 180 290 180 Q 310 200 290 220 Q 220 230 160 215 Z"/>
+          <text class="island-label" x="225" y="205">JAWA BARAT</text>
+          
+          <!-- Jawa Tengah -->
+          <path class="island" data-province="jateng" d="M 290 180 Q 380 170 470 175 Q 490 195 470 215 Q 380 225 290 215 Z"/>
+          <text class="island-label" x="380" y="200">JAWA TENGAH</text>
+          
+          <!-- DI Yogyakarta -->
+          <path class="island" data-province="diy" d="M 470 185 Q 510 180 530 190 Q 525 210 490 215 Q 465 205 470 185 Z"/>
+          <text class="island-label" x="500" y="200" style="font-size:9px;">DIY</text>
+          
+          <!-- Jawa Timur -->
+          <path class="island" data-province="jatim" d="M 530 190 Q 640 175 800 180 Q 830 200 800 220 Q 640 230 530 210 Z"/>
+          <text class="island-label" x="670" y="205">JAWA TIMUR</text>
+        </svg>
+      </div>
+      <div class="game-panel" id="gamePanel">
+        <div class="game-state" id="gameState">
+          <div class="big-icon">🗺️</div>
+          <h3 style="color:var(--dark);opacity:0.7;">Pilih sebuah provinsi!</h3>
+          <p>Klik provinsi mana pun di peta untuk memulai tantangan.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s7">
+  <div class="slide-header">
+    <span class="slide-badge">SLIDE 7</span>
+    <h2 class="slide-title">Kesimpulan & <span class="accent">Refleksi</span></h2>
+  </div>
+  <div class="conclusion-wrap">
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="icon-circle">1</div>
+        <h4>Konsep Luas</h4>
+        <p>Luas adalah ukuran permukaan bangun datar — diukur dengan menghitung kotak satuan yang menutupinya.</p>
+      </div>
+      <div class="summary-card">
+        <div class="icon-circle">2</div>
+        <h4>Luas Persegi</h4>
+        <p>Sisi × sisi</p>
+        <div class="formula">L = s × s</div>
+      </div>
+      <div class="summary-card">
+        <div class="icon-circle">3</div>
+        <h4>Luas Persegi Panjang</h4>
+        <p>Panjang × lebar</p>
+        <div class="formula">L = p × l</div>
+      </div>
+    </div>
+    <div class="reflection-box">
+      <h3>✨ Refleksi Belajar</h3>
+      <ul>
+        <li>Bagian mana yang paling kamu suka dari petualangan hari ini?</li>
+        <li>Apakah kamu sudah paham beda luas dan keliling? Coba ceritakan!</li>
+        <li>Bagian mana yang masih sedikit membingungkan? Tulis di buku catatanmu.</li>
+        <li>Coba ceritakan ke orang tua: kapan kamu memakai konsep luas di rumah?</li>
+      </ul>
+    </div>
+    <div class="thank-you">
+      <div class="emojis">🌟 🎉 🌟</div>
+      <h2>Terima Kasih Hari Ini!</h2>
+      <p>Kalian hebat sudah menyelesaikan petualangan ini bersama-sama.<br>Teruslah berlatih, teruslah bertanya, dan jangan takut salah — karena belajar adalah petualangan yang menyenangkan!</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s8">
+  <div class="slide-header">
+    <span class="slide-badge">SLIDE 8 — PENGAYAAN</span>
+    <h2 class="slide-title">Luas <span class="accent">Segitiga</span></h2>
+  </div>
+  <div class="enrichment-wrap">
+    <div class="triangle-demo">
+      <div class="demo-text">
+        <h3>Segitiga = Separuh Persegi Panjang!</h3>
+        <p>Perhatikan gambar di samping. Jika kita ambil sebuah persegi panjang lalu potong diagonal dari sudut ke sudut, kita akan mendapatkan <strong>2 segitiga yang sama besar</strong>!</p>
+        <p>Jadi, luas <strong>satu segitiga</strong> adalah <strong>separuh dari luas persegi panjang</strong> tersebut.</p>
+        <p>Karena luas persegi panjang = alas × tinggi, maka:</p>
+        <div class="formula-box">L = ½ × alas × tinggi</div>
+      </div>
+      <div class="triangle-svg">
+        <svg viewBox="0 0 300 220" width="100%">
+          <rect x="20" y="30" width="260" height="150" fill="rgba(107,203,119,0.15)" stroke="#2D3047" stroke-width="2"/>
+          <line x1="20" y1="30" x2="280" y2="180" stroke="#FF6B6B" stroke-width="2" stroke-dasharray="6,4"/>
+          <polygon points="20,180 280,180 20,30" fill="rgba(255,107,107,0.3)" stroke="#FF6B6B" stroke-width="2"/>
+          <text x="150" y="200" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="14" fill="#2D3047">alas</text>
+          <text x="10" y="105" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="14" fill="#2D3047" transform="rotate(-90,10,105)">tinggi</text>
+          <text x="150" y="130" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="16" fill="#FF6B6B">Segitiga = ½ persegi panjang</text>
+        </svg>
+      </div>
+    </div>
+    <h3 style="text-align:center;margin:20px 0 10px;color:var(--grape);">🎯 10 Latihan Soal Luas Segitiga</h3>
+    <div class="problems-grid" id="triangleProblems"></div>
+  </div>
+</section>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let studentNames = { s1: 'Siswa 1', s2: 'Siswa 2' };
+let currentSlide = 1;
+const totalSlides = 8;
+
+const navDots = document.getElementById('navDots');
+for (let i = 1; i <= totalSlides; i++) {
+  const dot = document.createElement('button');
+  dot.className = 'dot' + (i === 1 ? ' active' : '');
+  dot.textContent = i;
+  dot.onclick = () => goToSlide(i);
+  navDots.appendChild(dot);
+}
+
+function goToSlide(n) {
+  if (n < 1 || n > totalSlides) return;
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+  document.getElementById('s' + n).classList.add('active');
+  document.querySelectorAll('.dot')[n-1].classList.add('active');
+  currentSlide = n;
+  document.getElementById('prevBtn').disabled = (n === 1);
+  document.getElementById('nextBtn').disabled = (n === totalSlides);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('prevBtn').onclick = () => goToSlide(currentSlide - 1);
+document.getElementById('nextBtn').onclick = () => goToSlide(currentSlide + 1);
+
+function startJourney() {
+  const n1 = document.getElementById('name1').value.trim();
+  const n2 = document.getElementById('name2').value.trim();
+  if (!n1 || !n2) {
+    showToast('Tulis dulu nama kedua siswa ya! 😊', 'error');
+    return;
+  }
+  studentNames.s1 = n1;
+  studentNames.s2 = n2;
+  document.getElementById('displayName1').textContent = n1;
+  document.getElementById('displayName2').textContent = n2;
+  document.getElementById('avatar1').textContent = n1.charAt(0).toUpperCase();
+  document.getElementById('avatar2').textContent = n2.charAt(0).toUpperCase();
+  showToast('Selamat datang, ' + n1 + ' & ' + n2 + '! 🎉', 'success');
+  setTimeout(() => goToSlide(2), 800);
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function confetti() {
+  const colors = ['#FF6B6B','#FFD93D','#6BCB77','#4ECDC4','#FF9FF3','#9B5DE5'];
+  for (let i = 0; i < 40; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.top = '-20px';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    c.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
+  }
+}
+
+function switchTab(e, tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+const ig = document.getElementById('interactiveGrid');
+for (let r = 0; r < 4; r++) {
+  for (let c = 0; c < 5; c++) {
+    const cell = document.createElement('div');
+    cell.className = 'grid-cell';
+    cell.onclick = () => {
+      cell.classList.toggle('filled');
+      if (cell.classList.contains('filled') && Math.random() > 0.5) cell.classList.add('alt');
+      else cell.classList.remove('alt');
+      updateAreaCount();
+    };
+    ig.appendChild(cell);
+  }
+}
+function updateAreaCount() {
+  const n = document.querySelectorAll('.grid-cell.filled').length;
+  document.getElementById('areaCount').textContent = n;
+}
+function resetGrid() {
+  document.querySelectorAll('.grid-cell').forEach(c => { c.classList.remove('filled','alt'); });
+  updateAreaCount();
+}
+
+function gridShape(w, h, cellSize = 24, opts = {}) {
+  const W = w * cellSize, H = h * cellSize;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
+  svg += `<rect x="0" y="0" width="${W}" height="${H}" fill="#FFF8E7" stroke="#2D3047" stroke-width="2.5"/>`;
+  for (let i = 1; i < w; i++) svg += `<line x1="${i*cellSize}" y1="0" x2="${i*cellSize}" y2="${H}" stroke="#2D3047" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.5"/>`;
+  for (let i = 1; i < h; i++) svg += `<line x1="0" y1="${i*cellSize}" x2="${W}" y2="${i*cellSize}" stroke="#2D3047" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.5"/>`;
+  svg += `</svg>`;
+  return svg;
+}
+
+function labeledRect(w, h, labelW = 'panjang', labelH = 'lebar', unit = 'cm') {
+  const cs = 24;
+  const W = w * cs, H = h * cs;
+  let svg = `<svg viewBox="-30 -25 ${W+60} ${H+50}" width="${W+60}" height="${H+50}">`;
+  svg += `<rect x="0" y="0" width="${W}" height="${H}" fill="#FFF8E7" stroke="#2D3047" stroke-width="2.5"/>`;
+  svg += `<text x="${W/2}" y="${H+18}" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="13" fill="#2D3047">${w} ${unit} (${labelW})</text>`;
+  svg += `<text x="-15" y="${H/2}" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="13" fill="#2D3047" transform="rotate(-90,-15,${H/2})">${h} ${unit} (${labelH})</text>`;
+  svg += `</svg>`;
+  return svg;
+}
+
+function labeledSquare(s, unit = 'cm') {
+  const cs = 24;
+  const W = s * cs;
+  let svg = `<svg viewBox="-30 -25 ${W+60} ${W+50}" width="${W+60}" height="${W+50}">`;
+  svg += `<rect x="0" y="0" width="${W}" height="${W}" fill="#FFF8E7" stroke="#2D3047" stroke-width="2.5"/>`;
+  svg += `<text x="${W/2}" y="${W+18}" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="13" fill="#2D3047">${s} ${unit} (sisi)</text>`;
+  svg += `<text x="-15" y="${W/2}" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="13" fill="#2D3047" transform="rotate(-90,-15,${W/2})">${s} ${unit}</text>`;
+  svg += `</svg>`;
+  return svg;
+}
+
+function combinedShape(type, dims, unit = 'cm') {
+  const cs = 22;
+  if (type === 'L') {
+    const [w1, h1, w2, h2] = dims;
+    let svg = `<svg viewBox="0 0 ${w1*cs} ${(h1+h2)*cs}" width="${w1*cs}" height="${(h1+h2)*cs}">`;
+    svg += `<rect x="0" y="0" width="${w1*cs}" height="${h1*cs}" fill="rgba(255,107,107,0.15)" stroke="#2D3047" stroke-width="2"/>`;
+    svg += `<rect x="0" y="${h1*cs}" width="${w2*cs}" height="${h2*cs}" fill="rgba(107,203,119,0.15)" stroke="#2D3047" stroke-width="2"/>`;
+    svg += `<text x="${w1*cs/2}" y="${h1*cs/2}" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="11" fill="#2D3047">${w1}×${h1}</text>`;
+    svg += `<text x="${w2*cs/2}" y="${h1*cs + h2*cs/2}" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="11" fill="#2D3047">${w2}×${h2}</text>`;
+    svg += `</svg>`;
+    return svg;
+  } else if (type === 'step') {
+    const [w1, h1, w2, h2] = dims;
+    let svg = `<svg viewBox="0 0 ${(w1+w2)*cs} ${Math.max(h1,h2)*cs}" width="${(w1+w2)*cs}" height="${Math.max(h1,h2)*cs}">`;
+    svg += `<rect x="0" y="${(Math.max(h1,h2)-h1)*cs}" width="${w1*cs}" height="${h1*cs}" fill="rgba(255,107,107,0.15)" stroke="#2D3047" stroke-width="2"/>`;
+    svg += `<rect x="${w1*cs}" y="${(Math.max(h1,h2)-h2)*cs}" width="${w2*cs}" height="${h2*cs}" fill="rgba(107,203,119,0.15)" stroke="#2D3047" stroke-width="2"/>`;
+    svg += `<text x="${w1*cs/2}" y="${(Math.max(h1,h2)-h1/2)*cs}" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="11" fill="#2D3047">${w1}×${h1}</text>`;
+    svg += `<text x="${w1*cs + w2*cs/2}" y="${(Math.max(h1,h2)-h2/2)*cs}" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="11" fill="#2D3047">${w2}×${h2}</text>`;
+    svg += `</svg>`;
+    return svg;
+  }
+  return '';
+}
+
+const squareUnitData = [
+  { type: 'persegi', w: 3, h: 3, answer: 9, expl: 'Hitung semua kotak di dalam persegi: 3 kolom × 3 baris = 9 kotak. Jadi luas = 9 satuan persegi.' },
+  { type: 'persegipanjang', w: 4, h: 2, answer: 8, expl: 'Persegi panjang berisi 4 kolom × 2 baris = 8 kotak. Luas = 8 satuan persegi.' },
+  { type: 'persegi', w: 5, h: 5, answer: 25, expl: 'Persegi 5 × 5 = 25 kotak. Luas = 25 satuan persegi.' },
+  { type: 'persegipanjang', w: 6, h: 3, answer: 18, expl: '6 kolom × 3 baris = 18 kotak. Luas = 18 satuan persegi.' },
+  { type: 'persegi', w: 4, h: 4, answer: 16, expl: 'Persegi 4 × 4 = 16 kotak. Luas = 16 satuan persegi.' },
+  { type: 'gabungan', shape: 'L', dims: [4, 2, 2, 2], answer: 12, expl: 'Pisahkan jadi 2: persegi panjang atas (4×2 = 8) + persegi panjang bawah (2×2 = 4). Total = 8 + 4 = 12 satuan persegi.' },
+  { type: 'persegipanjang', w: 5, h: 4, answer: 20, expl: '5 kolom × 4 baris = 20 kotak. Luas = 20 satuan persegi.' },
+  { type: 'gabungan', shape: 'step', dims: [3, 3, 2, 2], answer: 13, expl: 'Pisahkan jadi 2: persegi panjang kiri (3×3 = 9) + persegi panjang kanan (2×2 = 4). Total = 9 + 4 = 13 satuan persegi.' },
+  { type: 'persegi', w: 6, h: 6, answer: 36, expl: 'Persegi 6 × 6 = 36 kotak. Luas = 36 satuan persegi.' },
+  { type: 'gabungan', shape: 'L', dims: [5, 3, 3, 2], answer: 21, expl: 'Pisahkan jadi 2: persegi panjang atas (5×3 = 15) + persegi panjang bawah (3×2 = 6). Total = 15 + 6 = 21 satuan persegi.' }
+];
+
+function renderSquareUnitProblems() {
+  const c = document.getElementById('squareUnitProblems');
+  squareUnitData.forEach((p, i) => {
+    let svg = '';
+    if (p.type === 'gabungan') {
+      const cs = 20;
+      const [w1, h1, w2, h2] = p.dims;
+      if (p.shape === 'L') {
+        svg = `<svg viewBox="0 0 ${w1*cs} ${(h1+h2)*cs}" width="${Math.min(w1*cs, 200)}" height="${(h1+h2)*cs}">`;
+        svg += `<rect x="0" y="0" width="${w1*cs}" height="${h1*cs}" fill="rgba(255,107,107,0.15)" stroke="#2D3047" stroke-width="2"/>`;
+        svg += `<rect x="0" y="${h1*cs}" width="${w2*cs}" height="${h2*cs}" fill="rgba(107,203,119,0.15)" stroke="#2D3047" stroke-width="2"/>`;
+        for (let x = 1; x < w1; x++) svg += `<line x1="${x*cs}" y1="0" x2="${x*cs}" y2="${h1*cs}" stroke="#2D3047" stroke-width="0.6" opacity="0.4"/>`;
+        for (let y = 1; y < h1; y++) svg += `<line x1="0" y1="${y*cs}" x2="${w1*cs}" y2="${y*cs}" stroke="#2D3047" stroke-width="0.6" opacity="0.4"/>`;
+        for (let x = 1; x < w2; x++) svg += `<line x1="${x*cs}" y1="${h1*cs}" x2="${x*cs}" y2="${(h1+h2)*cs}" stroke="#2D3047" stroke-width="0.6" opacity="0.4"/>`;
+        for (let y = 1; y < h2; y++) svg += `<line x1="0" y1="${(h1+y)*cs}" x2="${w2*cs}" y2="${(h1+y)*cs}" stroke="#2D3047" stroke-width="0.6" opacity="0.4"/>`;
+        svg += `</svg>`;
+      } else if (p.shape === 'step') {
+        const totalH = Math.max(h1, h2);
+        svg = `<svg viewBox="0 0 ${(w1+w2)*cs} ${totalH*cs}" width="${Math.min((w1+w2)*cs, 220)}" height="${totalH*cs}">`;
+        svg += `<rect x="0" y="${(totalH-h1)*cs}" width="${w1*cs}" height="${h1*cs}" fill="rgba(255,107,107,0.15)" stroke="#2D3047" stroke-width="2"/>`;
+        svg += `<rect x="${w1*cs}" y="${(totalH-h2)*cs}" width="${w2*cs}" height="${h2*cs}" fill="rgba(107,203,119,0.15)" stroke="#2D3047" stroke-width="2"/>`;
+        for (let x = 1; x < w1; x++) svg += `<line x1="${x*cs}" y1="${(totalH-h1)*cs}" x2="${x*cs}" y2="${totalH*cs}" stroke="#2D3047" stroke-width="0.6" opacity="0.4"/>`;
+        for (let y = 1; y < h1; y++) svg += `<line x1="0" y1="${(totalH-h1+y)*cs}" x2="${w1*cs}" y2="${(totalH-h1+y)*cs}" stroke="#2D3047" stroke-width="0.6" opacity="0.4"/>`;
+        for (let x = 1; x < w2; x++) svg += `<line x1="${(w1+x)*cs}" y1="${(totalH-h2)*cs}" x2="${(w1+x)*cs}" y2="${totalH*cs}" stroke="#2D3047" stroke-width="0.6" opacity="0.4"/>`;
+        for (let y = 1; y < h2; y++) svg += `<line x1="${w1*cs}" y1="${(totalH-h2+y)*cs}" x2="${(w1+w2)*cs}" y2="${(totalH-h2+y)*cs}" stroke="#2D3047" stroke-width="0.6" opacity="0.4"/>`;
+        svg += `</svg>`;
+      }
+    } else {
+      svg = gridShape(p.w, p.h, 22);
+    }
+    const card = document.createElement('div');
+    card.className = 'problem-card';
+    const shapeLabel = p.type === 'persegi' ? 'Persegi' : (p.type === 'persegipanjang' ? 'Persegi Panjang' : 'Gabungan Bangun');
+    card.innerHTML = `
+      <div class="problem-num">Soal ${i+1}</div>
+      <div class="problem-question"><strong>${shapeLabel}</strong> — Hitung luas bangun di bawah ini dengan menghitung jumlah satuan persegi (kotak).</div>
+      <div class="shape-display">${svg}</div>
+      <div class="input-row">
+        <input type="number" placeholder="Luas = ..." id="su-input-${i}">
+        <button class="btn-check" onclick="checkAnswer('su', ${i}, ${p.answer})">Cek</button>
+      </div>
+      <div class="feedback" id="su-fb-${i}"></div>
+      <button class="btn-explain" onclick="toggleExplain('su', ${i})">💡 Pembahasan</button>
+      <div class="explanation" id="su-ex-${i}">${p.expl}</div>
+    `;
+    c.appendChild(card);
+  });
+}
+
+function checkAnswer(prefix, idx, correct) {
+  const input = document.getElementById(`${prefix}-input-${idx}`);
+  const fb = document.getElementById(`${prefix}-fb-${idx}`);
+  const val = parseFloat(input.value);
+  if (isNaN(val)) {
+    fb.className = 'feedback wrong';
+    fb.textContent = '⚠️ Isi dulu jawabannya ya!';
+    return;
+  }
+  if (val === correct) {
+    fb.className = 'feedback correct';
+    fb.textContent = '✅ Benar! Pintar sekali!';
+    confetti();
+  } else {
+    fb.className = 'feedback wrong';
+    fb.textContent = '❌ Belum tepat. Coba lagi ya!';
+  }
+}
+
+function toggleExplain(prefix, idx) {
+  document.getElementById(`${prefix}-ex-${idx}`).classList.toggle('show');
+}
+
+const standardUnitData = [
+  { type: 'persegi', s: 5, unit: 'cm', answer: 25, expl: 'Persegi: L = s × s = 5 × 5 = 25 cm².' },
+  { type: 'persegipanjang', p: 8, l: 3, unit: 'cm', answer: 24, expl: 'Persegi panjang: L = p × l = 8 × 3 = 24 cm².' },
+  { type: 'persegi', s: 7, unit: 'cm', answer: 49, expl: 'Persegi: L = s × s = 7 × 7 = 49 cm².' },
+  { type: 'persegipanjang', p: 10, l: 4, unit: 'm', answer: 40, expl: 'Persegi panjang: L = p × l = 10 × 4 = 40 m².' },
+  { type: 'gabungan', dims: [6, 4, 6, 3], unit: 'cm', answer: 42, expl: 'Pisahkan jadi 2 persegi panjang: (6×4 = 24) + (6×3 = 18). Total = 24 + 18 = 42 cm².' },
+  { type: 'persegi', s: 9, unit: 'm', answer: 81, expl: 'Persegi: L = s × s = 9 × 9 = 81 m².' },
+  { type: 'persegipanjang', p: 12, l: 5, unit: 'cm', answer: 60, expl: 'Persegi panjang: L = p × l = 12 × 5 = 60 cm².' },
+  { type: 'gabungan', dims: [8, 3, 4, 5], unit: 'cm', answer: 44, expl: 'Pisahkan jadi 2: persegi panjang atas (8×3 = 24) + persegi panjang bawah (4×5 = 20). Total = 24 + 20 = 44 cm².' },
+  { type: 'persegi', s: 6, unit: 'cm', answer: 36, expl: 'Persegi: L = s × s = 6 × 6 = 36 cm².' },
+  { type: 'persegipanjang', p: 15, l: 6, unit: 'm', answer: 90, expl: 'Persegi panjang: L = p × l = 15 × 6 = 90 m².' }
+];
+
+function renderStandardUnitProblems() {
+  const c = document.getElementById('standardUnitProblems');
+  standardUnitData.forEach((p, i) => {
+    let svg = '', q = '';
+    if (p.type === 'persegi') {
+      svg = labeledSquare(p.s, p.unit);
+      q = `<strong>Persegi</strong> dengan sisi ${p.s} ${p.unit}. Hitung luasnya!`;
+    } else if (p.type === 'persegipanjang') {
+      svg = labeledRect(p.p, p.l, 'panjang', 'lebar', p.unit);
+      q = `<strong>Persegi Panjang</strong> dengan panjang ${p.p} ${p.unit} dan lebar ${p.l} ${p.unit}. Hitung luasnya!`;
+    } else {
+      const [w1, h1, w2, h2] = p.dims;
+      svg = combinedShape('L', p.dims, p.unit);
+      q = `<strong>Gabungan Bangun</strong>. Bagian atas ${w1}×${h1} ${p.unit}, bagian bawah ${w2}×${h2} ${p.unit}. Hitung total luasnya!`;
+    }
+    const card = document.createElement('div');
+    card.className = 'problem-card';
+    card.innerHTML = `
+      <div class="problem-num">Soal ${i+1}</div>
+      <div class="problem-question">${q}</div>
+      <div class="shape-display">${svg}</div>
+      <div class="input-row">
+        <input type="number" placeholder="Luas = ..." id="st-input-${i}">
+        <span style="font-size:13px;font-weight:600;">${p.unit}²</span>
+        <button class="btn-check" onclick="checkAnswer('st', ${i}, ${p.answer})">Cek</button>
+      </div>
+      <div class="feedback" id="st-fb-${i}"></div>
+      <button class="btn-explain" onclick="toggleExplain('st', ${i})">💡 Pembahasan</button>
+      <div class="explanation" id="st-ex-${i}">${p.expl}</div>
+    `;
+    c.appendChild(card);
+  });
+}
+
+const wordProblemData = [
+  { q: 'Bu Ani punya kebun berbentuk persegi dengan sisi 8 meter. Berapa luas kebun Bu Ani?', answer: 64, unit: 'm²', expl: 'Kebun persegi, sisi = 8 m. Luas = s × s = 8 × 8 = 64 m².' },
+  { q: 'Pak Budi akan memasang ubin di kamar mandi berbentuk persegi panjang. Kamar mandi panjang 3 meter dan lebar 2 meter. Berapa luas ubin yang dibutuhkan?', answer: 6, unit: 'm²', expl: 'Kamar mandi persegi panjang, p = 3 m, l = 2 m. Luas = p × l = 3 × 2 = 6 m².' },
+  { q: 'Sebuah taman bermain berbentuk gabungan dua persegi panjang. Bagian depan berukuran 10 m × 5 m, bagian belakang berukuran 5 m × 5 m. Berapa total luas taman bermain tersebut?', answer: 75, unit: 'm²', expl: 'Luas bagian depan = 10 × 5 = 50 m². Luas bagian belakang = 5 × 5 = 25 m². Total = 50 + 25 = 75 m².' },
+  { q: 'Ibu Guru menempelkan kertas warna berbentuk persegi dengan sisi 25 cm di papan tulis. Berapa luas kertas warna tersebut?', answer: 625, unit: 'cm²', expl: 'Kertas berbentuk persegi, sisi = 25 cm. Luas = s × s = 25 × 25 = 625 cm².' }
+];
+
+function renderWordProblems() {
+  const c = document.getElementById('wordProblems');
+  wordProblemData.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'wp-card';
+    card.innerHTML = `
+      <h4>📖 Soal Cerita ${i+1}</h4>
+      <p>${p.q}</p>
+      <div class="input-row">
+        <input type="number" placeholder="Jawaban = ..." id="wp-input-${i}">
+        <span style="font-size:14px;font-weight:600;">${p.unit}</span>
+        <button class="btn-check" onclick="checkAnswer('wp', ${i}, ${p.answer})">Cek</button>
+      </div>
+      <div class="feedback" id="wp-fb-${i}"></div>
+      <button class="btn-explain" onclick="toggleExplain('wp', ${i})">💡 Pembahasan</button>
+      <div class="explanation" id="wp-ex-${i}">${p.expl}</div>
+    `;
+    c.appendChild(card);
+  });
+}
+
+const flashcardsData = [
+  { q: 'Mama memasang keramik di lantai kamar.', a: 'LUAS', expl: 'Menutupi permukaan lantai = luas.' },
+  { q: 'Pak Tua memasang pagar di sekeliling kebun.', a: 'KELILING', expl: 'Garis batas kebun = keliling.' },
+  { q: 'Mengecat dinding kelas.', a: 'LUAS', expl: 'Menutupi permukaan dinding = luas.' },
+  { q: 'Memasang bingkai kayu di foto.', a: 'KELILING', expl: 'Kayu mengelilingi foto = keliling.' },
+  { q: 'Membeli karpet untuk lantai ruang tamu.', a: 'LUAS', expl: 'Karpet menutupi lantai = luas.' },
+  { q: 'Memasang pita di tepi meja.', a: 'KELILING', expl: 'Pita mengelilingi tepi = keliling.' },
+  { q: 'Menanam rumput di lapangan.', a: 'LUAS', expl: 'Rumput menutupi permukaan = luas.' },
+  { q: 'Memasang kerangka kawat di sekeliling kebun binatang.', a: 'KELILING', expl: 'Kawat mengelilingi = keliling.' },
+  { q: 'Membeli kaca untuk jendela.', a: 'LUAS', expl: 'Kaca menutupi permukaan jendela = luas.' },
+  { q: 'Memasang list di pinggiran plafon.', a: 'KELILING', expl: 'List di pinggiran = keliling.' },
+  { q: 'Membeli cat untuk mengecat atap.', a: 'LUAS', expl: 'Menutupi permukaan atap = luas.' },
+  { q: 'Memasang selang air mengelilingi taman.', a: 'KELILING', expl: 'Mengelilingi taman = keliling.' },
+  { q: 'Menghitung jumlah ubin lantai yang dibeli.', a: 'LUAS', expl: 'Ubin menutupi lantai = luas.' },
+  { q: 'Mengukur panjang benang untuk melilit kotak.', a: 'KELILING', expl: 'Benang melilit = keliling.' },
+  { q: 'Membeli kain untuk menutupi meja makan.', a: 'LUAS', expl: 'Kain menutupi meja = luas.' },
+  { q: 'Memasang tali di sekeliling tiang bendera.', a: 'KELILING', expl: 'Tali mengelilingi = keliling.' },
+  { q: 'Menanam bunga di seluruh permukaan taman.', a: 'LUAS', expl: 'Menutupi permukaan taman = luas.' },
+  { q: 'Memasang bordir di pinggir sapu tangan.', a: 'KELILING', expl: 'Bordir di pinggir = keliling.' },
+  { q: 'Membeli wallpaper untuk dinding kamar.', a: 'LUAS', expl: 'Wallpaper menutupi dinding = luas.' },
+  { q: 'Menghitung panjang pagar tembok rumah.', a: 'KELILING', expl: 'Pagar mengelilingi rumah = keliling.' }
+];
+
+function renderFlashcards() {
+  const c = document.getElementById('flashcards');
+  flashcardsData.forEach((f, i) => {
+    const card = document.createElement('div');
+    card.className = 'flashcard';
+    card.onclick = () => card.classList.toggle('flipped');
+    card.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="fc-num">Kartu ${i+1}</div>
+          <div class="fc-q">${f.q}</div>
+          <div class="flashcard-hint">👆 Klik untuk balik</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="fc-a">${f.a}</div>
+          <div class="fc-expl">${f.expl}</div>
+        </div>
+      </div>
+    `;
+    c.appendChild(card);
+  });
+}
+
+/* ===== QUIZ 1 (Kelas 2 - 30 soal, 5 terakhir soal cerita) ===== */
+const quiz1Data = [
+  { q: 'Apa itu luas?', opts: ['Garis batas bangun', 'Ukuran permukaan bangun', 'Panjang sisi', 'Banyak sudut'], ans: 1, img: null, expl: 'Luas adalah ukuran permukaan bangun datar.' },
+  { q: 'Persegi di samping berukuran 3 × 3 kotak. Berapa luasnya?', opts: ['6', '9', '12', '3'], ans: 1, img: gridShape(3,3,22), expl: '3 × 3 = 9 satuan persegi.' },
+  { q: 'Rumus luas persegi adalah...', opts: ['s × s', 's + s', '4 × s', 's ÷ 2'], ans: 0, img: null, expl: 'Luas persegi = sisi × sisi.' },
+  { q: 'Persegi panjang 4 × 2. Berapa luasnya?', opts: ['6', '8', '10', '4'], ans: 1, img: gridShape(4,2,22), expl: '4 × 2 = 8 satuan persegi.' },
+  { q: 'Rumus luas persegi panjang adalah...', opts: ['p + l', 'p × l', '2 × (p+l)', 'p ÷ l'], ans: 1, img: null, expl: 'Luas persegi panjang = panjang × lebar.' },
+  { q: 'Persegi dengan sisi 5 cm. Luasnya = ...', opts: ['10 cm²', '20 cm²', '25 cm²', '15 cm²'], ans: 2, img: labeledSquare(5,'cm'), expl: '5 × 5 = 25 cm².' },
+  { q: 'Persegi panjang panjang 6 cm, lebar 3 cm. Luasnya = ...', opts: ['9 cm²', '12 cm²', '18 cm²', '24 cm²'], ans: 2, img: labeledRect(6,3,'panjang','lebar','cm'), expl: '6 × 3 = 18 cm².' },
+  { q: 'Persegi 4 × 4. Luasnya = ...', opts: ['8', '12', '16', '20'], ans: 2, img: gridShape(4,4,22), expl: '4 × 4 = 16 satuan persegi.' },
+  { q: 'Manakah yang BUKAN rumus luas?', opts: ['s × s', 'p × l', 's + s', 'Jumlahkan luas tiap bagian'], ans: 2, img: null, expl: 's + s bukan rumus luas, itu menghitung 2 sisi.' },
+  { q: 'Persegi panjang 5 × 3. Luasnya = ...', opts: ['8', '15', '10', '12'], ans: 1, img: gridShape(5,3,22), expl: '5 × 3 = 15 satuan persegi.' },
+  { q: 'Bangun di samping adalah gabungan 2 persegi panjang: atas 4×2, bawah 2×2. Luas total = ...', opts: ['10', '12', '14', '8'], ans: 1, img: combinedShape('L',[4,2,2,2]), expl: '8 + 4 = 12 satuan persegi.' },
+  { q: 'Ibu mengecat dinding. Yang diukur adalah...', opts: ['keliling dinding', 'luas dinding', 'tinggi dinding', 'tebal dinding'], ans: 1, img: null, expl: 'Cat menutupi permukaan dinding, jadi diukur luasnya.' },
+  { q: 'Persegi sisi 4 cm. Luasnya = ...', opts: ['8 cm²', '12 cm²', '16 cm²', '20 cm²'], ans: 2, img: labeledSquare(4,'cm'), expl: '4 × 4 = 16 cm².' },
+  { q: 'Persegi panjang 7 cm × 2 cm. Luasnya = ...', opts: ['14 cm²', '9 cm²', '16 cm²', '5 cm²'], ans: 0, img: labeledRect(7,2,'panjang','lebar','cm'), expl: '7 × 2 = 14 cm².' },
+  { q: 'Untuk menghitung luas gabungan bangun, kita bisa...', opts: ['Mengurangkan luasnya', 'Memisah jadi bangun sederhana lalu menjumlah', 'Menghitung kelilingnya', 'Mengalikan semua sisi'], ans: 1, img: null, expl: 'Pisahkan jadi bangun sederhana, hitung masing-masing luas, lalu jumlahkan.' },
+  { q: 'Persegi 2 × 2. Luasnya = ...', opts: ['2', '4', '6', '8'], ans: 1, img: gridShape(2,2,22), expl: '2 × 2 = 4 satuan persegi.' },
+  { q: 'Persegi panjang 3 × 2. Luasnya = ...', opts: ['5', '6', '7', '8'], ans: 1, img: gridShape(3,2,22), expl: '3 × 2 = 6 satuan persegi.' },
+  { q: 'Persegi 5 × 5. Luasnya = ...', opts: ['10', '15', '20', '25'], ans: 3, img: gridShape(5,5,18), expl: '5 × 5 = 25 satuan persegi.' },
+  { q: 'Satuan luas adalah...', opts: ['cm, m', 'cm², m²', 'kg, g', 'detik, menit'], ans: 1, img: null, expl: 'Satuan luas selalu berpangkat dua (cm², m²).' },
+  { q: 'Persegi panjang 4 × 3. Luasnya = ...', opts: ['7', '12', '14', '16'], ans: 1, img: gridShape(4,3,22), expl: '4 × 3 = 12 satuan persegi.' },
+  { q: 'Persegi sisi 3 cm. Luasnya = ...', opts: ['6 cm²', '9 cm²', '12 cm²', '3 cm²'], ans: 1, img: labeledSquare(3,'cm'), expl: '3 × 3 = 9 cm².' },
+  { q: 'Persegi panjang 5 × 2. Luasnya = ...', opts: ['7', '10', '12', '14'], ans: 1, img: gridShape(5,2,22), expl: '5 × 2 = 10 satuan persegi.' },
+  { q: 'Mama membeli karpet lantai. Yang dihitung adalah...', opts: ['luas lantai', 'keliling lantai', 'tinggi lantai', 'tebal karpet'], ans: 0, img: null, expl: 'Karpet menutupi permukaan lantai, jadi dihitung luasnya.' },
+  { q: 'Luas atau keliling? "Memasang pagar kebun"', opts: ['Luas', 'Keliling', 'Keduanya', 'Tidak keduanya'], ans: 1, img: null, expl: 'Pagar mengelilingi kebun, jadi keliling.' },
+  { q: 'Persegi sisi 6 cm. Luasnya = ...', opts: ['12 cm²', '24 cm²', '36 cm²', '18 cm²'], ans: 2, img: labeledSquare(6,'cm'), expl: '6 × 6 = 36 cm².' },
+  /* Soal Cerita di Kuis 1 */
+  { q: '📖 Kebun sawi Pak Budi berbentuk persegi, sisinya 4 m. Berapa luas kebun Pak Budi?', opts: ['8 m²', '12 m²', '16 m²', '20 m²'], ans: 2, img: null, expl: 'L = s × s = 4 × 4 = 16 m².' },
+  { q: '📖 Meja belajar Rina berbentuk persegi panjang berukuran 3 m x 2 m. Berapa luas permukaan meja Rina?', opts: ['5 m²', '6 m²', '10 m²', '12 m²'], ans: 1, img: null, expl: 'L = p × l = 3 × 2 = 6 m².' },
+  { q: '📖 Dina menempelkan 1 stiker foto berbentuk persegi berukuran 2 cm x 2 cm. Berapa luas stiker itu?', opts: ['4 cm²', '6 cm²', '8 cm²', '2 cm²'], ans: 0, img: null, expl: 'L = s × s = 2 × 2 = 4 cm².' },
+  { q: '📖 Kolam ikan Adik berbentuk persegi panjang berukuran 5 m x 3 m. Berapa luas kolam ikan Adik?', opts: ['8 m²', '12 m²', '15 m²', '16 m²'], ans: 2, img: null, expl: 'L = p × l = 5 × 3 = 15 m².' },
+  { q: '📖 Papan tulis kelas berbentuk persegi panjang berukuran 4 m x 1 m. Berapa luas papan tulis itu?', opts: ['4 m²', '5 m²', '8 m²', '10 m²'], ans: 0, img: null, expl: 'L = p × l = 4 × 1 = 4 m².' }
+];
+
+/* ===== QUIZ 2 (Kelas 3 - 30 soal, 5 terakhir soal cerita) ===== */
+const quiz2Data = [
+  { q: 'Persegi panjang panjang 12 cm, lebar 5 cm. Luasnya = ...', opts: ['17 cm²', '60 cm²', '34 cm²', '50 cm²'], ans: 1, img: labeledRect(12,5,'panjang','lebar','cm'), expl: '12 × 5 = 60 cm².' },
+  { q: 'Persegi sisi 9 cm. Luasnya = ...', opts: ['18 cm²', '36 cm²', '81 cm²', '90 cm²'], ans: 2, img: labeledSquare(9,'cm'), expl: '9 × 9 = 81 cm².' },
+  { q: 'Gabungan 2 bangun: 8×3 cm dan 4×5 cm. Luas total = ...', opts: ['44 cm²', '24 cm²', '20 cm²', '40 cm²'], ans: 0, img: combinedShape('L',[8,3,4,5]), expl: '24 + 20 = 44 cm².' },
+  { q: 'Sebuah kebun persegi panjang 15 m × 8 m. Luas = ...', opts: ['23 m²', '46 m²', '120 m²', '88 m²'], ans: 2, img: labeledRect(15,8,'panjang','lebar','m'), expl: '15 × 8 = 120 m².' },
+  { q: 'Jika luas persegi = 49 cm², maka sisi = ...', opts: ['6 cm', '7 cm', '8 cm', '9 cm'], ans: 1, img: null, expl: 's × s = 49, jadi s = 7 cm (karena 7 × 7 = 49).' },
+  { q: 'Sebuah taman gabungan: 10×5 m dan 5×5 m. Luas total = ...', opts: ['50 m²', '25 m²', '75 m²', '100 m²'], ans: 2, img: combinedShape('L',[10,5,5,5]), expl: '50 + 25 = 75 m².' },
+  { q: 'Persegi panjang luasnya 36 cm² dan lebarnya 4 cm. Panjangnya = ...', opts: ['8 cm', '9 cm', '12 cm', '6 cm'], ans: 1, img: null, expl: 'p = luas ÷ l = 36 ÷ 4 = 9 cm.' },
+  { q: 'Meja berbentuk persegi sisi 25 cm. Luas permukaan meja = ...', opts: ['50 cm²', '100 cm²', '625 cm²', '125 cm²'], ans: 2, img: labeledSquare(25,'cm'), expl: '25 × 25 = 625 cm².' },
+  { q: 'Manakah yang TEPAT untuk soal luas?', opts: ['Memasang pagar kebun', 'Membeli keramik lantai', 'Menghitung tali pengikat', 'Memasang bingkai foto'], ans: 1, img: null, expl: 'Keramik menutupi lantai, jadi menggunakan konsep luas.' },
+  { q: 'Gabungan bangun: 6×4 cm dan 6×3 cm. Luas total = ...', opts: ['24 cm²', '18 cm²', '42 cm²', '48 cm²'], ans: 2, img: combinedShape('L',[6,4,6,3]), expl: '24 + 18 = 42 cm².' },
+  { q: 'Lantai kamar 6 m × 4 m akan dipasang karpet. Luas karpet = ...', opts: ['10 m²', '20 m²', '24 m²', '12 m²'], ans: 2, img: labeledRect(6,4,'panjang','lebar','m'), expl: '6 × 4 = 24 m².' },
+  { q: 'Jika luas persegi panjang 48 cm² dan panjangnya 8 cm, maka lebarnya = ...', opts: ['4 cm', '6 cm', '8 cm', '12 cm'], ans: 1, img: null, expl: 'l = luas ÷ p = 48 ÷ 8 = 6 cm.' },
+  { q: 'Sebuah halaman persegi sisi 11 m. Luasnya = ...', opts: ['22 m²', '44 m²', '121 m²', '111 m²'], ans: 2, img: labeledSquare(11,'m'), expl: '11 × 11 = 121 m².' },
+  { q: 'Bangun gabungan: 7×3 cm dan 3×3 cm. Luas total = ...', opts: ['21 cm²', '9 cm²', '30 cm²', '24 cm²'], ans: 2, img: combinedShape('L',[7,3,3,3]), expl: '21 + 9 = 30 cm².' },
+  { q: 'Sebidang sawah 20 m × 15 m. Luas sawah = ...', opts: ['35 m²', '70 m²', '300 m²', '200 m²'], ans: 2, img: labeledRect(20,15,'panjang','lebar','m'), expl: '20 × 15 = 300 m².' },
+  { q: 'Persegi panjang 14 cm × 6 cm. Luasnya = ...', opts: ['20 cm²', '40 cm²', '84 cm²', '74 cm²'], ans: 2, img: labeledRect(14,6,'panjang','lebar','cm'), expl: '14 × 6 = 84 cm².' },
+  { q: 'Persegi sisi 13 cm. Luasnya = ...', opts: ['26 cm²', '52 cm²', '169 cm²', '130 cm²'], ans: 2, img: labeledSquare(13,'cm'), expl: '13 × 13 = 169 cm².' },
+  { q: 'Luas persegi 64 cm². Maka sisinya = ...', opts: ['6 cm', '7 cm', '8 cm', '9 cm'], ans: 2, img: null, expl: '8 × 8 = 64, jadi sisi = 8 cm.' },
+  { q: 'Gabungan bangun: 9×4 cm dan 5×4 cm. Luas total = ...', opts: ['36 cm²', '20 cm²', '56 cm²', '46 cm²'], ans: 2, img: combinedShape('L',[9,4,5,4]), expl: '36 + 20 = 56 cm².' },
+  { q: 'Kebun pak tani 18 m × 7 m. Luas = ...', opts: ['25 m²', '50 m²', '126 m²', '116 m²'], ans: 2, img: labeledRect(18,7,'panjang','lebar','m'), expl: '18 × 7 = 126 m².' },
+  { q: 'Luas persegi panjang 72 cm², panjang 12 cm. Lebar = ...', opts: ['4 cm', '6 cm', '8 cm', '10 cm'], ans: 1, img: null, expl: 'l = 72 ÷ 12 = 6 cm.' },
+  { q: 'Sebuah papan tulis 22 cm × 9 cm. Luas = ...', opts: ['31 cm²', '198 cm²', '188 cm²', '62 cm²'], ans: 1, img: labeledRect(22,9,'panjang','lebar','cm'), expl: '22 × 9 = 198 cm².' },
+  { q: 'Persegi sisi 15 cm. Luasnya = ...', opts: ['30 cm²', '60 cm²', '225 cm²', '125 cm²'], ans: 2, img: labeledSquare(15,'cm'), expl: '15 × 15 = 225 cm².' },
+  { q: 'Luas persegi 100 cm². Sisi = ...', opts: ['8 cm', '9 cm', '10 cm', '11 cm'], ans: 2, img: null, expl: '10 × 10 = 100, jadi sisi = 10 cm.' },
+  { q: 'Gabungan: 11×5 cm dan 6×5 cm. Luas total = ...', opts: ['55 cm²', '30 cm²', '85 cm²', '75 cm²'], ans: 2, img: combinedShape('L',[11,5,6,5]), expl: '55 + 30 = 85 cm².' },
+  /* Soal Cerita di Kuis 2 */
+  { q: '📖 Lantai kamar tidur berukuran 4 m x 3 m akan dipasang karpet. Berapa luas karpet yang dibutuhkan?', opts: ['7 m²', '12 m²', '14 m²', '24 m²'], ans: 1, img: null, expl: 'L = p × l = 4 × 3 = 12 m².' },
+  { q: '📖 Taman berbentuk gabungan: 5x4 m dan 4x3 m. Berapa luas total taman itu?', opts: ['20 m²', '12 m²', '32 m²', '27 m²'], ans: 2, img: null, expl: 'Luas 1 = 5 × 4 = 20 m². Luas 2 = 4 × 3 = 12 m². Total = 20 + 12 = 32 m².' },
+  { q: '📖 Dinding berukuran 6 m x 3 m akan dicat. Berapa luas dinding yang dicat?', opts: ['9 m²', '18 m²', '24 m²', '12 m²'], ans: 1, img: null, expl: 'L = p × l = 6 × 3 = 18 m².' },
+  { q: '📖 Halaman parkir berbentuk persegi dengan sisi 11 m. Berapa luas halaman parkir?', opts: ['22 m²', '44 m²', '121 m²', '111 m²'], ans: 2, img: null, expl: 'L = s × s = 11 × 11 = 121 m².' },
+  { q: '📖 Sawah Pak Tani berukuran 12 m x 8 m. Berapa luas sawah Pak Tani?', opts: ['20 m²', '40 m²', '96 m²', '84 m²'], ans: 2, img: null, expl: 'L = p × l = 12 × 8 = 96 m².' }
+];
+
+function renderQuiz(quizData, containerId, prefix) {
+  const c = document.getElementById(containerId);
+  quizData.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-q';
+    let imgHtml = q.img ? `<div class="quiz-q-img">${q.img}</div>` : '';
+    div.innerHTML = `
+      <div class="quiz-q-num">Soal ${i+1}</div>
+      <div class="quiz-q-text">${q.q}</div>
+      ${imgHtml}
+      <div class="quiz-options">
+        ${q.opts.map((o, j) => `
+          <label class="quiz-option" data-prefix="${prefix}" data-q="${i}" data-opt="${j}">
+            <input type="radio" name="${prefix}-q${i}" value="${j}">
+            <strong>${String.fromCharCode(65+j)}.</strong> ${o}
+          </label>
+        `).join('')}
+      </div>
+      <div class="quiz-actions">
+        <button class="btn-q-check" onclick="checkQuiz('${prefix}', ${i}, ${q.ans})">Cek</button>
+        <button class="btn-q-explain" onclick="toggleQuizExplain('${prefix}', ${i})">Pembahasan</button>
+      </div>
+      <div class="quiz-feedback" id="${prefix}-qfb-${i}"></div>
+      <div class="quiz-explain" id="${prefix}-qex-${i}">${q.expl}</div>
+    `;
+    c.appendChild(div);
+  });
+  c.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.onclick = () => {
+      const p = opt.dataset.prefix;
+      const q = opt.dataset.q;
+      c.querySelectorAll(`.quiz-option[data-prefix="${p}"][data-q="${q}"]`).forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      opt.querySelector('input').checked = true;
+    };
+  });
+}
+
+function checkQuiz(prefix, idx, ans) {
+  const selected = document.querySelector(`input[name="${prefix}-q${idx}"]:checked`);
+  const fb = document.getElementById(`${prefix}-qfb-${idx}`);
+  if (!selected) {
+    fb.className = 'quiz-feedback wrong';
+    fb.textContent = '⚠️ Pilih jawaban dulu!';
+    return;
+  }
+  if (parseInt(selected.value) === ans) {
+    fb.className = 'quiz-feedback correct';
+    fb.textContent = '✅ Benar!';
+    confetti();
+  } else {
+    fb.className = 'quiz-feedback wrong';
+    fb.textContent = '❌ Belum tepat. Cek pembahasan ya!';
+  }
+  updateScores();
+}
+
+function toggleQuizExplain(prefix, idx) {
+  document.getElementById(`${prefix}-qex-${idx}`).classList.toggle('show');
+}
+
+function updateScores() {
+  let s1 = 0, s2 = 0;
+  quiz1Data.forEach((q, i) => {
+    const sel = document.querySelector(`input[name="q1-q${i}"]:checked`);
+    if (sel && parseInt(sel.value) === q.ans) s1++;
+  });
+  quiz2Data.forEach((q, i) => {
+    const sel = document.querySelector(`input[name="q2-q${i}"]:checked`);
+    if (sel && parseInt(sel.value) === q.ans) s2++;
+  });
+  document.getElementById('score1').textContent = s1;
+  document.getElementById('score2').textContent = s2;
+}
+
+/* ===== GAME: PULAU JAWA MAP ===== */
+const provincesData = {
+  banten: {
+    name: 'Banten',
+    context: 'Banten terkenal dengan hutan lindung Ujung Kulon. Kawasan konservasi badak di sana berbentuk persegi panjang berukuran 12 m x 8 m.',
+    tasks: {
+      keliling: 'Hitung keliling kawasan konservasi (persegi panjang 12 m x 8 m).',
+      luas: 'Hitung luas kawasan konservasi.'
+    },
+    answers: { keliling: 40, luas: 96 },
+    expl: { keliling: 'K = 2 x (12 + 8) = 2 x 20 = 40 m.', luas: 'L = p x l = 12 x 8 = 96 m².' }
+  },
+  jakarta: {
+    name: 'DKI Jakarta',
+    context: 'Di Jakarta ada Taman Mini Indonesia Indah (TMII). Sebuah taman di TMII berbentuk persegi dengan sisi 9 m.',
+    tasks: {
+      keliling: 'Hitung keliling taman (persegi sisi 9 m).',
+      luas: 'Hitung luas taman.'
+    },
+    answers: { keliling: 36, luas: 81 },
+    expl: { keliling: 'K = 4 x s = 4 x 9 = 36 m.', luas: 'L = s x s = 9 x 9 = 81 m².' }
+  },
+  jabar: {
+    name: 'Jawa Barat',
+    context: 'Jawa Barat terkenal dengan perkebunan teh. Sebuah kebun teh berbentuk persegi panjang berukuran 15 m x 10 m.',
+    tasks: {
+      keliling: 'Hitung keliling kebun teh (persegi panjang 15 m x 10 m).',
+      luas: 'Hitung luas kebun teh.'
+    },
+    answers: { keliling: 50, luas: 150 },
+    expl: { keliling: 'K = 2 x (15 + 10) = 2 x 25 = 50 m.', luas: 'L = 15 x 10 = 150 m².' }
+  },
+  jateng: {
+    name: 'Jawa Tengah',
+    context: 'Jawa Tengah terkenal dengan Candi Borobudur. Halaman candi berbentuk persegi dengan sisi 11 m.',
+    tasks: {
+      keliling: 'Hitung keliling halaman candi (persegi sisi 11 m).',
+      luas: 'Hitung luas halaman candi.'
+    },
+    answers: { keliling: 44, luas: 121 },
+    expl: { keliling: 'K = 4 x 11 = 44 m.', luas: 'L = 11 x 11 = 121 m².' }
+  },
+  diy: {
+    name: 'DI Yogyakarta',
+    context: 'DIY terkenal dengan Keraton Yogyakarta. Halaman keraton berbentuk persegi panjang 20 m x 14 m.',
+    tasks: {
+      keliling: 'Hitung keliling halaman keraton (persegi panjang 20 m x 14 m).',
+      luas: 'Hitung luas halaman keraton.'
+    },
+    answers: { keliling: 68, luas: 280 },
+    expl: { keliling: 'K = 2 x (20 + 14) = 2 x 34 = 68 m.', luas: 'L = 20 x 14 = 280 m².' }
+  },
+  jatim: {
+    name: 'Jawa Timur',
+    context: 'Jawa Timur terkenal dengan Gunung Bromo. Area perkemahan di Bromo berbentuk persegi panjang 25 m x 12 m.',
+    tasks: {
+      keliling: 'Hitung keliling area perkemahan (persegi panjang 25 m x 12 m).',
+      luas: 'Hitung luas area perkemahan.'
+    },
+    answers: { keliling: 74, luas: 300 },
+    expl: { keliling: 'K = 2 x (25 + 12) = 2 x 37 = 74 m.', luas: 'L = 25 x 12 = 300 m².' }
+  }
+};
+
+let currentProvince = null;
+let currentAssignment = null;
+let provincesCompleted = new Set();
+
+const gameProgress = document.getElementById('gameProgress');
+Object.keys(provincesData).forEach((key, i) => {
+  const d = document.createElement('div');
+  d.className = 'progress-dot';
+  d.textContent = i+1;
+  d.id = 'prog-' + key;
+  gameProgress.appendChild(d);
+});
+
+document.querySelectorAll('.island').forEach(isl => {
+  isl.onclick = () => selectProvince(isl.dataset.province);
+});
+
+function selectProvince(key) {
+  if (provincesCompleted.has(key)) {
+    showToast('Provinsi ' + provincesData[key].name + ' sudah diwarnai! 🎉', 'success');
+    return;
+  }
+  currentProvince = key;
+  currentAssignment = null;
+  Object.keys(provincesData).forEach(k => {
+    document.getElementById('prog-' + k).classList.remove('current');
+  });
+  document.getElementById('prog-' + key).classList.add('current');
+  const panel = document.getElementById('gamePanel');
+  panel.innerHTML = `
+    <h3>📍 Provinsi ${provincesData[key].name}</h3>
+    <div class="problem-context">${provincesData[key].context}</div>
+    <div class="spinner-wrap">
+      <h4>🎯 Spin Pembagian Tugas!</h4>
+      <p style="font-size:13px;opacity:0.7;">Tekan tombol untuk menentukan siapa yang mengerjakan LUAS dan siapa yang mengerjakan KELILING.</p>
+      <div style="position:relative;">
+        <div class="spinner-pointer"></div>
+        <div class="spinner" id="spinner"></div>
+      </div>
+      <button class="btn-spin" id="spinBtn" onclick="spinWheel()">🔄 Putar Spinner</button>
+      <div class="spin-result" id="spinResult" style="display:none;"></div>
+    </div>
+    <div id="islandProblemArea"></div>
+  `;
+  drawSpinner();
+}
+
+const spinnerOptions = [
+  { s1: 'luas', s2: 'keliling', color: '#FF6B6B' },
+  { s1: 'keliling', s2: 'luas', color: '#6BCB77' },
+  { s1: 'luas', s2: 'keliling', color: '#FFD93D' },
+  { s1: 'keliling', s2: 'luas', color: '#4ECDC4' }
+];
+
+function drawSpinner() {
+  const spinner = document.getElementById('spinner');
+  if (!spinner) return;
+  const seg = 360 / spinnerOptions.length;
+  let html = `<svg viewBox="0 0 200 200" style="width:100%;height:100%;">`;
+  spinnerOptions.forEach((opt, i) => {
+    const startAngle = i * seg - 90;
+    const endAngle = (i+1) * seg - 90;
+    const r = 100;
+    const x1 = 100 + r * Math.cos(startAngle * Math.PI / 180);
+    const y1 = 100 + r * Math.sin(startAngle * Math.PI / 180);
+    const x2 = 100 + r * Math.cos(endAngle * Math.PI / 180);
+    const y2 = 100 + r * Math.sin(endAngle * Math.PI / 180);
+    const midAngle = startAngle + seg/2;
+    const tx = 100 + 55 * Math.cos(midAngle * Math.PI / 180);
+    const ty = 100 + 55 * Math.sin(midAngle * Math.PI / 180);
+    html += `<path d="M 100 100 L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z" fill="${opt.color}" stroke="white" stroke-width="2"/>`;
+    html += `<text x="${tx}" y="${ty}" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="9" fill="white">${opt.s1 === 'luas' ? 'S1:LUAS' : 'S1:KEL'}</text>`;
+  });
+  html += `</svg>`;
+  spinner.innerHTML = html;
+  spinner.dataset.rotation = 0;
+}
+
+function spinWheel() {
+  const spinner = document.getElementById('spinner');
+  const spinBtn = document.getElementById('spinBtn');
+  const result = document.getElementById('spinResult');
+  spinBtn.disabled = true;
+  
+  const choice = Math.floor(Math.random() * spinnerOptions.length);
+  const seg = 360 / spinnerOptions.length;
+  const targetAngle = 360 * 5 + (360 - (choice * seg + seg/2));
+  
+  const svg = spinner.querySelector('svg');
+  svg.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.21, 0.99)';
+  svg.style.transform = `rotate(${targetAngle}deg)`;
+  
+  setTimeout(() => {
+    const chosen = spinnerOptions[choice];
+    currentAssignment = chosen;
+    result.style.display = 'block';
+    result.innerHTML = `🎯 <strong>${studentNames.s1}</strong>: ${chosen.s1.toUpperCase()} &nbsp;|&nbsp; <strong>${studentNames.s2}</strong>: ${chosen.s2.toUpperCase()}`;
+    showProvinceProblem();
+    spinBtn.disabled = false;
+  }, 4100);
+}
+
+function showProvinceProblem() {
+  if (!currentProvince || !currentAssignment) return;
+  const area = document.getElementById('islandProblemArea');
+  const prov = provincesData[currentProvince];
+  area.innerHTML = `
+    <div class="island-problem show">
+      <h4 style="color:var(--coral);">📝 Tugas Kalian:</h4>
+      <div class="task-assignment">
+        <div class="task-box s1">
+          <div class="who">${studentNames.s1} (Siswa 1)</div>
+          <div class="what">${currentAssignment.s1.toUpperCase()}</div>
+          <p style="font-size:13px;margin-top:6px;">${prov.tasks[currentAssignment.s1]}</p>
+        </div>
+        <div class="task-box s2">
+          <div class="who">${studentNames.s2} (Siswa 2)</div>
+          <div class="what">${currentAssignment.s2.toUpperCase()}</div>
+          <p style="font-size:13px;margin-top:6px;">${prov.tasks[currentAssignment.s2]}</p>
+        </div>
+      </div>
+      <div class="task-input">
+        <input type="number" id="task-s1" placeholder="Jawaban ${studentNames.s1}">
+        <input type="number" id="task-s2" class="s2" placeholder="Jawaban ${studentNames.s2}">
+      </div>
+      <div class="task-actions">
+        <button class="btn-check" onclick="checkProvinceTask()">✅ Cek Jawaban</button>
+        <button class="btn-explain" onclick="toggleProvinceExplain()">💡 Pembahasan</button>
+      </div>
+      <div class="feedback" id="island-fb"></div>
+      <div class="explanation" id="island-ex">
+        <strong>${studentNames.s1} (${currentAssignment.s1}):</strong> ${prov.expl[currentAssignment.s1]}<br>
+        <strong>${studentNames.s2} (${currentAssignment.s2}):</strong> ${prov.expl[currentAssignment.s2]}
+      </div>
+    </div>
+  `;
+}
+
+function checkProvinceTask() {
+  if (!currentProvince || !currentAssignment) return;
+  const prov = provincesData[currentProvince];
+  const ans1 = parseFloat(document.getElementById('task-s1').value);
+  const ans2 = parseFloat(document.getElementById('task-s2').value);
+  const correct1 = prov.answers[currentAssignment.s1];
+  const correct2 = prov.answers[currentAssignment.s2];
+  const fb = document.getElementById('island-fb');
+  
+  if (isNaN(ans1) || isNaN(ans2)) {
+    fb.className = 'feedback wrong';
+    fb.textContent = '⚠️ Isi dulu kedua jawaban ya!';
+    return;
+  }
+  
+  if (ans1 === correct1 && ans2 === correct2) {
+    fb.className = 'feedback correct';
+    fb.textContent = '🎉 Kalian hebat! Provinsi ' + prov.name + ' berhasil diwarnai!';
+    confetti();
+    document.querySelector(`[data-province="${currentProvince}"]`).classList.add('colored');
+    provincesCompleted.add(currentProvince);
+    document.getElementById('prog-' + currentProvince).classList.add('done');
+    document.getElementById('prog-' + currentProvince).classList.remove('current');
+    document.getElementById('islandsDone').textContent = provincesCompleted.size;
+    
+    if (provincesCompleted.size === Object.keys(provincesData).length) {
+      setTimeout(() => {
+        showToast('🎉 SELAMAT! Peta Pulau Jawa sudah lengkap berwarna! 🗺️', 'success');
+        confetti();
+        setTimeout(confetti, 500);
+      }, 800);
+    }
+  } else {
+    fb.className = 'feedback wrong';
+    fb.textContent = '❌ Cek lagi pekerjaan kalian. Salah satu jawaban masih belum tepat!';
+  }
+}
+
+function toggleProvinceExplain() {
+  document.getElementById('island-ex').classList.toggle('show');
+}
+
+/* ===== TRIANGLE PROBLEMS ===== */
+const triangleData = [
+  { a: 6, t: 4, unit: 'cm', expl: 'L = ½ × a × t = ½ × 6 × 4 = ½ × 24 = 12 cm².' },
+  { a: 8, t: 5, unit: 'cm', expl: 'L = ½ × 8 × 5 = ½ × 40 = 20 cm².' },
+  { a: 10, t: 6, unit: 'cm', expl: 'L = ½ × 10 × 6 = ½ × 60 = 30 cm².' },
+  { a: 7, t: 4, unit: 'cm', expl: 'L = ½ × 7 × 4 = ½ × 28 = 14 cm².' },
+  { a: 12, t: 5, unit: 'cm', expl: 'L = ½ × 12 × 5 = ½ × 60 = 30 cm².' },
+  { a: 9, t: 8, unit: 'cm', expl: 'L = ½ × 9 × 8 = ½ × 72 = 36 cm².' },
+  { a: 5, t: 6, unit: 'cm', expl: 'L = ½ × 5 × 6 = ½ × 30 = 15 cm².' },
+  { a: 14, t: 3, unit: 'cm', expl: 'L = ½ × 14 × 3 = ½ × 42 = 21 cm².' },
+  { a: 10, t: 10, unit: 'cm', expl: 'L = ½ × 10 × 10 = ½ × 100 = 50 cm².' },
+  { a: 16, t: 5, unit: 'cm', expl: 'L = ½ × 16 × 5 = ½ × 80 = 40 cm².' }
+];
+
+function renderTriangleProblems() {
+  const c = document.getElementById('triangleProblems');
+  triangleData.forEach((p, i) => {
+    const cs = 14;
+    const W = p.a * cs;
+    const H = p.t * cs;
+    const svg = `<svg viewBox="-20 -20 ${W+40} ${H+40}" width="${W+40}" height="${H+40}">
+      <polygon points="0,${H} ${W},${H} ${W/2},0" fill="rgba(155,93,229,0.2)" stroke="#9B5DE5" stroke-width="2"/>
+      <line x1="0" y1="${H}" x2="${W/2}" y2="0" stroke="#9B5DE5" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.5"/>
+      <text x="${W/2}" y="${H+15}" text-anchor="middle" font-family="Baloo 2" font-weight="700" font-size="11" fill="#2D3047">alas = ${p.a} ${p.unit}</text>
+      <text x="${W/2+15}" y="${H/2}" font-family="Baloo 2" font-weight="700" font-size="11" fill="#9B5DE5">t = ${p.t} ${p.unit}</text>
+    </svg>`;
+    const ans = 0.5 * p.a * p.t;
+    const card = document.createElement('div');
+    card.className = 'problem-card';
+    card.style.borderTopColor = 'var(--grape)';
+    card.innerHTML = `
+      <div class="problem-num" style="background:var(--grape);">Soal ${i+1}</div>
+      <div class="problem-question">Hitung luas segitiga di bawah ini!</div>
+      <div class="shape-display">${svg}</div>
+      <div class="input-row">
+        <input type="number" placeholder="Luas = ..." id="tr-input-${i}">
+        <span style="font-size:13px;font-weight:600;">${p.unit}²</span>
+        <button class="btn-check" onclick="checkAnswer('tr', ${i}, ${ans})">Cek</button>
+      </div>
+      <div class="feedback" id="tr-fb-${i}"></div>
+      <button class="btn-explain" onclick="toggleExplain('tr', ${i})">💡 Pembahasan</button>
+      <div class="explanation" id="tr-ex-${i}">${p.expl}</div>
+    `;
+    c.appendChild(card);
+  });
+}
+
+renderSquareUnitProblems();
+renderStandardUnitProblems();
+renderWordProblems();
+renderFlashcards();
+renderQuiz(quiz1Data, 'quiz1', 'q1');
+renderQuiz(quiz2Data, 'quiz2', 'q2');
+renderTriangleProblems();
+
+document.getElementById('prevBtn').disabled = true;
+
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight') goToSlide(currentSlide + 1);
+  if (e.key === 'ArrowLeft') goToSlide(currentSlide - 1);
+});
+</script>
+</body>
+</html>
