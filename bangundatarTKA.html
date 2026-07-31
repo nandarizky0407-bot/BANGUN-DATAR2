@@ -1,0 +1,2732 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Geometri: Bangun Datar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#F0F4FF;
+  --bg-soft:#E0E7FF;
+  --bg-card:#FFFFFF;
+  --primary:#1E40AF;
+  --primary-light:#3B82F6;
+  --primary-dark:#1E3A8A;
+  --orange:#EA580C;
+  --orange-light:#FB923C;
+  --teal:#0D9488;
+  --teal-light:#14B8A6;
+  --pink:#DB2777;
+  --pink-light:#EC4899;
+  --green:#16A34A;
+  --green-light:#22C55E;
+  --red:#DC2626;
+  --yellow:#CA8A04;
+  --yellow-light:#EAB308;
+  --text-dark:#0F172A;
+  --text-medium:#1E293B;
+  --text-muted:#64748B;
+  --border:#CBD5E1;
+  --shadow-sm:0 2px 8px rgba(15,23,42,0.06);
+  --shadow-md:0 8px 24px rgba(15,23,42,0.10);
+  --shadow-lg:0 20px 50px rgba(15,23,42,0.15);
+  --shadow-xl:0 30px 80px rgba(15,23,42,0.25);
+  --radius-sm:12px;
+  --radius-md:18px;
+  --radius-lg:28px;
+}
+
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text-dark);
+  min-height:100vh;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+
+/* Screen System */
+.screen{display:none;min-height:100vh}
+.screen.active{display:block;animation:fadeIn 0.6s ease-out}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes slideDown{
+  from{opacity:0;transform:translateY(-10px);max-height:0}
+  to{opacity:1;transform:translateY(0);max-height:3000px}
+}
+
+@keyframes floatUp{
+  0%{transform:translateY(100vh) rotate(0deg);opacity:0}
+  10%{opacity:0.6}
+  90%{opacity:0.6}
+  100%{transform:translateY(-100px) rotate(360deg);opacity:0}
+}
+
+@keyframes morph{
+  0%,100%{border-radius:30% 70% 70% 30% / 30% 30% 70% 70%}
+  50%{border-radius:70% 30% 30% 70% / 70% 70% 30% 30%}
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-20px)}
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+/* === COVER SCREEN === */
+.cover-bg{
+  background:linear-gradient(135deg,#0F172A 0%,#1E3A8A 50%,#1E40AF 100%);
+  position:relative;
+  overflow:hidden;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px 20px;
+}
+
+.cover-bg::before{
+  content:'';
+  position:absolute;
+  top:-30%;
+  right:-15%;
+  width:700px;
+  height:700px;
+  background:radial-gradient(circle,rgba(234,88,12,0.3) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.cover-bg::after{
+  content:'';
+  position:absolute;
+  bottom:-30%;
+  left:-10%;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle,rgba(20,184,166,0.25) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.float-shapes{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:1;
+}
+
+.float-shapes .geo{
+  position:absolute;
+  opacity:0.15;
+  animation:floatUp 18s linear infinite;
+}
+
+.shape-deco{
+  position:absolute;
+  pointer-events:none;
+  z-index:1;
+}
+
+.shape-deco-1{
+  top:15%;left:8%;
+  width:80px;height:80px;
+  background:linear-gradient(135deg,#FB923C,#EA580C);
+  animation:morph 8s ease-in-out infinite;
+  opacity:0.7;
+}
+
+.shape-deco-2{
+  bottom:18%;right:8%;
+  width:100px;height:100px;
+  background:linear-gradient(135deg,#14B8A6,#0D9488);
+  border-radius:50%;
+  animation:float 6s ease-in-out infinite;
+  opacity:0.7;
+}
+
+.shape-deco-3{
+  top:60%;right:5%;
+  width:0;height:0;
+  border-left:30px solid transparent;
+  border-right:30px solid transparent;
+  border-bottom:50px solid rgba(234,88,12,0.5);
+  animation:float 7s ease-in-out infinite 1s;
+}
+
+.shape-deco-4{
+  top:25%;right:18%;
+  width:50px;height:50px;
+  background:rgba(219,39,119,0.6);
+  transform:rotate(45deg);
+  animation:float 8s ease-in-out infinite;
+}
+
+.cover-content{
+  position:relative;
+  z-index:2;
+  max-width:740px;
+  width:100%;
+  text-align:center;
+  color:white;
+}
+
+.cover-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 18px;
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:100px;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:28px;
+  backdrop-filter:blur(10px);
+  letter-spacing:0.5px;
+}
+
+.cover-badge i{color:var(--orange-light)}
+
+.cover-title{
+  font-family:'Fredoka',sans-serif;
+  font-weight:700;
+  font-size:clamp(48px,8vw,80px);
+  line-height:0.95;
+  letter-spacing:-0.03em;
+  margin-bottom:18px;
+  background:linear-gradient(135deg,#fff 0%,#FB923C 50%,#14B8A6 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.cover-subtitle{
+  font-size:clamp(16px,2vw,20px);
+  color:rgba(255,255,255,0.85);
+  margin-bottom:40px;
+  font-weight:500;
+  max-width:560px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.cover-card{
+  background:rgba(255,255,255,0.97);
+  border-radius:var(--radius-lg);
+  padding:36px;
+  box-shadow:var(--shadow-xl);
+  text-align:left;
+  color:var(--text-dark);
+  backdrop-filter:blur(20px);
+}
+
+.input-group{margin-bottom:24px}
+
+.input-label{
+  display:block;
+  font-weight:700;
+  font-size:14px;
+  margin-bottom:10px;
+  color:var(--text-dark);
+  letter-spacing:0.3px;
+}
+
+.input-label i{color:var(--primary);margin-right:6px}
+
+.input-field{
+  width:100%;
+  padding:16px 20px;
+  border:2px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-size:16px;
+  font-family:inherit;
+  transition:all 0.3s ease;
+  background:#F8FAFC;
+  color:var(--text-dark);
+  font-weight:500;
+}
+
+.input-field:focus{
+  outline:none;
+  border-color:var(--primary);
+  background:white;
+  box-shadow:0 0 0 4px rgba(30,64,175,0.12);
+}
+
+.cover-buttons{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.cover-info{
+  margin-top:24px;
+  padding-top:20px;
+  border-top:1px dashed var(--border);
+  display:flex;
+  gap:24px;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  font-size:13px;
+  color:var(--text-muted);
+}
+
+.cover-info-item{display:flex;align-items:center;gap:8px}
+.cover-info-item i{color:var(--primary)}
+
+/* Buttons */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:14px 24px;
+  border:none;
+  border-radius:var(--radius-sm);
+  font-family:inherit;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  text-decoration:none;
+  white-space:nowrap;
+  letter-spacing:0.3px;
+}
+
+.btn-primary{
+  background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);
+  color:white;
+  box-shadow:0 4px 14px rgba(30,64,175,0.4);
+  flex:1;
+}
+
+.btn-primary:hover:not(:disabled){
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(30,64,175,0.5);
+}
+
+.btn-primary:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+}
+
+.btn-secondary{
+  background:white;
+  color:var(--primary);
+  border:2px solid var(--primary);
+}
+
+.btn-secondary:hover{
+  background:var(--primary);
+  color:white;
+  transform:translateY(-2px);
+}
+
+.btn-orange{
+  background:linear-gradient(135deg,var(--orange) 0%,#C2410C 100%);
+  color:white;
+  box-shadow:0 4px 14px rgba(234,88,12,0.4);
+}
+
+.btn-orange:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(234,88,12,0.5);
+}
+
+.btn-outline{
+  background:transparent;
+  color:var(--primary);
+  border:2px solid var(--border);
+}
+
+.btn-outline:hover:not(:disabled){
+  border-color:var(--primary);
+  background:rgba(30,64,175,0.05);
+}
+
+.btn-outline:disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+}
+
+.btn-full{width:100%}
+
+/* === MATERI SCREEN === */
+.materi-container{
+  max-width:1100px;
+  margin:0 auto;
+  padding:32px 20px 60px;
+}
+
+.materi-header{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:32px;
+  flex-wrap:wrap;
+}
+
+.back-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 18px;
+  background:white;
+  border:2px solid var(--border);
+  border-radius:100px;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:600;
+  font-size:14px;
+  color:var(--text-dark);
+  transition:all 0.3s ease;
+}
+
+.back-btn:hover{
+  border-color:var(--primary);
+  color:var(--primary);
+  transform:translateX(-2px);
+}
+
+.materi-title{
+  font-family:'Fredoka',sans-serif;
+  font-size:clamp(28px,5vw,42px);
+  font-weight:700;
+  color:var(--text-dark);
+  flex:1;
+  letter-spacing:-0.02em;
+}
+
+.materi-hero{
+  background:linear-gradient(135deg,#1E40AF 0%,#1E3A8A 100%);
+  border-radius:var(--radius-lg);
+  padding:40px;
+  color:white;
+  margin-bottom:32px;
+  position:relative;
+  overflow:hidden;
+}
+
+.materi-hero::before{
+  content:'';
+  position:absolute;
+  top:-50%;
+  right:-20%;
+  width:400px;
+  height:400px;
+  background:radial-gradient(circle,rgba(251,146,60,0.25) 0%,transparent 70%);
+}
+
+.materi-hero-content{position:relative;z-index:2}
+
+.materi-hero h2{
+  font-family:'Fredoka',sans-serif;
+  font-size:32px;
+  margin-bottom:12px;
+  font-weight:700;
+}
+
+.materi-hero p{
+  font-size:16px;
+  opacity:0.9;
+  max-width:650px;
+}
+
+.materi-section{
+  background:white;
+  border-radius:var(--radius-lg);
+  padding:32px;
+  margin-bottom:24px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border);
+}
+
+.section-label{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 14px;
+  border-radius:100px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+  margin-bottom:16px;
+  background:rgba(30,64,175,0.12);
+  color:var(--primary);
+}
+
+.section-label.orange{background:rgba(234,88,12,0.12);color:var(--orange)}
+.section-label.teal{background:rgba(13,148,136,0.12);color:var(--teal)}
+.section-label.pink{background:rgba(219,39,119,0.12);color:var(--pink)}
+
+.materi-section h3{
+  font-family:'Fredoka',sans-serif;
+  font-size:26px;
+  font-weight:700;
+  margin-bottom:16px;
+  color:var(--text-dark);
+  letter-spacing:-0.01em;
+}
+
+.materi-section h4{
+  font-family:'Fredoka',sans-serif;
+  font-size:18px;
+  font-weight:600;
+  margin:20px 0 10px;
+  color:var(--text-medium);
+}
+
+.materi-section p{
+  color:var(--text-dark);
+  margin-bottom:12px;
+  font-size:15px;
+}
+
+/* Shapes Grid */
+.shapes-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:18px;
+  margin-top:20px;
+}
+
+.shape-card{
+  background:linear-gradient(135deg,#F8FAFC 0%,#E0E7FF 100%);
+  border-radius:var(--radius-md);
+  padding:20px;
+  border:2px solid var(--border);
+  transition:all 0.3s ease;
+  position:relative;
+  overflow:hidden;
+}
+
+.shape-card:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-md);
+  border-color:var(--primary-light);
+}
+
+.shape-card-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.shape-icon{
+  width:50px;
+  height:50px;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-light));
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  flex-shrink:0;
+}
+
+.shape-card:nth-child(8n+1) .shape-icon{background:linear-gradient(135deg,#1E40AF,#3B82F6)}
+.shape-card:nth-child(8n+2) .shape-icon{background:linear-gradient(135deg,#EA580C,#FB923C)}
+.shape-card:nth-child(8n+3) .shape-icon{background:linear-gradient(135deg,#0D9488,#14B8A6)}
+.shape-card:nth-child(8n+4) .shape-icon{background:linear-gradient(135deg,#DB2777,#EC4899)}
+.shape-card:nth-child(8n+5) .shape-icon{background:linear-gradient(135deg,#7C3AED,#A78BFA)}
+.shape-card:nth-child(8n+6) .shape-icon{background:linear-gradient(135deg,#CA8A04,#EAB308)}
+.shape-card:nth-child(8n+7) .shape-icon{background:linear-gradient(135deg,#16A34A,#22C55E)}
+.shape-card:nth-child(8n+8) .shape-icon{background:linear-gradient(135deg,#0891B2,#06B6D4)}
+
+.shape-name{
+  font-family:'Fredoka',sans-serif;
+  font-size:17px;
+  font-weight:600;
+  color:var(--text-dark);
+  line-height:1.2;
+}
+
+.shape-formula{
+  background:white;
+  border-radius:10px;
+  padding:12px 14px;
+  margin-top:10px;
+  font-size:13px;
+  border-left:3px solid var(--primary);
+}
+
+.shape-formula-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:4px 0;
+}
+
+.shape-formula-row + .shape-formula-row{
+  border-top:1px dashed var(--border);
+  margin-top:4px;
+  padding-top:8px;
+}
+
+.formula-label{
+  font-size:11px;
+  color:var(--text-muted);
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+
+.formula-value{
+  font-family:'Courier New',monospace;
+  font-weight:700;
+  color:var(--primary-dark);
+  font-size:13px;
+}
+
+.shape-features{
+  font-size:12px;
+  color:var(--text-muted);
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px dashed var(--border);
+  line-height:1.5;
+}
+
+.shape-features strong{color:var(--text-medium)}
+
+/* Ciri-ciri table */
+.features-table{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:16px;
+  margin:20px 0;
+}
+
+.feature-card{
+  padding:18px;
+  border-radius:var(--radius-md);
+  background:#F8FAFC;
+  border:2px solid var(--border);
+}
+
+.feature-card h5{
+  font-family:'Fredoka',sans-serif;
+  font-size:15px;
+  font-weight:600;
+  margin-bottom:10px;
+  color:var(--primary);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.feature-card ul{
+  list-style:none;
+  padding:0;
+}
+
+.feature-card li{
+  padding:4px 0;
+  font-size:13px;
+  color:var(--text-dark);
+  display:flex;
+  align-items:flex-start;
+  gap:6px;
+}
+
+.feature-card li::before{
+  content:'▸';
+  color:var(--orange);
+  font-weight:bold;
+  flex-shrink:0;
+}
+
+/* Story tips */
+.tip-box{
+  background:linear-gradient(135deg,#FEF3C7 0%,#FDE68A 100%);
+  border-left:4px solid var(--yellow);
+  padding:18px 22px;
+  border-radius:var(--radius-sm);
+  margin:20px 0;
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+}
+
+.tip-box i{
+  color:var(--yellow);
+  font-size:20px;
+  margin-top:2px;
+}
+
+.tip-box strong{color:#78350F}
+
+.story-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin:16px 0;
+}
+
+.story-card{
+  padding:16px;
+  border-radius:var(--radius-md);
+  background:white;
+  border:2px solid var(--border);
+}
+
+.story-card h5{
+  font-family:'Fredoka',sans-serif;
+  font-size:14px;
+  font-weight:600;
+  color:var(--primary);
+  margin-bottom:8px;
+}
+
+.story-card p{
+  font-size:13px;
+  color:var(--text-dark);
+  margin:0;
+}
+
+.materi-footer{
+  text-align:center;
+  margin-top:32px;
+}
+
+/* === QUIZ SCREEN === */
+.quiz-container{
+  max-width:880px;
+  margin:0 auto;
+  padding:24px 20px 60px;
+}
+
+.quiz-header{
+  background:white;
+  border-radius:var(--radius-lg);
+  padding:24px;
+  margin-bottom:24px;
+  box-shadow:var(--shadow-sm);
+  position:sticky;
+  top:16px;
+  z-index:50;
+  border:1px solid var(--border);
+}
+
+.quiz-info{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.student-info{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:600;
+  font-size:14px;
+}
+
+.student-avatar{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--orange));
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:14px;
+  font-family:'Fredoka',sans-serif;
+}
+
+.progress-info{
+  font-size:13px;
+  color:var(--text-muted);
+  font-weight:600;
+}
+
+.progress-info strong{color:var(--primary)}
+
+.progress-bar{
+  height:8px;
+  background:var(--border);
+  border-radius:100px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--green) 0%,var(--orange) 50%,var(--pink) 100%);
+  border-radius:100px;
+  transition:width 0.5s ease;
+  width:0%;
+}
+
+/* Section Divider */
+.quiz-section-divider{
+  margin:32px 0 20px;
+  padding:16px 24px;
+  background:linear-gradient(135deg,var(--primary-dark),var(--primary));
+  border-radius:var(--radius-md);
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.quiz-section-divider .divider-icon{
+  width:36px;
+  height:36px;
+  background:rgba(255,255,255,0.2);
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+}
+
+.quiz-section-divider h3{
+  font-family:'Fredoka',sans-serif;
+  font-size:18px;
+  font-weight:600;
+  margin:0;
+}
+
+.quiz-section-divider p{
+  font-size:12px;
+  opacity:0.8;
+  margin:0;
+}
+
+/* Question Card */
+.question-card{
+  background:white;
+  border-radius:var(--radius-lg);
+  padding:28px;
+  margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border);
+  transition:all 0.3s ease;
+}
+
+.question-card.correct{
+  border-color:var(--green);
+  box-shadow:0 8px 24px rgba(22,163,74,0.15);
+}
+
+.question-card.wrong{
+  border-color:var(--red);
+  box-shadow:0 8px 24px rgba(220,38,38,0.15);
+}
+
+.question-card.partial{
+  border-color:var(--yellow);
+  box-shadow:0 8px 24px rgba(202,138,4,0.15);
+}
+
+.question-top{
+  display:flex;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:18px;
+}
+
+.question-number{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Fredoka',sans-serif;
+  font-weight:700;
+  font-size:18px;
+  flex-shrink:0;
+}
+
+.question-card.correct .question-number{
+  background:linear-gradient(135deg,var(--green),#15803D);
+}
+
+.question-card.wrong .question-number{
+  background:linear-gradient(135deg,var(--red),#B91C1C);
+}
+
+.question-card.partial .question-number{
+  background:linear-gradient(135deg,var(--yellow),#A16207);
+}
+
+.question-text{
+  font-size:16px;
+  font-weight:500;
+  color:var(--text-dark);
+  line-height:1.7;
+  flex:1;
+  padding-top:6px;
+}
+
+.question-text strong{color:var(--primary-dark)}
+
+.question-meta{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+}
+
+.type-hint{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 12px;
+  border-radius:100px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+}
+
+.type-hint.tf{background:rgba(13,148,136,0.12);color:var(--teal)}
+.type-hint.mc{background:rgba(30,64,175,0.12);color:var(--primary)}
+.type-hint.complex{background:rgba(219,39,119,0.12);color:var(--pink)}
+
+.hint-text{
+  font-size:12px;
+  color:var(--text-muted);
+  font-style:italic;
+}
+
+/* Options - True/False */
+.tf-options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:8px;
+}
+
+.tf-option{
+  padding:18px;
+  background:#F8FAFC;
+  border:2px solid var(--border);
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  transition:all 0.25s ease;
+  text-align:center;
+  font-weight:600;
+  font-size:15px;
+  color:var(--text-dark);
+  user-select:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.tf-option:hover{
+  border-color:var(--primary-light);
+  background:#EFF6FF;
+}
+
+.tf-option.selected{
+  border-color:var(--primary);
+  background:rgba(30,64,175,0.06);
+}
+
+.tf-option.correct{
+  border-color:var(--green);
+  background:rgba(22,163,74,0.08);
+  color:#15803D;
+}
+
+.tf-option.wrong{
+  border-color:var(--red);
+  background:rgba(220,38,38,0.08);
+  color:#B91C1C;
+}
+
+.tf-option.disabled{
+  cursor:not-allowed;
+  pointer-events:none;
+}
+
+.tf-option i{font-size:18px}
+
+/* Options - Multiple Choice */
+.options-list{
+  display:grid;
+  gap:10px;
+  margin-top:8px;
+}
+
+.option-item{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 18px;
+  background:#F8FAFC;
+  border:2px solid var(--border);
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  transition:all 0.25s ease;
+  font-size:15px;
+  font-weight:500;
+  color:var(--text-dark);
+  user-select:none;
+}
+
+.option-item:hover{
+  border-color:var(--primary-light);
+  background:#EFF6FF;
+  transform:translateX(4px);
+}
+
+.option-item.selected{
+  border-color:var(--primary);
+  background:rgba(30,64,175,0.06);
+  font-weight:600;
+}
+
+.option-item.correct{
+  border-color:var(--green);
+  background:rgba(22,163,74,0.08);
+  color:#15803D;
+  font-weight:600;
+}
+
+.option-item.wrong{
+  border-color:var(--red);
+  background:rgba(220,38,38,0.08);
+  color:#B91C1C;
+  font-weight:600;
+}
+
+.option-item.disabled{
+  cursor:not-allowed;
+  pointer-events:none;
+}
+
+.option-badge{
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  background:white;
+  border:2px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Fredoka',sans-serif;
+  font-weight:700;
+  font-size:14px;
+  flex-shrink:0;
+  transition:all 0.25s ease;
+}
+
+.option-item.selected .option-badge{
+  background:var(--primary);
+  color:white;
+  border-color:var(--primary);
+}
+
+.option-item.correct .option-badge{
+  background:var(--green);
+  color:white;
+  border-color:var(--green);
+}
+
+.option-item.wrong .option-badge{
+  background:var(--red);
+  color:white;
+  border-color:var(--red);
+}
+
+.option-icon{
+  margin-left:auto;
+  font-size:18px;
+  opacity:0;
+  transition:opacity 0.3s ease;
+}
+
+.option-item.correct .option-icon,
+.option-item.wrong .option-icon{
+  opacity:1;
+}
+
+.option-item.correct .option-icon{color:var(--green)}
+.option-item.wrong .option-icon{color:var(--red)}
+
+/* Complex Options (Checkbox) */
+.complex-options{
+  display:grid;
+  gap:10px;
+  margin-top:8px;
+}
+
+.complex-option{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  padding:14px 18px;
+  background:#F8FAFC;
+  border:2px solid var(--border);
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  transition:all 0.25s ease;
+  font-size:15px;
+  font-weight:500;
+  color:var(--text-dark);
+  user-select:none;
+}
+
+.complex-option:hover{
+  border-color:var(--primary-light);
+  background:#EFF6FF;
+}
+
+.complex-option.selected{
+  border-color:var(--primary);
+  background:rgba(30,64,175,0.06);
+}
+
+.complex-option.correct{
+  border-color:var(--green);
+  background:rgba(22,163,74,0.08);
+  color:#15803D;
+}
+
+.complex-option.wrong{
+  border-color:var(--red);
+  background:rgba(220,38,38,0.08);
+  color:#B91C1C;
+}
+
+.complex-option.partial{
+  border-color:var(--yellow);
+  background:rgba(202,138,4,0.08);
+  color:#854D0E;
+}
+
+.complex-option.disabled{
+  cursor:not-allowed;
+  pointer-events:none;
+}
+
+.complex-checkbox{
+  width:24px;
+  height:24px;
+  border-radius:6px;
+  background:white;
+  border:2px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  transition:all 0.25s ease;
+  margin-top:1px;
+}
+
+.complex-option.selected .complex-checkbox{
+  background:var(--primary);
+  border-color:var(--primary);
+  color:white;
+}
+
+.complex-option.correct .complex-checkbox{
+  background:var(--green);
+  border-color:var(--green);
+  color:white;
+}
+
+.complex-option.wrong .complex-checkbox{
+  background:var(--red);
+  border-color:var(--red);
+  color:white;
+}
+
+.complex-checkbox i{
+  font-size:12px;
+  opacity:0;
+}
+
+.complex-option.selected .complex-checkbox i,
+.complex-option.correct .complex-checkbox i,
+.complex-option.wrong .complex-checkbox i{
+  opacity:1;
+}
+
+.complex-content{
+  flex:1;
+}
+
+.complex-badge{
+  display:inline-block;
+  font-family:'Fredoka',sans-serif;
+  font-weight:700;
+  font-size:13px;
+  margin-right:8px;
+  color:var(--text-muted);
+}
+
+.complex-option.correct .complex-badge{color:var(--green)}
+.complex-option.wrong .complex-badge{color:var(--red)}
+
+.complex-icon{
+  margin-left:auto;
+  font-size:18px;
+  opacity:0;
+  transition:opacity 0.3s ease;
+  align-self:center;
+}
+
+.complex-option.correct .complex-icon,
+.complex-option.wrong .complex-icon{
+  opacity:1;
+}
+
+.complex-option.correct .complex-icon{color:var(--green)}
+.complex-option.wrong .complex-icon{color:var(--red)}
+
+.question-actions{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.feedback-msg{
+  flex:1;
+  min-width:200px;
+  font-size:14px;
+  font-weight:600;
+  display:none;
+  align-items:center;
+  gap:8px;
+}
+
+.feedback-msg.show{display:flex}
+
+.feedback-msg.correct{color:var(--green)}
+.feedback-msg.wrong{color:var(--red)}
+.feedback-msg.partial{color:var(--yellow)}
+
+.btn-small{
+  padding:10px 18px;
+  font-size:13px;
+  border-radius:10px;
+}
+
+.explanation-box{
+  margin-top:16px;
+  padding:20px;
+  background:linear-gradient(135deg,#FFFBEB 0%,#FEF3C7 100%);
+  border-radius:var(--radius-md);
+  border-left:4px solid var(--orange);
+  display:none;
+  animation:slideDown 0.4s ease-out;
+  overflow:hidden;
+}
+
+.explanation-box.show{display:block}
+
+.explanation-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:'Fredoka',sans-serif;
+  font-weight:600;
+  font-size:16px;
+  color:#92400E;
+  margin-bottom:10px;
+}
+
+.explanation-content{
+  font-size:14px;
+  color:#78350F;
+  line-height:1.8;
+}
+
+.explanation-content strong{color:#451A03}
+
+.explanation-content .calc-block{
+  background:#1E293B;
+  color:#E0E7FF;
+  padding:14px 18px;
+  border-radius:10px;
+  font-family:'Courier New',monospace;
+  font-size:13px;
+  margin:10px 0;
+  line-height:1.9;
+  overflow-x:auto;
+}
+
+.explanation-content .calc-block .hl-orange{color:#FB923C;font-weight:bold}
+.explanation-content .calc-block .hl-green{color:#34D399;font-weight:bold}
+.explanation-content .calc-block .hl-yellow{color:#FBBF24;font-weight:bold}
+
+.answer-tag{
+  display:inline-block;
+  padding:4px 12px;
+  border-radius:100px;
+  font-size:12px;
+  font-weight:700;
+  margin-top:8px;
+  background:var(--orange);
+  color:white;
+}
+
+.quiz-footer{
+  margin-top:32px;
+  text-align:center;
+}
+
+.finish-summary{
+  background:linear-gradient(135deg,#FEF3C7 0%,#FDE68A 100%);
+  padding:18px 24px;
+  border-radius:var(--radius-md);
+  margin-bottom:20px;
+  font-size:14px;
+  color:#78350F;
+  display:none;
+}
+
+.finish-summary.show{display:block}
+
+.finish-summary strong{color:#451A03}
+
+/* === RESULT SCREEN === */
+.result-bg{
+  background:linear-gradient(135deg,#0F172A 0%,#1E3A8A 50%,#1E40AF 100%);
+  min-height:100vh;
+  padding:40px 20px;
+  position:relative;
+  overflow:hidden;
+}
+
+.result-bg::before{
+  content:'';
+  position:absolute;
+  top:-30%;
+  left:-10%;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle,rgba(251,146,60,0.25) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.result-bg::after{
+  content:'';
+  position:absolute;
+  bottom:-30%;
+  right:-10%;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle,rgba(219,39,119,0.25) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.result-content{
+  max-width:760px;
+  margin:0 auto;
+  position:relative;
+  z-index:2;
+}
+
+.result-card{
+  background:rgba(255,255,255,0.97);
+  border-radius:var(--radius-lg);
+  padding:48px 36px;
+  box-shadow:var(--shadow-xl);
+  text-align:center;
+  backdrop-filter:blur(20px);
+}
+
+.result-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 18px;
+  background:rgba(30,64,175,0.1);
+  border-radius:100px;
+  font-size:13px;
+  font-weight:700;
+  color:var(--primary);
+  margin-bottom:20px;
+  letter-spacing:0.5px;
+}
+
+.result-title{
+  font-family:'Fredoka',sans-serif;
+  font-size:clamp(28px,5vw,38px);
+  font-weight:700;
+  color:var(--text-dark);
+  margin-bottom:8px;
+  letter-spacing:-0.02em;
+}
+
+.result-subtitle{
+  font-size:15px;
+  color:var(--text-muted);
+  margin-bottom:32px;
+}
+
+.score-circle-wrap{
+  position:relative;
+  width:200px;
+  height:200px;
+  margin:0 auto 32px;
+}
+
+.score-circle{
+  width:100%;
+  height:100%;
+  transform:rotate(-90deg);
+}
+
+.score-circle-bg{
+  fill:none;
+  stroke:#E5E7EB;
+  stroke-width:14;
+}
+
+.score-circle-fill{
+  fill:none;
+  stroke:url(#scoreGradient);
+  stroke-width:14;
+  stroke-linecap:round;
+  stroke-dasharray:565.48;
+  stroke-dashoffset:565.48;
+  transition:stroke-dashoffset 1.5s ease-out;
+}
+
+.score-text{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.score-number{
+  font-family:'Fredoka',sans-serif;
+  font-size:54px;
+  font-weight:700;
+  color:var(--text-dark);
+  line-height:1;
+}
+
+.score-label{
+  font-size:14px;
+  color:var(--text-muted);
+  font-weight:600;
+  margin-top:4px;
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:32px;
+}
+
+.stat-card{
+  padding:18px 12px;
+  border-radius:var(--radius-md);
+  text-align:center;
+  border:2px solid;
+}
+
+.stat-card.total{background:#EFF6FF;border-color:rgba(30,64,175,0.2)}
+.stat-card.done{background:#F0FDFA;border-color:rgba(13,148,136,0.2)}
+.stat-card.correct{background:rgba(22,163,74,0.08);border-color:rgba(22,163,74,0.3)}
+.stat-card.wrong{background:rgba(220,38,38,0.08);border-color:rgba(220,38,38,0.3)}
+
+.stat-icon{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 8px;
+  font-size:16px;
+  color:white;
+}
+
+.stat-card.total .stat-icon{background:var(--primary)}
+.stat-card.done .stat-icon{background:var(--teal)}
+.stat-card.correct .stat-icon{background:var(--green)}
+.stat-card.wrong .stat-icon{background:var(--red)}
+
+.stat-value{
+  font-family:'Fredoka',sans-serif;
+  font-size:28px;
+  font-weight:700;
+  line-height:1;
+  margin-bottom:4px;
+}
+
+.stat-card.total .stat-value{color:var(--primary)}
+.stat-card.done .stat-value{color:var(--teal)}
+.stat-card.correct .stat-value{color:var(--green)}
+.stat-card.wrong .stat-value{color:var(--red)}
+
+.stat-label{
+  font-size:12px;
+  color:var(--text-muted);
+  font-weight:600;
+}
+
+.result-message{
+  background:linear-gradient(135deg,#F0F4FF 0%,#E0E7FF 100%);
+  border-radius:var(--radius-md);
+  padding:20px;
+  margin-bottom:28px;
+  font-size:15px;
+  color:var(--text-dark);
+  line-height:1.7;
+}
+
+.result-message strong{color:var(--primary)}
+
+.result-message .msg-icon{
+  font-size:24px;
+  margin-bottom:8px;
+  display:block;
+}
+
+.result-buttons{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.result-buttons .btn{flex:1;min-width:180px}
+
+/* Confetti */
+.confetti{
+  position:fixed;
+  width:10px;
+  height:10px;
+  pointer-events:none;
+  z-index:1000;
+  animation:confettiFall 3s ease-out forwards;
+}
+
+@keyframes confettiFall{
+  0%{transform:translateY(-100vh) rotate(0deg);opacity:1}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+
+/* Responsive */
+@media (max-width:640px){
+  .cover-card{padding:24px}
+  .materi-section{padding:22px}
+  .materi-hero{padding:28px 22px}
+  .question-card{padding:20px}
+  .question-top{flex-direction:column;gap:10px}
+  .question-text{padding-top:0}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .result-card{padding:32px 22px}
+  .story-grid{grid-template-columns:1fr}
+  .cover-buttons{flex-direction:column}
+  .cover-buttons .btn{width:100%}
+  .question-actions{flex-direction:column;align-items:stretch}
+  .question-actions .btn{width:100%}
+  .feedback-msg{width:100%}
+  .tf-options{grid-template-columns:1fr}
+}
+
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+</style>
+</head>
+<body>
+
+<!-- ========== COVER SCREEN ========== -->
+<section id="cover-screen" class="screen active">
+  <div class="cover-bg">
+    <div class="float-shapes" id="float-shapes"></div>
+    <div class="shape-deco shape-deco-1"></div>
+    <div class="shape-deco shape-deco-2"></div>
+    <div class="shape-deco shape-deco-3"></div>
+    <div class="shape-deco shape-deco-4"></div>
+    
+    <div class="cover-content">
+      <div class="cover-badge">
+        <i class="fas fa-shapes"></i>
+        Latihan TKA Matematika SD
+      </div>
+      <h1 class="cover-title">Bangun Datar</h1>
+      <p class="cover-subtitle">Petualangan geometri seru memahami ciri-ciri, rumus luas, keliling, dan bangun gabungan lewat 20 soal penuh tantangan!</p>
+      
+      <div class="cover-card">
+        <div class="input-group">
+          <label class="input-label" for="student-name">
+            <i class="fas fa-user-graduate"></i> Nama Peserta
+          </label>
+          <input type="text" id="student-name" class="input-field" placeholder="Tuliskan namamu di sini..." autocomplete="off" maxlength="40">
+        </div>
+        <div class="cover-buttons">
+          <button class="btn btn-secondary" onclick="showScreen('materi-screen')">
+            <i class="fas fa-book-open"></i> Lihat Materi
+          </button>
+          <button class="btn btn-primary" id="start-btn" disabled onclick="startQuiz()">
+            <i class="fas fa-rocket"></i> Mulai Latihan
+          </button>
+        </div>
+        <div class="cover-info">
+          <div class="cover-info-item"><i class="fas fa-list-check"></i> 20 Soal Variatif</div>
+          <div class="cover-info-item"><i class="fas fa-lightbulb"></i> Pembahasan Lengkap</div>
+          <div class="cover-info-item"><i class="fas fa-trophy"></i> Skor Otomatis</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== MATERI SCREEN ========== -->
+<section id="materi-screen" class="screen">
+  <div class="materi-container">
+    <div class="materi-header">
+      <button class="back-btn" onclick="showScreen('cover-screen')">
+        <i class="fas fa-arrow-left"></i> Kembali
+      </button>
+      <h1 class="materi-title">Materi Bangun Datar</h1>
+    </div>
+    
+    <div class="materi-hero">
+      <div class="materi-hero-content">
+        <h2>Memahami Bangun Datar</h2>
+        <p>Bangun datar adalah bentuk geometri dua dimensi yang memiliki luas dan keliling. Pelajari rumus dan ciri-cirinya untuk mengerjakan soal cerita dengan tepat!</p>
+      </div>
+    </div>
+    
+    <!-- Rumus Bangun Datar -->
+    <div class="materi-section">
+      <span class="section-label"><i class="fas fa-calculator"></i> Rumus Luas & Keliling</span>
+      <h3>Rumus Bangun Datar</h3>
+      <p>Berikut adalah rumus luas dan keliling dari 8 bangun datar utama yang sering muncul dalam soal:</p>
+      
+      <div class="shapes-grid">
+        <!-- Persegi -->
+        <div class="shape-card">
+          <div class="shape-card-header">
+            <div class="shape-icon"><i class="fas fa-square"></i></div>
+            <div class="shape-name">Persegi</div>
+          </div>
+          <div class="shape-formula">
+            <div class="shape-formula-row">
+              <span class="formula-label">Luas</span>
+              <span class="formula-value">L = s × s = s²</span>
+            </div>
+            <div class="shape-formula-row">
+              <span class="formula-label">Keliling</span>
+              <span class="formula-value">K = 4 × s</span>
+            </div>
+          </div>
+          <div class="shape-features"><strong>Ciri:</strong> 4 sisi sama panjang, 4 sudut 90°</div>
+        </div>
+        
+        <!-- Persegi Panjang -->
+        <div class="shape-card">
+          <div class="shape-card-header">
+            <div class="shape-icon"><i class="fas fa-rectangle-list"></i></div>
+            <div class="shape-name">Persegi Panjang</div>
+          </div>
+          <div class="shape-formula">
+            <div class="shape-formula-row">
+              <span class="formula-label">Luas</span>
+              <span class="formula-value">L = p × l</span>
+            </div>
+            <div class="shape-formula-row">
+              <span class="formula-label">Keliling</span>
+              <span class="formula-value">K = 2 × (p + l)</span>
+            </div>
+          </div>
+          <div class="shape-features"><strong>Ciri:</strong> 2 pasang sisi sejajar, 4 sudut 90°</div>
+        </div>
+        
+        <!-- Segitiga -->
+        <div class="shape-card">
+          <div class="shape-card-header">
+            <div class="shape-icon"><i class="fas fa-play"></i></div>
+            <div class="shape-name">Segitiga</div>
+          </div>
+          <div class="shape-formula">
+            <div class="shape-formula-row">
+              <span class="formula-label">Luas</span>
+              <span class="formula-value">L = ½ × a × t</span>
+            </div>
+            <div class="shape-formula-row">
+              <span class="formula-label">Keliling</span>
+              <span class="formula-value">K = s₁ + s₂ + s₃</span>
+            </div>
+          </div>
+          <div class="shape-features"><strong>Ciri:</strong> 3 sisi, 3 sudut (total 180°)</div>
+        </div>
+        
+        <!-- Jajar Genjang -->
+        <div class="shape-card">
+          <div class="shape-card-header">
+            <div class="shape-icon"><i class="fas fa-vector-square"></i></div>
+            <div class="shape-name">Jajar Genjang</div>
+          </div>
+          <div class="shape-formula">
+            <div class="shape-formula-row">
+              <span class="formula-label">Luas</span>
+              <span class="formula-value">L = a × t</span>
+            </div>
+            <div class="shape-formula-row">
+              <span class="formula-label">Keliling</span>
+              <span class="formula-value">K = 2 × (a + s)</span>
+            </div>
+          </div>
+          <div class="shape-features"><strong>Ciri:</strong> 2 pasang sisi sejajar sama panjang</div>
+        </div>
+        
+        <!-- Trapesium -->
+        <div class="shape-card">
+          <div class="shape-card-header">
+            <div class="shape-icon"><i class="fas fa-table-cells-large"></i></div>
+            <div class="shape-name">Trapesium</div>
+          </div>
+          <div class="shape-formula">
+            <div class="shape-formula-row">
+              <span class="formula-label">Luas</span>
+              <span class="formula-value">L = ½ × (a + b) × t</span>
+            </div>
+            <div class="shape-formula-row">
+              <span class="formula-label">Keliling</span>
+              <span class="formula-value">K = a + b + s₁ + s₂</span>
+            </div>
+          </div>
+          <div class="shape-features"><strong>Ciri:</strong> tepat 1 pasang sisi sejajar</div>
+        </div>
+        
+        <!-- Belah Ketupat -->
+        <div class="shape-card">
+          <div class="shape-card-header">
+            <div class="shape-icon"><i class="fas fa-diamond"></i></div>
+            <div class="shape-name">Belah Ketupat</div>
+          </div>
+          <div class="shape-formula">
+            <div class="shape-formula-row">
+              <span class="formula-label">Luas</span>
+              <span class="formula-value">L = ½ × d₁ × d₂</span>
+            </div>
+            <div class="shape-formula-row">
+              <span class="formula-label">Keliling</span>
+              <span class="formula-value">K = 4 × s</span>
+            </div>
+          </div>
+          <div class="shape-features"><strong>Ciri:</strong> 4 sisi sama, diagonal tegak lurus</div>
+        </div>
+        
+        <!-- Layang-Layang -->
+        <div class="shape-card">
+          <div class="shape-card-header">
+            <div class="shape-icon"><i class="fas fa-kite"></i></div>
+            <div class="shape-name">Layang-Layang</div>
+          </div>
+          <div class="shape-formula">
+            <div class="shape-formula-row">
+              <span class="formula-label">Luas</span>
+              <span class="formula-value">L = ½ × d₁ × d₂</span>
+            </div>
+            <div class="shape-formula-row">
+              <span class="formula-label">Keliling</span>
+              <span class="formula-value">K = 2 × (s₁ + s₂)</span>
+            </div>
+          </div>
+          <div class="shape-features"><strong>Ciri:</strong> 2 pasang sisi sama, 1 simetri lipat</div>
+        </div>
+        
+        <!-- Lingkaran -->
+        <div class="shape-card">
+          <div class="shape-card-header">
+            <div class="shape-icon"><i class="fas fa-circle"></i></div>
+            <div class="shape-name">Lingkaran</div>
+          </div>
+          <div class="shape-formula">
+            <div class="shape-formula-row">
+              <span class="formula-label">Luas</span>
+              <span class="formula-value">L = π × r²</span>
+            </div>
+            <div class="shape-formula-row">
+              <span class="formula-label">Keliling</span>
+              <span class="formula-value">K = 2 × π × r = π × d</span>
+            </div>
+          </div>
+          <div class="shape-features"><strong>Ciri:</strong> semua titik sama jauh dari pusat</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Ciri-ciri Bangun Datar -->
+    <div class="materi-section">
+      <span class="section-label teal"><i class="fas fa-search"></i> Ciri-Ciri</span>
+      <h3>Ciri-Ciri Bangun Datar</h3>
+      <p>Kenali ciri-ciri khas setiap bangun datar untuk membedakannya:</p>
+      
+      <div class="features-table">
+        <div class="feature-card">
+          <h5><i class="fas fa-square"></i> Persegi & Persegi Panjang</h5>
+          <ul>
+            <li>Persegi: semua sisi sama, 4 simetri lipat</li>
+            <li>Persegi panjang: 2 pasang sisi sama, 2 simetri lipat</li>
+            <li>Keduanya memiliki 4 sudut siku-siku (90°)</li>
+            <li>Diagonal persegi saling tegak lurus</li>
+          </ul>
+        </div>
+        
+        <div class="feature-card">
+          <h5><i class="fas fa-play"></i> Segitiga</h5>
+          <ul>
+            <li>Sama sisi: 3 sisi sama, 3 simetri lipat</li>
+            <li>Sama kaki: 2 sisi sama, 1 simetri lipat</li>
+            <li>Siku-siku: 1 sudut 90°</li>
+            <li>Sembarang: tidak ada sisi yang sama</li>
+          </ul>
+        </div>
+        
+        <div class="feature-card">
+          <h5><i class="fas fa-vector-square"></i> Jajar Genjang & Trapesium</h5>
+          <ul>
+            <li>Jajar genjang: 2 pasang sisi sejajar sama panjang</li>
+            <li>Trapesium: tepat 1 pasang sisi sejajar</li>
+            <li>Trapesium sama kaki: kaki sama, 1 simetri lipat</li>
+            <li>Trapesium siku-siku: 2 sudut siku-siku</li>
+          </ul>
+        </div>
+        
+        <div class="feature-card">
+          <h5><i class="fas fa-diamond"></i> Belah Ketupat & Layang-Layang</h5>
+          <ul>
+            <li>Belah ketupat: 4 sisi sama, 2 simetri lipat</li>
+            <li>Diagonal belah ketupat saling tegak lurus</li>
+            <li>Layang-layang: 2 pasang sisi berdekatan sama</li>
+            <li>Layang-layang memiliki 1 simetri lipat</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Soal Cerita Tips -->
+    <div class="materi-section">
+      <span class="section-label orange"><i class="fas fa-lightbulb"></i> Tips Soal Cerita</span>
+      <h3>Penggunaan dalam Soal Cerita</h3>
+      <p>Soal cerita bangun datar sering menyembunyikan rumus yang dibutuhkan. Pelajari kata kuncinya:</p>
+      
+      <div class="story-grid">
+        <div class="story-card">
+          <h5><i class="fas fa-ruler"></i> Soal Keliling</h5>
+          <p>Kata kunci: <strong>memagari, berlari mengelilingi, kawat, renda, keliling, biaya per meter</strong>. Contoh: biaya pagar = keliling × harga per meter.</p>
+        </div>
+        <div class="story-card">
+          <h5><i class="fas fa-paint-roller"></i> Soal Luas</h5>
+          <p>Kata kunci: <strong>mengecat, menanam rumput, ubin, biaya per m², luas, sisa area</strong>. Contoh: biaya cat = luas × harga per m².</p>
+        </div>
+        <div class="story-card">
+          <h5><i class="fas fa-puzzle-piece"></i> Bangun Gabungan</h5>
+          <p>Pecah bangun menjadi bagian-bagian sederhana. Hitung luas/keliling masing-masing, lalu jumlahkan. Untuk keliling, hitung hanya sisi luar!</p>
+        </div>
+        <div class="story-card">
+          <h5><i class="fas fa-circle-notch"></i> Soal Putaran Roda</h5>
+          <p>Jarak tempuh = jumlah putaran × keliling roda. Ingat: keliling roda = 2 × π × r. Konversi satuan dengan teliti (cm → m → km).</p>
+        </div>
+      </div>
+      
+      <div class="tip-box">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+          <strong>Ingat!</strong> Untuk soal <em>bangun gabungan</em>, luas total = jumlah luas masing-masing bagian. Tapi untuk keliling, hitung hanya <strong>sisi luar</strong> bangun gabungan (sisi yang berimpit tidak dihitung).
+        </div>
+      </div>
+      
+      <div class="tip-box" style="background:linear-gradient(135deg,#DBEAFE 0%,#BFDBFE 100%);border-left-color:var(--primary)">
+        <i class="fas fa-info-circle" style="color:var(--primary)"></i>
+        <div>
+          <strong style="color:#1E3A8A">Nilai π yang sering dipakai:</strong> <code style="background:white;padding:2px 8px;border-radius:6px;font-family:monospace">π = 3,14</code> atau <code style="background:white;padding:2px 8px;border-radius:6px;font-family:monospace">π = 22/7</code>. Gunakan 22/7 jika jari-jari kelipatan 7 (misal 7, 14, 21, 28, 35) agar perhitungan lebih mudah.
+        </div>
+      </div>
+    </div>
+    
+    <div class="materi-footer">
+      <button class="btn btn-primary" onclick="showScreen('cover-screen')" style="padding:16px 36px">
+        <i class="fas fa-arrow-right"></i> Saya Sudah Paham, Lanjut!
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ========== QUIZ SCREEN ========== -->
+<section id="quiz-screen" class="screen">
+  <div class="quiz-container">
+    <div class="quiz-header">
+      <div class="quiz-info">
+        <div class="student-info">
+          <div class="student-avatar" id="student-avatar">A</div>
+          <span id="student-display">Nama Siswa</span>
+        </div>
+        <div class="progress-info">
+          Dijawab: <strong id="answered-count">0</strong> / 20
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+    
+    <div id="questions-list"></div>
+    
+    <div class="quiz-footer">
+      <div class="finish-summary" id="finish-summary"></div>
+      <button class="btn btn-orange btn-full" style="padding:18px" onclick="finishQuiz()">
+        <i class="fas fa-flag-checkered"></i> Selesai & Lihat Hasil
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ========== RESULT SCREEN ========== -->
+<section id="result-screen" class="screen">
+  <div class="result-bg">
+    <div class="result-content">
+      <div class="result-card">
+        <div class="result-badge">
+          <i class="fas fa-trophy"></i> Hasil Latihan
+        </div>
+        <h2 class="result-title" id="result-title">Kerja Bagus!</h2>
+        <p class="result-subtitle" id="result-subtitle">Berikut hasil latihanmu</p>
+        
+        <div class="score-circle-wrap">
+          <svg class="score-circle" viewBox="0 0 200 200">
+            <defs>
+              <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#16A34A"/>
+                <stop offset="50%" stop-color="#EA580C"/>
+                <stop offset="100%" stop-color="#DB2777"/>
+              </linearGradient>
+            </defs>
+            <circle class="score-circle-bg" cx="100" cy="100" r="90"/>
+            <circle class="score-circle-fill" id="score-circle-fill" cx="100" cy="100" r="90"/>
+          </svg>
+          <div class="score-text">
+            <div class="score-number" id="score-number">0</div>
+            <div class="score-label">dari 100</div>
+          </div>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card total">
+            <div class="stat-icon"><i class="fas fa-list"></i></div>
+            <div class="stat-value" id="stat-total">20</div>
+            <div class="stat-label">Total Soal</div>
+          </div>
+          <div class="stat-card done">
+            <div class="stat-icon"><i class="fas fa-pen"></i></div>
+            <div class="stat-value" id="stat-done">0</div>
+            <div class="stat-label">Dikerjakan</div>
+          </div>
+          <div class="stat-card correct">
+            <div class="stat-icon"><i class="fas fa-check"></i></div>
+            <div class="stat-value" id="stat-correct">0</div>
+            <div class="stat-label">Benar</div>
+          </div>
+          <div class="stat-card wrong">
+            <div class="stat-icon"><i class="fas fa-times"></i></div>
+            <div class="stat-value" id="stat-wrong">0</div>
+            <div class="stat-label">Salah</div>
+          </div>
+        </div>
+        
+        <div class="result-message" id="result-message"></div>
+        
+        <div class="result-buttons">
+          <button class="btn btn-outline" onclick="showScreen('materi-screen')">
+            <i class="fas fa-book-open"></i> Pelajari Materi
+          </button>
+          <button class="btn btn-primary" onclick="restartQuiz()">
+            <i class="fas fa-redo"></i> Coba Lagi
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// ===== Data Soal =====
+const questions = [
+  // ===== BAGIAN I: BENAR / SALAH (1-5) =====
+  {
+    id: 1,
+    type: "tf",
+    question: 'Persegi panjang memiliki dua pasang sisi sejajar dan semua sudutnya 90°, sedangkan jajar genjang memiliki dua pasang sisi sejajar tetapi sudut-sudutnya tidak harus 90°.',
+    options: ["Benar", "Salah"],
+    correct: 0,
+    explanation: '<strong>Jawaban: Benar</strong><br><br>Persegi panjang memiliki 2 pasang sisi sejajar dan keempat sudutnya siku-siku (90°). Jajar genjang juga memiliki 2 pasang sisi sejajar, namun sudut-sudutnya hanya berhadapan sama besar (tidak harus 90°).<br><br><span class="answer-tag">Jawaban: A. Benar</span>'
+  },
+  {
+    id: 2,
+    type: "tf",
+    question: 'Pak Ali memiliki tanah berbentuk segitiga siku-siku. Jika panjang sisi penyikunya adalah 6 meter dan 8 meter, maka luas tanah Pak Ali adalah 48 m².',
+    options: ["Benar", "Salah"],
+    correct: 1,
+    explanation: '<strong>Jawaban: Salah</strong><br><br>Pada segitiga siku-siku, dua sisi penyiku bisa berfungsi sebagai alas dan tinggi.<div class="calc-block">Luas = ½ × alas × tinggi<br>Luas = ½ × 6 × 8<br>Luas = <span class="hl-orange">24 m²</span></div>Jadi luas tanah Pak Ali adalah 24 m², bukan 48 m².<br><br><span class="answer-tag">Jawaban: B. Salah</span>'
+  },
+  {
+    id: 3,
+    type: "tf",
+    question: 'Paman membuat hiasan taman berbentuk lingkaran dari kawat. Jika jari-jari lingkaran tersebut 14 cm, panjang kawat minimal yang dibutuhkan untuk satu putaran penuh adalah 88 cm.',
+    options: ["Benar", "Salah"],
+    correct: 0,
+    explanation: '<strong>Jawaban: Benar</strong><br><br>Panjang kawat minimal untuk satu putaran penuh = keliling lingkaran.<div class="calc-block">K = 2 × π × r<br>K = 2 × (22/7) × 14<br>K = 2 × 22 × 2<br>K = <span class="hl-green">88 cm</span></div>Jadi pernyataan tersebut benar.<br><br><span class="answer-tag">Jawaban: A. Benar</span>'
+  },
+  {
+    id: 4,
+    type: "tf",
+    question: 'Sebuah area bermain berbentuk gabungan dua persegi panjang yang membentuk huruf L. Persegi panjang pertama berukuran 10 m × 4 m dan persegi panjang kedua 8 m × 5 m. Luas total area bermain tersebut adalah 80 m².',
+    options: ["Benar", "Salah"],
+    correct: 0,
+    explanation: '<strong>Jawaban: Benar</strong><br><br>Luas bangun gabungan = jumlah luas masing-masing bangun penyusun.<div class="calc-block">Luas PP 1 = 10 × 4 = <span class="hl-orange">40 m²</span><br>Luas PP 2 = 8 × 5 = <span class="hl-orange">40 m²</span><br><br>Total Luas = 40 + 40 = <span class="hl-green">80 m²</span></div>Jadi pernyataan tersebut benar.<br><br><span class="answer-tag">Jawaban: A. Benar</span>'
+  },
+  {
+    id: 5,
+    type: "tf",
+    question: 'Dua buah petak sawah berbentuk persegi masing-masing memiliki keliling 24 meter dan 36 meter. Perbandingan luas kedua petak sawah tersebut adalah 4 : 9.',
+    options: ["Benar", "Salah"],
+    correct: 0,
+    explanation: '<strong>Jawaban: Benar</strong><br><br>Cari sisi masing-masing persegi terlebih dahulu:<div class="calc-block">Sisi persegi 1 = 24 ÷ 4 = 6 m<br>Luas persegi 1 = 6² = <span class="hl-orange">36 m²</span><br><br>Sisi persegi 2 = 36 ÷ 4 = 9 m<br>Luas persegi 2 = 9² = <span class="hl-orange">81 m²</span><br><br>Perbandingan = 36 : 81<br>Disederhanakan (dibagi 9) = <span class="hl-green">4 : 9</span></div>Jadi pernyataan tersebut benar.<br><br><span class="answer-tag">Jawaban: A. Benar</span>'
+  },
+  
+  // ===== BAGIAN II: PILIHAN GANDA KOMPLEKS (6-10) =====
+  {
+    id: 6,
+    type: "complex",
+    question: 'Dalam pelajaran desain, Budi diminta menggambar trapesium sama kaki. Manakah dari pernyataan berikut yang merupakan ciri-ciri trapesium sama kaki yang benar? <strong>(Pilih semua yang benar)</strong>',
+    options: [
+      "Memiliki tepat sepasang sisi yang sejajar.",
+      "Kedua diagonalnya berpotongan tegak lurus.",
+      "Memiliki simetri lipat sebanyak 1 buah.",
+      "Kedua sisi yang tidak sejajar (kaki trapesium) memiliki panjang yang sama."
+    ],
+    correct: [0, 2, 3],
+    explanation: '<strong>Ciri-ciri Trapesium Sama Kaki:</strong><br><br>• <strong>A Benar:</strong> Semua trapesium memiliki tepat 1 pasang sisi sejajar.<br>• <strong>B Salah:</strong> Diagonal trapesium sama kaki sama panjang, tetapi TIDAK berpotongan tegak lurus.<br>• <strong>C Benar:</strong> Trapesium sama kaki memiliki 1 sumbu simetri lipat.<br>• <strong>D Benar:</strong> Sisi tidak sejajar (kaki) pada trapesium sama kaki memiliki panjang yang sama.<br><br><span class="answer-tag">Jawaban: A, C, D</span>'
+  },
+  {
+    id: 7,
+    type: "complex",
+    question: 'Pak Budi memiliki sebidang tanah berbentuk persegi panjang. Ia ingin memperluas tanahnya agar luasnya menjadi tepat 4 kali lipat dari luas semula. Kondisi manakah yang dapat memenuhi keinginan Pak Budi? <strong>(Pilih semua yang benar)</strong>',
+    options: [
+      "Panjangnya dilipatgandakan dua kali, lebarnya tetap.",
+      "Panjang dan lebarnya masing-masing dilipatgandakan dua kali.",
+      "Lebarnya dikalikan empat, panjangnya tetap.",
+      "Panjangnya ditambah 4 meter, lebarnya ditambah 4 meter."
+    ],
+    correct: [1, 2],
+    explanation: '<strong>Analisis setiap opsi:</strong><br><br>Rumus awal: Luas = p × l. Kita ingin luas baru = 4 × p × l.<br><br>• <strong>A Salah:</strong> Panjang × 2, lebar tetap → Luas baru = 2p × l = <strong>2 kali</strong> (bukan 4).<br>• <strong>B Benar:</strong> Panjang × 2, lebar × 2 → Luas baru = 2p × 2l = 4 × p × l = <strong>4 kali</strong> ✓<br>• <strong>C Benar:</strong> Lebar × 4, panjang tetap → Luas baru = p × 4l = 4 × p × l = <strong>4 kali</strong> ✓<br>• <strong>D Salah:</strong> (p+4) × (l+4) ≠ 4 × p × l (tergantung nilai p dan l).<br><br><span class="answer-tag">Jawaban: B, C</span>'
+  },
+  {
+    id: 8,
+    type: "complex",
+    question: 'Siska memotong kertas karton membentuk bangun belah ketupat untuk layang-layangnya. Kertas tersebut memiliki panjang diagonal 16 cm dan 12 cm. Pernyataan yang benar mengenai kertas karton Siska adalah: <strong>(Pilih semua yang benar)</strong>',
+    options: [
+      "Luas permukaan karton tersebut adalah 96 cm².",
+      "Panjang sisi belah ketupat adalah 10 cm.",
+      "Keliling karton tersebut adalah 40 cm.",
+      "Luas permukaan karton tersebut adalah 192 cm²."
+    ],
+    correct: [0, 1, 2],
+    explanation: '<strong>Analisis pernyataan:</strong><br><br>• <strong>A Benar:</strong> Luas belah ketupat = ½ × d₁ × d₂ = ½ × 16 × 12 = <strong>96 cm²</strong> ✓<br>• <strong>D Salah:</strong> Bukan 192 cm² (itu jika tidak dibagi 2).<br>• <strong>B Benar:</strong> Diagonal berpotongan tegak lurus dan saling membagi dua. Setengah diagonal: 8 cm dan 6 cm. Sisi = √(8² + 6²) = √(64+36) = √100 = <strong>10 cm</strong> ✓<br>• <strong>C Benar:</strong> Keliling = 4 × sisi = 4 × 10 = <strong>40 cm</strong> ✓<br><br><span class="answer-tag">Jawaban: A, B, C</span>'
+  },
+  {
+    id: 9,
+    type: "complex",
+    question: 'Sebidang lahan pertanian berbentuk layang-layang dengan panjang diagonal berturut-turut 40 meter dan 50 meter. Lahan tersebut akan dijual dengan harga Rp500.000,00 per m². Pernyataan yang benar adalah: <strong>(Pilih semua yang benar)</strong>',
+    options: [
+      "Luas lahan pertanian tersebut adalah 1.000 m².",
+      "Total harga jual lahan tersebut adalah Rp500.000.000,00.",
+      "Luas lahan pertanian tersebut adalah 2.000 m².",
+      "Total harga jual lahan tersebut adalah Rp1.000.000.000,00."
+    ],
+    correct: [0, 1],
+    explanation: '<strong>Analisis pernyataan:</strong><br><br>• <strong>A Benar:</strong> Luas layang-layang = ½ × d₁ × d₂ = ½ × 40 × 50 = <strong>1.000 m²</strong> ✓<br>• <strong>C Salah:</strong> Bukan 2.000 m² (itu jika tidak dibagi 2).<br>• <strong>B Benar:</strong> Total harga = Luas × harga per m² = 1.000 × Rp500.000 = <strong>Rp500.000.000,00</strong> ✓<br>• <strong>D Salah:</strong> Bukan Rp1.000.000.000 (itu jika luas 2.000 m²).<br><br><span class="answer-tag">Jawaban: A, B</span>'
+  },
+  {
+    id: 10,
+    type: "complex",
+    question: 'Sebuah logo perusahaan berbentuk gabungan bangun datar yang terdiri dari persegi panjang (panjang 12 cm, lebar 5 cm) dan sebuah segitiga sama kaki. Alas segitiga berimpit dengan salah satu sisi panjang dari persegi panjang tersebut, dan tinggi segitiga tersebut adalah 8 cm. Pernyataan yang benar mengenai logo tersebut adalah: <strong>(Pilih semua yang benar)</strong>',
+    options: [
+      "Luas area persegi panjang pada logo adalah 60 cm².",
+      "Luas area segitiga pada logo adalah 48 cm².",
+      "Luas total logo tersebut adalah 108 cm².",
+      "Keliling luar logo tersebut adalah 42 cm."
+    ],
+    correct: [0, 1, 2, 3],
+    explanation: '<strong>Semua pernyataan BENAR!</strong><br><br>• <strong>A Benar:</strong> Luas PP = p × l = 12 × 5 = <strong>60 cm²</strong> ✓<br>• <strong>B Benar:</strong> Luas segitiga = ½ × alas × tinggi = ½ × 12 × 8 = <strong>48 cm²</strong> ✓<br>• <strong>C Benar:</strong> Luas total = 60 + 48 = <strong>108 cm²</strong> ✓<br>• <strong>D Benar:</strong> Segitiga sama kaki: setengah alas = 6 cm, tinggi = 8 cm. Sisi miring = √(6² + 8²) = √100 = 10 cm. Keliling luar = (2 × lebar PP) + (1 × panjang PP) + (2 × sisi miring segitiga) = 10 + 12 + 20 = <strong>42 cm</strong> ✓<br><br><span class="answer-tag">Jawaban: A, B, C, D (Semua Benar)</span>'
+  },
+  
+  // ===== BAGIAN III: PILIHAN GANDA (11-20) =====
+  {
+    id: 11,
+    type: "mc",
+    question: 'Ibu membuat taplak meja berbentuk lingkaran dengan diameter 1,4 meter. Di sekeliling pinggir taplak tersebut akan dipasang renda hias. Jika harga renda adalah Rp15.000,00 per meter, berapakah biaya minimal yang harus dikeluarkan ibu untuk membeli renda?',
+    options: [
+      "Rp22.000,00",
+      "Rp44.000,00",
+      "Rp66.000,00",
+      "Rp88.000,00"
+    ],
+    correct: 2,
+    explanation: '<strong>Kata kunci:</strong> "pinggir taplak" dan "renda" → soal <strong>Keliling</strong>.<br><br>Panjang renda = keliling lingkaran taplak meja.<div class="calc-block">K = π × d<br>K = (22/7) × 1,4<br>K = 22 × 0,2<br>K = <span class="hl-orange">4,4 meter</span><br><br>Biaya = 4,4 × Rp15.000<br>Biaya = <span class="hl-green">Rp66.000,00</span></div><br><span class="answer-tag">Jawaban: C. Rp66.000,00</span>'
+  },
+  {
+    id: 12,
+    type: "mc",
+    question: 'Pemerintah kota membangun taman berbentuk persegi panjang dengan ukuran panjang 25 meter dan lebar 20 meter. Tepat di tengah taman, dibangun sebuah kolam air mancur berbentuk lingkaran dengan diameter 14 meter. Sisa area taman akan ditanami rumput hias. Berapakah luas area yang ditanami rumput?',
+    options: [
+      "154 m²",
+      "346 m²",
+      "423 m²",
+      "500 m²"
+    ],
+    correct: 1,
+    explanation: '<strong>Kata kunci:</strong> "sisa area" → luas total - luas kolam.<div class="calc-block">Luas taman (PP) = p × l = 25 × 20 = <span class="hl-orange">500 m²</span><br><br>r kolam = 14 ÷ 2 = 7 m<br>Luas kolam (Lingkaran) = π × r²<br>= (22/7) × 7²<br>= (22/7) × 49 = <span class="hl-orange">154 m²</span><br><br>Sisa area rumput = 500 - 154 = <span class="hl-green">346 m²</span></div><br><span class="answer-tag">Jawaban: B. 346 m²</span>'
+  },
+  {
+    id: 13,
+    type: "mc",
+    question: 'Paman sedang mengecat salah satu sisi dinding rumahnya yang berbentuk trapesium siku-siku. Sisi-sisi sejajar dinding tersebut panjangnya 6 meter dan 4 meter, sedangkan tingginya 3 meter. Jika 1 kaleng cat hanya cukup untuk mengecat area seluas 5 m², berapa kaleng cat yang dibutuhkan paman?',
+    options: [
+      "2 kaleng",
+      "3 kaleng",
+      "4 kaleng",
+      "5 kaleng"
+    ],
+    correct: 1,
+    explanation: '<strong>Kata kunci:</strong> "mengecat dinding" → soal <strong>Luas</strong> trapesium.<div class="calc-block">Luas trapesium = ½ × (jumlah sisi sejajar) × tinggi<br>Luas = ½ × (6 + 4) × 3<br>Luas = ½ × 10 × 3<br>Luas = <span class="hl-orange">15 m²</span><br><br>Kebutuhan cat = 15 ÷ 5 = <span class="hl-green">3 kaleng</span></div><br><span class="answer-tag">Jawaban: B. 3 kaleng</span>'
+  },
+  {
+    id: 14,
+    type: "mc",
+    question: 'Sebuah roda sepeda balap memiliki jari-jari sepanjang 35 cm. Jika roda tersebut berputar tanpa selip sebanyak 2.000 kali untuk menempuh suatu rute, berapakah jarak tempuh rute tersebut dalam kilometer?',
+    options: [
+      "2,2 km",
+      "4,4 km",
+      "6,6 km",
+      "8,8 km"
+    ],
+    correct: 1,
+    explanation: '<strong>Konsep:</strong> Jarak tempuh = jumlah putaran × keliling roda.<div class="calc-block">Keliling roda = 2 × π × r<br>= 2 × (22/7) × 35<br>= 2 × 22 × 5<br>= <span class="hl-orange">220 cm</span> = 2,2 meter<br><br>Jarak total = 2.000 × 2,2 m<br>= <span class="hl-orange">4.400 meter</span><br>= <span class="hl-green">4,4 km</span></div><br><span class="answer-tag">Jawaban: B. 4,4 km</span>'
+  },
+  {
+    id: 15,
+    type: "mc",
+    question: 'Setiap pagi Andi berolahraga lari mengelilingi lapangan yang berbentuk persegi dengan panjang sisi 50 meter. Jika pada hari ini Andi berhasil berlari sebanyak 5 putaran penuh, maka jarak total yang ditempuh Andi adalah...',
+    options: [
+      "250 meter",
+      "500 meter",
+      "1.000 meter",
+      "1.250 meter"
+    ],
+    correct: 2,
+    explanation: '<strong>Kata kunci:</strong> "mengelilingi lapangan" → soal <strong>Keliling</strong>.<div class="calc-block">Keliling lapangan (persegi) = 4 × s<br>K = 4 × 50<br>K = <span class="hl-orange">200 meter</span><br><br>Jarak total = 5 putaran × 200 meter<br>= <span class="hl-green">1.000 meter</span></div><br><span class="answer-tag">Jawaban: C. 1.000 meter</span>'
+  },
+  {
+    id: 16,
+    type: "mc",
+    question: 'Sebuah arsitektur jendela masjid didesain dengan bentuk gabungan antara persegi panjang di bagian bawah dan setengah lingkaran di bagian atasnya. Jika lebar persegi panjang (yang juga menjadi diameter setengah lingkaran) adalah 70 cm dan tinggi persegi panjang tersebut 100 cm, berapakah keliling luar dari jendela tersebut?',
+    options: [
+      "310 cm",
+      "340 cm",
+      "380 cm",
+      "450 cm"
+    ],
+    correct: 2,
+    explanation: '<strong>Konsep:</strong> Keliling luar gabungan = sisi luar persegi panjang + setengah keliling lingkaran.<div class="calc-block">Bagian lengkung (½ lingkaran):<br>= ½ × π × d<br>= ½ × (22/7) × 70<br>= <span class="hl-orange">110 cm</span><br><br>Sisi luar persegi panjang:<br>= sisi bawah + 2 sisi tegak<br>= 70 + 100 + 100<br>= <span class="hl-orange">270 cm</span><br><br>Total keliling = 110 + 270 = <span class="hl-green">380 cm</span></div>Catatan: sisi atas persegi panjang tidak dihitung karena berimpit dengan setengah lingkaran.<br><br><span class="answer-tag">Jawaban: C. 380 cm</span>'
+  },
+  {
+    id: 17,
+    type: "mc",
+    question: 'Pak RT memimpin warga untuk memagari sebuah lapangan serbaguna yang berbentuk jajar genjang. Lapangan tersebut memiliki panjang alas 30 meter dan panjang sisi miring 20 meter. Jika biaya material dan jasa pembuatan pagar adalah Rp50.000,00 per meter, berapakah total biaya yang dibutuhkan?',
+    options: [
+      "Rp2.500.000,00",
+      "Rp5.000.000,00",
+      "Rp7.500.000,00",
+      "Rp10.000.000,00"
+    ],
+    correct: 1,
+    explanation: '<strong>Kata kunci:</strong> "memagari lapangan" → soal <strong>Keliling</strong>.<div class="calc-block">Keliling jajar genjang = 2 × (alas + sisi miring)<br>K = 2 × (30 + 20)<br>K = 2 × 50<br>K = <span class="hl-orange">100 meter</span><br><br>Total biaya = 100 × Rp50.000<br>= <span class="hl-green">Rp5.000.000,00</span></div><br><span class="answer-tag">Jawaban: B. Rp5.000.000,00</span>'
+  },
+  {
+    id: 18,
+    type: "mc",
+    question: 'Kakak sedang berkreasi membuat kue kering berbentuk gabungan. Di tengahnya berbentuk belah ketupat dan pada dua sisi yang berseberangan menempel dua bangun segitiga siku-siku yang kongruen. Jika diketahui luas area belah ketupat adalah 200 cm² dan luas total permukaan kue adalah 350 cm², berapakah luas dari satu buah segitiga siku-siku tersebut?',
+    options: [
+      "50 cm²",
+      "75 cm²",
+      "100 cm²",
+      "150 cm²"
+    ],
+    correct: 1,
+    explanation: '<strong>Konsep:</strong> Luas total = luas belah ketupat + luas 2 segitiga.<div class="calc-block">Luas total = 350 cm²<br>Luas belah ketupat = 200 cm²<br><br>Luas 2 segitiga = 350 - 200 = <span class="hl-orange">150 cm²</span><br><br>Karena kedua segitiga kongruen (sama persis):<br>Luas 1 segitiga = 150 ÷ 2 = <span class="hl-green">75 cm²</span></div><br><span class="answer-tag">Jawaban: B. 75 cm²</span>'
+  },
+  {
+    id: 19,
+    type: "mc",
+    question: 'Seorang desainer interior sedang merancang ubin lantai berbentuk segi enam (heksagon) beraturan. Heksagon ini tersusun dari 6 buah segitiga sama sisi yang identik, dengan masing-masing panjang sisinya 10 cm. Jika nilai √3 diasumsikan 1,73, berapakah perkiraan luas satu ubin segi enam tersebut?',
+    options: [
+      "43,25 cm²",
+      "129,75 cm²",
+      "259,5 cm²",
+      "300,0 cm²"
+    ],
+    correct: 2,
+    explanation: '<strong>Konsep:</strong> Heksagon beraturan = 6 segitiga sama sisi identik.<div class="calc-block">Luas 1 segitiga sama sisi:<br>= ¼ × s² × √3<br>= ¼ × 10² × 1,73<br>= ¼ × 100 × 1,73<br>= 25 × 1,73<br>= <span class="hl-orange">43,25 cm²</span><br><br>Luas heksagon = 6 × 43,25<br>= <span class="hl-green">259,5 cm²</span></div><br><span class="answer-tag">Jawaban: C. 259,5 cm²</span>'
+  },
+  {
+    id: 20,
+    type: "mc",
+    question: 'Pak Dani, seorang pengrajin, memiliki sebuah papan kayu utuh berbentuk lingkaran dengan jari-jari 20 cm. Ia memotong papan tersebut untuk membentuk sebuah persegi dengan ukuran terbesar yang mungkin (keempat titik sudut persegi menyentuh tepi lingkaran). Berapakah luas area kayu sisa yang terbuang dari potongan tersebut? (Gunakan π = 3,14)',
+    options: [
+      "400 cm²",
+      "456 cm²",
+      "800 cm²",
+      "1.256 cm²"
+    ],
+    correct: 1,
+    explanation: '<strong>Konsep:</strong> Sisa kayu = luas lingkaran - luas persegi terbesar di dalamnya.<div class="calc-block">Luas lingkaran:<br>= π × r²<br>= 3,14 × 20²<br>= 3,14 × 400<br>= <span class="hl-orange">1.256 cm²</span><br><br>Persegi terbesar di dalam lingkaran:<br>Diagonal persegi = diameter lingkaran = 40 cm<br><br>Luas persegi = ½ × d₁ × d₂<br>= ½ × 40 × 40<br>= <span class="hl-orange">800 cm²</span><br><br>Sisa kayu terbuang = 1.256 - 800<br>= <span class="hl-green">456 cm²</span></div><br><span class="answer-tag">Jawaban: B. 456 cm²</span>'
+  }
+];
+
+// ===== State =====
+let studentName = '';
+const questionState = questions.map(() => ({
+  selected: null,
+  selectedArray: [],
+  checked: false,
+  isCorrect: false,
+  explanationOpen: false
+}));
+
+// ===== Floating Shapes =====
+function createFloatingShapes(){
+  const container = document.getElementById('float-shapes');
+  const shapes = ['▲', '■', '●', '◆', '⬟', '⬢', '◐', '◢'];
+  for(let i = 0; i < 18; i++){
+    const span = document.createElement('span');
+    span.className = 'geo';
+    span.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+    span.style.left = Math.random() * 100 + '%';
+    span.style.fontSize = (Math.random() * 30 + 25) + 'px';
+    span.style.color = ['#FB923C', '#14B8A6', '#EC4899', '#3B82F6', '#EAB308'][Math.floor(Math.random() * 5)];
+    span.style.animationDuration = (Math.random() * 10 + 12) + 's';
+    span.style.animationDelay = (Math.random() * 15) + 's';
+    container.appendChild(span);
+  }
+}
+
+// ===== Screen Switching =====
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ===== Name Input Handling =====
+const nameInput = document.getElementById('student-name');
+const startBtn = document.getElementById('start-btn');
+
+nameInput.addEventListener('input', () => {
+  startBtn.disabled = nameInput.value.trim().length < 2;
+});
+
+nameInput.addEventListener('keypress', (e) => {
+  if(e.key === 'Enter' && !startBtn.disabled){
+    startQuiz();
+  }
+});
+
+// ===== Start Quiz =====
+function startQuiz(){
+  const name = nameInput.value.trim();
+  if(name.length < 2){
+    nameInput.focus();
+    return;
+  }
+  studentName = name;
+  
+  document.getElementById('student-display').textContent = name;
+  document.getElementById('student-avatar').textContent = name.charAt(0).toUpperCase();
+  
+  renderQuestions();
+  updateProgress();
+  showScreen('quiz-screen');
+}
+
+// ===== Render Questions =====
+function renderQuestions(){
+  const container = document.getElementById('questions-list');
+  container.innerHTML = '';
+  
+  let currentSection = -1;
+  
+  questions.forEach((q, qIndex) => {
+    // Section dividers
+    if(qIndex === 0){
+      const div = document.createElement('div');
+      div.className = 'quiz-section-divider';
+      div.innerHTML = `
+        <div class="divider-icon"><i class="fas fa-check-circle"></i></div>
+        <div>
+          <h3>Bagian I: Benar / Salah</h3>
+          <p>Pilih apakah pernyataan berikut benar atau salah (Soal 1-5)</p>
+        </div>
+      `;
+      container.appendChild(div);
+      currentSection = 0;
+    } else if(qIndex === 5){
+      const div = document.createElement('div');
+      div.className = 'quiz-section-divider';
+      div.style.background = 'linear-gradient(135deg,#DB2777,#BE185D)';
+      div.innerHTML = `
+        <div class="divider-icon"><i class="fas fa-list-check"></i></div>
+        <div>
+          <h3>Bagian II: Pilihan Ganda Kompleks</h3>
+          <p>Pilih semua jawaban yang benar (Soal 6-10)</p>
+        </div>
+      `;
+      container.appendChild(div);
+      currentSection = 1;
+    } else if(qIndex === 10){
+      const div = document.createElement('div');
+      div.className = 'quiz-section-divider';
+      div.style.background = 'linear-gradient(135deg,#EA580C,#C2410C)';
+      div.innerHTML = `
+        <div class="divider-icon"><i class="fas fa-list-ul"></i></div>
+        <div>
+          <h3>Bagian III: Pilihan Ganda</h3>
+          <p>Pilih satu jawaban yang paling tepat (Soal 11-20)</p>
+        </div>
+      `;
+      container.appendChild(div);
+      currentSection = 2;
+    }
+    
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `question-${qIndex}`;
+    
+    let typeClass = '', typeText = '', typeIcon = '', hintHTML = '';
+    
+    if(q.type === 'tf'){
+      typeClass = 'tf';
+      typeText = 'Benar / Salah';
+      typeIcon = 'fa-check-circle';
+    } else if(q.type === 'mc'){
+      typeClass = 'mc';
+      typeText = 'Pilihan Ganda';
+      typeIcon = 'fa-list-ul';
+    } else if(q.type === 'complex'){
+      typeClass = 'complex';
+      typeText = 'Pilihan Ganda Kompleks';
+      typeIcon = 'fa-list-check';
+      hintHTML = '<span class="hint-text">Pilih semua yang benar</span>';
+    }
+    
+    let optionsHTML = '';
+    
+    if(q.type === 'tf'){
+      optionsHTML = '<div class="tf-options">';
+      q.options.forEach((opt, optIndex) => {
+        const icon = optIndex === 0 ? 'fa-check' : 'fa-times';
+        optionsHTML += `
+          <div class="tf-option" data-q="${qIndex}" data-opt="${optIndex}" onclick="selectOption(${qIndex}, ${optIndex})">
+            <i class="fas ${icon}"></i> ${opt}
+          </div>
+        `;
+      });
+      optionsHTML += '</div>';
+    } else if(q.type === 'mc'){
+      optionsHTML = '<div class="options-list">';
+      q.options.forEach((opt, optIndex) => {
+        optionsHTML += `
+          <div class="option-item" data-q="${qIndex}" data-opt="${optIndex}" onclick="selectOption(${qIndex}, ${optIndex})">
+            <div class="option-badge">${String.fromCharCode(65 + optIndex)}</div>
+            <div class="option-text">${opt}</div>
+            <i class="option-icon fas"></i>
+          </div>
+        `;
+      });
+      optionsHTML += '</div>';
+    } else if(q.type === 'complex'){
+      optionsHTML = '<div class="complex-options">';
+      q.options.forEach((opt, optIndex) => {
+        optionsHTML += `
+          <div class="complex-option" data-q="${qIndex}" data-opt="${optIndex}" onclick="toggleComplexOption(${qIndex}, ${optIndex})">
+            <div class="complex-checkbox"><i class="fas fa-check"></i></div>
+            <div class="complex-content">
+              <span class="complex-badge">${String.fromCharCode(65 + optIndex)}.</span>${opt}
+            </div>
+            <i class="complex-icon fas"></i>
+          </div>
+        `;
+      });
+      optionsHTML += '</div>';
+    }
+    
+    card.innerHTML = `
+      <div class="question-top">
+        <div class="question-number">${qIndex + 1}</div>
+        <div class="question-text">${q.question}</div>
+      </div>
+      <div class="question-meta">
+        <span class="type-hint ${typeClass}"><i class="fas ${typeIcon}"></i> ${typeText}</span>
+        ${hintHTML}
+      </div>
+      ${optionsHTML}
+      <div class="question-actions">
+        <div class="feedback-msg" id="feedback-${qIndex}"></div>
+        <button class="btn btn-primary btn-small" id="check-btn-${qIndex}" onclick="checkAnswer(${qIndex})" disabled>
+          <i class="fas fa-check-circle"></i> Cek Jawaban
+        </button>
+        <button class="btn btn-outline btn-small" id="explanation-btn-${qIndex}" onclick="toggleExplanation(${qIndex})" disabled>
+          <i class="fas fa-lightbulb"></i> Pembahasan
+        </button>
+      </div>
+      <div class="explanation-box" id="explanation-${qIndex}">
+        <div class="explanation-title"><i class="fas fa-graduation-cap"></i> Pembahasan Lengkap</div>
+        <div class="explanation-content">${q.explanation}</div>
+      </div>
+    `;
+    
+    container.appendChild(card);
+  });
+}
+
+// ===== Select Option (TF & MC) =====
+function selectOption(qIndex, optIndex){
+  if(questionState[qIndex].checked) return;
+  
+  questionState[qIndex].selected = optIndex;
+  
+  const card = document.getElementById(`question-${qIndex}`);
+  const options = card.querySelectorAll('.tf-option, .option-item');
+  options.forEach((opt, i) => {
+    opt.classList.toggle('selected', i === optIndex);
+  });
+  
+  document.getElementById(`check-btn-${qIndex}`).disabled = false;
+}
+
+// ===== Toggle Complex Option =====
+function toggleComplexOption(qIndex, optIndex){
+  if(questionState[qIndex].checked) return;
+  
+  const state = questionState[qIndex];
+  const idx = state.selectedArray.indexOf(optIndex);
+  
+  if(idx > -1){
+    state.selectedArray.splice(idx, 1);
+  } else {
+    state.selectedArray.push(optIndex);
+  }
+  
+  const card = document.getElementById(`question-${qIndex}`);
+  const option = card.querySelector(`.complex-option[data-opt="${optIndex}"]`);
+  option.classList.toggle('selected');
+  
+  document.getElementById(`check-btn-${qIndex}`).disabled = state.selectedArray.length === 0;
+}
+
+// ===== Check Answer =====
+function checkAnswer(qIndex){
+  const state = questionState[qIndex];
+  const q = questions[qIndex];
+  
+  if(q.type === 'complex'){
+    if(state.selectedArray.length === 0 || state.checked) return;
+  } else {
+    if(state.selected === null || state.checked) return;
+  }
+  
+  state.checked = true;
+  
+  const card = document.getElementById(`question-${qIndex}`);
+  
+  if(q.type === 'tf'){
+    const options = card.querySelectorAll('.tf-option');
+    options.forEach((opt, i) => {
+      opt.classList.add('disabled');
+      opt.classList.remove('selected');
+      if(i === q.correct){
+        opt.classList.add('correct');
+      } else if(i === state.selected){
+        opt.classList.add('wrong');
+      }
+    });
+    state.isCorrect = (state.selected === q.correct);
+  } else if(q.type === 'mc'){
+    const options = card.querySelectorAll('.option-item');
+    options.forEach((opt, i) => {
+      opt.classList.add('disabled');
+      opt.classList.remove('selected');
+      if(i === q.correct){
+        opt.classList.add('correct');
+        opt.querySelector('.option-icon').className = 'option-icon fas fa-check';
+      } else if(i === state.selected){
+        opt.classList.add('wrong');
+        opt.querySelector('.option-icon').className = 'option-icon fas fa-times';
+      }
+    });
+    state.isCorrect = (state.selected === q.correct);
+  } else if(q.type === 'complex'){
+    const options = card.querySelectorAll('.complex-option');
+    const correctSet = new Set(q.correct);
+    const selectedSet = new Set(state.selectedArray);
+    
+    let allCorrect = true;
+    let hasWrong = false;
+    
+    options.forEach((opt, i) => {
+      opt.classList.add('disabled');
+      opt.classList.remove('selected');
+      
+      const isCorrectAnswer = correctSet.has(i);
+      const isSelected = selectedSet.has(i);
+      
+      if(isCorrectAnswer && isSelected){
+        opt.classList.add('correct');
+        opt.querySelector('.complex-icon').className = 'complex-icon fas fa-check';
+      } else if(isCorrectAnswer && !isSelected){
+        opt.classList.add('wrong');
+        opt.querySelector('.complex-icon').className = 'complex-icon fas fa-times';
+        allCorrect = false;
+      } else if(!isCorrectAnswer && isSelected){
+        opt.classList.add('wrong');
+        opt.querySelector('.complex-icon').className = 'complex-icon fas fa-times';
+        allCorrect = false;
+        hasWrong = true;
+      }
+    });
+    
+    // For complex, partial correct = not fully correct
+    state.isCorrect = allCorrect && !hasWrong;
+  }
+  
+  // Update card style
+  if(state.isCorrect){
+    card.classList.add('correct');
+  } else {
+    card.classList.add('wrong');
+  }
+  
+  // Feedback message
+  const feedback = document.getElementById(`feedback-${qIndex}`);
+  if(state.isCorrect){
+    feedback.className = 'feedback-msg correct show';
+    feedback.innerHTML = '<i class="fas fa-check-circle"></i> Jawabanmu benar! Hebat!';
+  } else {
+    feedback.className = 'feedback-msg wrong show';
+    feedback.innerHTML = '<i class="fas fa-times-circle"></i> Belum tepat. Pelajari pembahasannya ya!';
+  }
+  
+  // Disable check button, enable explanation
+  document.getElementById(`check-btn-${qIndex}`).disabled = true;
+  document.getElementById(`check-btn-${qIndex}`).innerHTML = '<i class="fas fa-lock"></i> Sudah Dicek';
+  document.getElementById(`explanation-btn-${qIndex}`).disabled = false;
+  
+  updateProgress();
+}
+
+// ===== Toggle Explanation =====
+function toggleExplanation(qIndex){
+  if(!questionState[qIndex].checked) return;
+  
+  const state = questionState[qIndex];
+  state.explanationOpen = !state.explanationOpen;
+  
+  const box = document.getElementById(`explanation-${qIndex}`);
+  const btn = document.getElementById(`explanation-btn-${qIndex}`);
+  
+  if(state.explanationOpen){
+    box.classList.add('show');
+    btn.innerHTML = '<i class="fas fa-eye-slash"></i> Sembunyikan';
+  } else {
+    box.classList.remove('show');
+    btn.innerHTML = '<i class="fas fa-lightbulb"></i> Pembahasan';
+  }
+}
+
+// ===== Update Progress =====
+function updateProgress(){
+  const answered = questionState.filter(s => s.checked).length;
+  const percent = (answered / questions.length) * 100;
+  
+  document.getElementById('answered-count').textContent = answered;
+  document.getElementById('progress-fill').style.width = percent + '%';
+  
+  const summary = document.getElementById('finish-summary');
+  if(answered < questions.length){
+    summary.classList.add('show');
+    summary.innerHTML = `<i class="fas fa-info-circle"></i> Kamu sudah mengerjakan <strong>${answered} dari ${questions.length} soal</strong>. Masih ada <strong>${questions.length - answered} soal</strong> lagi yang belum dijawab.`;
+  } else {
+    summary.classList.add('show');
+    summary.innerHTML = `<i class="fas fa-check-circle"></i> Selamat! Semua <strong>${questions.length} soal</strong> sudah kamu kerjakan. Klik tombol di bawah untuk melihat hasil!`;
+  }
+}
+
+// ===== Finish Quiz =====
+function finishQuiz(){
+  const answered = questionState.filter(s => s.checked).length;
+  
+  if(answered < questions.length){
+    const confirm = window.confirm(`Kamu baru menjawab ${answered} dari ${questions.length} soal. Yakin ingin menyelesaikan latihan?`);
+    if(!confirm) return;
+  }
+  
+  showResults();
+}
+
+// ===== Show Results =====
+function showResults(){
+  const total = questions.length;
+  const done = questionState.filter(s => s.checked).length;
+  const correct = questionState.filter(s => s.isCorrect).length;
+  const wrong = done - correct;
+  const score = Math.round((correct / total) * 100);
+  
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-correct').textContent = correct;
+  document.getElementById('stat-wrong').textContent = wrong;
+  
+  // Animate score number
+  const scoreNum = document.getElementById('score-number');
+  let current = 0;
+  const increment = score / 30;
+  const timer = setInterval(() => {
+    current += increment;
+    if(current >= score){
+      current = score;
+      clearInterval(timer);
+    }
+    scoreNum.textContent = Math.round(current);
+  }, 30);
+  
+  // Animate circle
+  const circle = document.getElementById('score-circle-fill');
+  const circumference = 2 * Math.PI * 90;
+  const offset = circumference - (score / 100) * circumference;
+  setTimeout(() => {
+    circle.style.strokeDashoffset = offset;
+  }, 100);
+  
+  // Set title and message
+  let title, subtitle, message;
+  if(score >= 90){
+    title = 'Luar Biasa!';
+    subtitle = 'Kamu jago geometri!';
+    message = `<i class="fas fa-trophy msg-icon" style="color:#EA580C"></i> Wah, <strong>${studentName}</strong>! Skor <strong>${score}</strong> menunjukkan kamu sudah sangat menguasai bangun datar. Pertahankan terus prestasimu!`;
+  } else if(score >= 70){
+    title = 'Kerja Bagus!';
+    subtitle = 'Sedikit lagi menuju kesempurnaan!';
+    message = `<i class="fas fa-star msg-icon" style="color:#EA580C"></i> Hebat, <strong>${studentName}</strong>! Skor <strong>${score}</strong> sudah cukup baik. Pelajari kembali pembahasan soal yang salah untuk hasil lebih sempurna.`;
+  } else if(score >= 50){
+    title = 'Tetap Semangat!';
+    subtitle = 'Ayo tingkatkan lagi belajarmu!';
+    message = `<i class="fas fa-fire msg-icon" style="color:#DC2626"></i> <strong>${studentName}</strong>, skor <strong>${score}</strong> menunjukkan kamu perlu berlatih lebih banyak. Buka kembali materi dan pahami rumus bangun datar. Kamu pasti bisa!`;
+  } else {
+    title = 'Jangan Menyerah!';
+    subtitle = 'Belajar lagi yuk, kamu pasti bisa!';
+    message = `<i class="fas fa-book msg-icon" style="color:#1E40AF"></i> <strong>${studentName}</strong>, jangan menyerah. Pelajari kembali materi bangun datar dengan teliti, terutama rumus luas dan keliling. Coba lagi ya!`;
+  }
+  
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-subtitle').textContent = subtitle;
+  document.getElementById('result-message').innerHTML = message;
+  
+  showScreen('result-screen');
+  
+  // Confetti for high scores
+  if(score >= 70){
+    setTimeout(() => createConfetti(), 500);
+  }
+}
+
+// ===== Confetti =====
+function createConfetti(){
+  const colors = ['#EA580C', '#0D9488', '#DB2777', '#1E40AF', '#CA8A04', '#16A34A'];
+  for(let i = 0; i < 60; i++){
+    setTimeout(() => {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+      confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+      if(Math.random() > 0.5){
+        confetti.style.borderRadius = '50%';
+      }
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 4000);
+    }, i * 30);
+  }
+}
+
+// ===== Restart Quiz =====
+function restartQuiz(){
+  questionState.forEach(s => {
+    s.selected = null;
+    s.selectedArray = [];
+    s.checked = false;
+    s.isCorrect = false;
+    s.explanationOpen = false;
+  });
+  
+  document.getElementById('score-circle-fill').style.strokeDashoffset = 565.48;
+  document.getElementById('score-number').textContent = '0';
+  
+  renderQuestions();
+  updateProgress();
+  
+  showScreen('quiz-screen');
+}
+
+// ===== Init =====
+createFloatingShapes();
+
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' && document.getElementById('cover-screen').classList.contains('active')){
+    if(!startBtn.disabled) startQuiz();
+  }
+});
+</script>
+
+</body>
+</html>
