@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Poligon — Matematika Kelas 3 SD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ DASAR ============ */
+:root{
+  --ink:#2F2A26;
+  --paper:#FAF0DC;
+  --card:#FFFDF6;
+  --tangerine:#F2542D;
+  --sun:#FFC533;
+  --leaf:#3E9B57;
+  --ocean:#1D8FA8;
+  --berry:#C74B7B;
+  --violet:#7A6AAB;
+  --r:18px;
+  --sh:6px 6px 0 var(--ink);
+  --sh-sm:4px 4px 0 var(--ink);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{
+  font-family:'Fredoka',sans-serif;color:var(--ink);background:var(--paper);
+  background-image:radial-gradient(rgba(47,42,38,.075) 1.5px, transparent 1.6px);
+  background-size:26px 26px;overflow:hidden;
+}
+button{font-family:inherit;color:inherit;cursor:pointer}
+input,textarea{font-family:inherit;color:inherit}
+
+/* ============ KERANGKA ============ */
+.topbar{
+  position:fixed;inset:0 0 auto 0;height:62px;z-index:50;background:var(--card);
+  border-bottom:3px solid var(--ink);display:flex;align-items:center;gap:16px;padding:0 20px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.5px}
+.brand-badge{font-size:.72rem;font-weight:600;background:var(--sun);border:2px solid var(--ink);border-radius:999px;padding:2px 10px}
+.topbar .spacer{flex:1}
+.progress{position:absolute;left:0;right:0;bottom:-3px;height:5px;background:transparent}
+.progress>div{height:100%;width:0;background:var(--tangerine);transition:width .45s cubic-bezier(.6,.1,.2,1.2)}
+.bottombar{
+  position:fixed;inset:auto 0 0 0;height:74px;z-index:50;background:var(--card);
+  border-top:3px solid var(--ink);display:flex;align-items:center;justify-content:center;gap:22px;
+}
+.slide-tag{font-weight:600;font-size:.95rem;display:flex;gap:10px;align-items:center;min-width:220px;justify-content:center}
+.slide-tag .muted{opacity:.55;font-weight:500}
+.navbtn{
+  width:48px;height:48px;border-radius:14px;border:3px solid var(--ink);background:var(--sun);
+  box-shadow:var(--sh-sm);display:grid;place-items:center;transition:transform .12s, box-shadow .12s;
+}
+.navbtn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.navbtn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.navbtn:disabled{opacity:.35;cursor:default;transform:none;box-shadow:var(--sh-sm)}
+
+#stage{position:fixed;inset:62px 0 74px;overflow:hidden}
+.slide{
+  position:absolute;inset:0;overflow-y:auto;padding:26px 4vw 40px;
+  opacity:0;visibility:hidden;transform:translateY(18px);transition:opacity .4s, transform .4s, visibility .4s;
+}
+.slide.active{opacity:1;visibility:visible;transform:none;z-index:2}
+
+/* ============ ANIMASI ============ */
+@keyframes riseIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}
+@keyframes bob{0%,100%{transform:rotate(var(--rot,0deg)) translateY(0)}50%{transform:rotate(var(--rot,0deg)) translateY(-10px)}}
+@keyframes march{to{stroke-dashoffset:-510}}
+@keyframes namePop{0%{transform:scale(.85)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes stampIn{from{opacity:0;transform:rotate(-6deg) scale(2.4)}to{opacity:1;transform:rotate(-6deg) scale(1)}}
+@keyframes fall{
+  0%{transform:translate3d(0,-10vh,0) rotate(0deg)}
+  100%{transform:translate3d(var(--sway,20px),115vh,0) rotate(660deg)}
+}
+@keyframes floaty{50%{transform:translateY(-9px)}}
+@keyframes drawSide{to{stroke-dashoffset:0}}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+.slide.active>*{animation:riseIn .55s cubic-bezier(.22,.68,.34,1) backwards}
+.slide.active>*:nth-child(2){animation-delay:.08s}
+.slide.active>*:nth-child(3){animation-delay:.16s}
+.slide.active>*:nth-child(4){animation-delay:.24s}
+.slide.active>*:nth-child(5){animation-delay:.32s}
+.slide:not(.active) .confetti,
+.slide:not(.active) .cover-title span,
+.slide:not(.active) .trio svg,
+.slide:not(.active) #thanksTrio svg,
+.slide:not(.active) .dashmap>svg path{animation-play-state:paused}
+
+/* ============ KOMPONEN ============ */
+.kicker{font-size:.76rem;font-weight:600;letter-spacing:2.5px;color:var(--berry);margin-bottom:8px}
+h2{font-size:clamp(1.5rem,3vw,2.3rem);font-weight:700;line-height:1.15;margin-bottom:14px}
+.hl{background:var(--sun);padding:0 8px;border-radius:8px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.hand-note{font-family:'Caveat',cursive;font-size:1.35rem;color:var(--ocean);transform:rotate(-1.5deg)}
+.card{background:var(--card);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh)}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;border:3px solid var(--ink);background:var(--card);
+  border-radius:14px;box-shadow:var(--sh-sm);padding:10px 18px;font-weight:600;font-size:.98rem;
+  transition:transform .12s, box-shadow .12s;
+}
+.btn:hover:not(:disabled){transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active:not(:disabled){transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn-primary{background:var(--tangerine);color:#fff}
+.btn-yes{background:var(--leaf);color:#fff}
+.btn-no{background:var(--berry);color:#fff}
+.btn-big{font-size:1.15rem;padding:14px 26px;border-radius:18px}
+.btn-small{padding:7px 13px;font-size:.85rem;border-radius:11px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:2.5px solid var(--ink);border-radius:999px;padding:4px 13px;font-weight:600;font-size:.85rem;background:#fff}
+.chip.sun{background:var(--sun)}.chip.leaf{background:var(--leaf);color:#fff}.chip.ocean{background:var(--ocean);color:#fff}.chip.berry{background:var(--berry);color:#fff}.chip.tang{background:var(--tangerine);color:#fff}
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center;width:min(1160px,100%);margin:0 auto}
+.mark{background:var(--sun);padding:0 5px;border-radius:6px}
+
+/* ============ COVER ============ */
+.cover{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;width:min(1160px,100%);margin:0 auto;min-height:calc(100vh - 210px)}
+.cover-title{font-size:clamp(3.4rem,8.5vw,6.2rem);font-weight:700;line-height:1;letter-spacing:2px;margin:10px 0 14px;display:flex;gap:4px;flex-wrap:wrap}
+.cover-title span{--rot:0deg;display:inline-block;animation:bob 3.2s ease-in-out infinite}
+.cover-title span:nth-child(1){--rot:-4deg;color:var(--tangerine)}
+.cover-title span:nth-child(2){--rot:3deg;color:var(--sun);animation-delay:.15s}
+.cover-title span:nth-child(3){--rot:-2deg;color:var(--leaf);animation-delay:.3s}
+.cover-title span:nth-child(4){--rot:4deg;color:var(--ocean);animation-delay:.45s}
+.cover-title span:nth-child(5){--rot:-3deg;color:var(--berry);animation-delay:.6s}
+.cover-title span:nth-child(6){--rot:2deg;color:var(--violet);animation-delay:.75s}
+.cover-title span:nth-child(7){--rot:-4deg;color:var(--tangerine);animation-delay:.9s}
+.cover-sub{font-size:clamp(1rem,1.6vw,1.25rem);max-width:46ch;margin-bottom:22px}
+.name-field{display:flex;flex-direction:column;gap:6px;font-weight:600;margin-bottom:20px;max-width:360px}
+.name-field input{
+  border:3px solid var(--ink);border-radius:14px;padding:11px 15px;font-size:1.05rem;background:#fff;
+  box-shadow:var(--sh-sm);outline:none;
+}
+.name-field input:focus{background:#FFF6DE}
+.trio{display:flex;align-items:flex-end;justify-content:center;gap:6px;min-height:210px}
+.trio svg{animation:bob 3.4s ease-in-out infinite}
+.trio svg:nth-child(2){animation-delay:.4s}
+.trio svg:nth-child(3){animation-delay:.8s}
+
+/* ============ MOSAIK SEHARI-HARI ============ */
+.mosaic{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:auto;gap:18px;width:min(1060px,100%);margin:0 auto}
+.tile{overflow:hidden;transition:transform .15s, box-shadow .15s;cursor:default}
+.tile:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--ink)}
+.slide.active .tile{animation:riseIn .55s cubic-bezier(.22,.68,.34,1) backwards}
+.slide.active .tile:nth-child(2){animation-delay:.1s}
+.slide.active .tile:nth-child(3){animation-delay:.2s}
+.slide.active .tile:nth-child(4){animation-delay:.3s}
+.slide.active .tile:nth-child(5){animation-delay:.4s}
+.slide.active .tile:nth-child(6){animation-delay:.5s}
+.tile svg{display:block;width:100%;height:auto;background:#FFF9EC;border-bottom:3px solid var(--ink)}
+.tile figcaption{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;font-weight:600;flex-wrap:wrap}
+.tile.big{grid-column:span 2;grid-row:span 2;display:flex;flex-direction:column}
+.tile.big svg{flex:1}
+
+/* ============ PETA TUJUAN ============ */
+.dashmap{position:relative;height:470px;width:min(1160px,100%);margin:8px auto 0}
+.dashmap>svg{position:absolute;inset:0;width:100%;height:100%}
+.dashmap>svg path{animation:march 26s linear infinite}
+.goal-node{position:absolute;width:190px;transform:translateX(-50%);text-align:center}
+.goal-badge{display:inline-grid;place-items:center;margin-bottom:8px}
+.goal-node p{background:var(--card);border:3px solid var(--ink);border-radius:14px;box-shadow:var(--sh-sm);padding:9px 11px;font-weight:500;font-size:.9rem;line-height:1.3}
+.slide.active .goal-node{animation:popIn .55s backwards}
+.slide.active .goal-node:nth-of-type(2){animation-delay:.12s}
+.slide.active .goal-node:nth-of-type(3){animation-delay:.24s}
+.slide.active .goal-node:nth-of-type(4){animation-delay:.36s}
+.slide.active .goal-node:nth-of-type(5){animation-delay:.48s}
+
+/* ============ DEFINISI ============ */
+.def{font-size:clamp(1.15rem,2vw,1.5rem);line-height:1.5;margin:6px 0 18px}
+.traits{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.traits li{display:flex;gap:10px;align-items:center;font-weight:600}
+.traits .tick{width:30px;height:30px;border-radius:9px;border:3px solid var(--ink);display:grid;place-items:center;flex:none;background:var(--leaf);color:#fff}
+.demo-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.demo-cell{border:3px solid var(--ink);border-radius:14px;padding:10px;text-align:center;font-weight:600;font-size:.88rem;background:#fff}
+.demo-cell.bad{background:#FBE3DC}
+.demo-cell.good{background:#E2F2E4}
+.demo-cell svg{display:block;margin:0 auto 6px}
+
+/* ============ BAGIAN POLIGON ============ */
+.parts-stage{display:flex;flex-direction:column;align-items:center;gap:6px}
+.parts-stage svg{width:min(430px,100%);height:auto}
+.stage-caption{font-weight:600;background:var(--sun);border:3px solid var(--ink);border-radius:999px;padding:7px 18px;box-shadow:var(--sh-sm)}
+.tabs{display:flex;gap:8px;margin:6px 0 14px;flex-wrap:wrap}
+.tab{border:3px solid var(--ink);background:#fff;border-radius:999px;padding:8px 18px;font-weight:600;box-shadow:var(--sh-sm);transition:transform .12s, background .2s}
+.tab.active{background:var(--ocean);color:#fff}
+.tab:hover{transform:translate(-1px,-1px)}
+.part-info h3{font-size:1.3rem;margin-bottom:6px}
+.part-info p{line-height:1.5;margin-bottom:8px}
+.part-info .fact{font-weight:600;background:#FFF3D6;border:2.5px dashed var(--ink);border-radius:12px;padding:10px 13px}
+.p-wedge,.p-vert,.p-vlabel{opacity:0;transform-box:fill-box;transform-origin:center}
+.p-wedge.show,.p-vert.show,.p-vlabel.show{animation:popIn .5s both}
+.p-side,.p-arc{stroke-dasharray:1;stroke-dashoffset:1}
+.p-side.show{animation:drawSide .55s ease forwards}
+.p-arc.show{animation:drawSide .6s ease forwards}
+
+/* ============ BERATURAN ============ */
+.def-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.def-mini{border:3px solid var(--ink);border-radius:14px;padding:13px 15px;box-shadow:var(--sh-sm)}
+.def-mini h4{margin-bottom:5px;font-size:1.02rem}
+.def-mini p{font-size:.9rem;line-height:1.4}
+.def-mini.g{background:#E2F2E4}.def-mini.b{background:#FADEEA}
+.slide.active .def-mini{animation:riseIn .5s backwards}
+.slide.active .def-mini:nth-child(2){animation-delay:.15s}
+.reg-stage{display:flex;flex-direction:column;align-items:center;gap:14px}
+.reg-stage svg{width:min(340px,100%);height:auto}
+input[type=range]{width:min(320px,100%);accent-color:var(--tangerine);height:30px}
+.hex-len{font-size:.78rem;font-weight:700;fill:var(--ink)}
+
+/* ============ GALERI NAMA (slide 7 — ditata ulang) ============ */
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center;width:min(1150px,100%);margin:0 auto}
+.machine{display:flex;flex-direction:column;align-items:center;gap:10px}
+.machine svg{width:min(330px,80vw);height:auto}
+#morphDots{transition:opacity .25s}
+.machine-name{font-size:2rem;font-weight:700;line-height:1.1}
+.machine-name.pop-name{animation:namePop .35s}
+.machine-en{
+  border:2.5px solid var(--ink);background:var(--violet);color:#fff;border-radius:999px;
+  padding:3px 18px;font-weight:700;letter-spacing:1.5px;font-size:.95rem;
+}
+.machine-sub{font-weight:600;opacity:.75;margin-top:-2px;font-size:.92rem}
+.stepper{display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap;justify-content:center}
+.stepbtn{width:44px;height:44px;border-radius:12px;border:3px solid var(--ink);background:var(--sun);font-size:1.4rem;font-weight:700;box-shadow:var(--sh-sm)}
+.stepbtn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.chips button{border:2.5px solid var(--ink);background:#fff;border-radius:10px;width:38px;height:38px;font-weight:700}
+.chips button.active{background:var(--tangerine);color:#fff;transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink) inset}
+.greek-note{font-family:'Caveat',cursive;font-size:1.2rem;color:var(--ocean);text-align:center;line-height:1.4;margin-top:4px}
+.poly-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.poly-row{
+  display:flex;align-items:center;gap:10px;border:3px solid var(--ink);border-radius:14px;background:#fff;
+  padding:8px 10px 8px 8px;box-shadow:var(--sh-sm);transition:transform .12s;text-align:left;width:100%;
+}
+.poly-row:hover{transform:translate(-2px,-2px)}
+.poly-row.active{background:var(--sun)}
+.poly-row svg{width:44px;height:44px;flex:none}
+.pr-names{flex:1;min-width:0;line-height:1.15}
+.pr-names b{display:block;font-size:.95rem}
+.pr-names .pen{display:block;font-size:.72rem;font-weight:600;color:var(--violet)}
+.pcount{width:27px;height:27px;border:2.5px solid var(--ink);border-radius:8px;display:grid;place-items:center;font-weight:700;background:var(--paper);font-size:.85rem;flex:none}
+.slide.active .poly-row{animation:riseIn .45s backwards}
+.slide.active .poly-row:nth-child(1){animation-delay:.05s}
+.slide.active .poly-row:nth-child(2){animation-delay:.1s}
+.slide.active .poly-row:nth-child(3){animation-delay:.15s}
+.slide.active .poly-row:nth-child(4){animation-delay:.2s}
+.slide.active .poly-row:nth-child(5){animation-delay:.25s}
+.slide.active .poly-row:nth-child(6){animation-delay:.3s}
+.slide.active .poly-row:nth-child(7){animation-delay:.35s}
+.slide.active .poly-row:nth-child(8){animation-delay:.4s}
+
+/* ============ BUKAN POLIGON (slide 8 — ditata ulang) ============ */
+.reasons{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.reason{display:flex;gap:14px;align-items:center;padding:13px 16px}
+.reason-ic{flex:none;width:96px;height:68px;display:grid;place-items:center;background:#FFF9EC;border:2.5px solid var(--ink);border-radius:12px}
+.reason-ic svg{width:82px;height:auto;display:block}
+.reason-tx{min-width:0}
+.reason-tx b{display:block;margin-bottom:3px;font-size:1rem;line-height:1.3}
+.reason-tx p{font-size:.9rem;line-height:1.45;font-weight:500}
+.rno{
+  display:inline-block;font-size:.66rem;font-weight:700;letter-spacing:1px;background:var(--sun);
+  border:2px solid var(--ink);border-radius:999px;padding:1px 9px;margin-right:8px;transform:translateY(-1.5px);
+}
+.slide.active .reason{animation:riseIn .5s backwards}
+.slide.active .reason:nth-child(2){animation-delay:.12s}
+.slide.active .reason:nth-child(3){animation-delay:.24s}
+.catch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:14px 0}
+.catch-cell{border:3px solid var(--ink);border-radius:14px;background:#fff;padding:8px;box-shadow:var(--sh-sm);transition:transform .12s;position:relative}
+.catch-cell:hover{transform:translate(-2px,-2px)}
+.slide.active .catch-cell{animation:popIn .45s backwards}
+.slide.active .catch-cell:nth-child(2){animation-delay:.08s}
+.slide.active .catch-cell:nth-child(3){animation-delay:.16s}
+.slide.active .catch-cell:nth-child(4){animation-delay:.24s}
+.slide.active .catch-cell:nth-child(5){animation-delay:.32s}
+.slide.active .catch-cell:nth-child(6){animation-delay:.4s}
+.catch-cell svg{display:block;width:100%;height:auto}
+.catch-cell.caught{background:#DFF0E2;opacity:.75}
+.catch-cell.caught::after{content:"";position:absolute;inset:-3px;border:4px solid var(--leaf);border-radius:14px}
+.catch-cell.shake{animation:shake .4s}
+.catch-hud{font-weight:700;text-align:center;min-height:26px}
+.catch-hud.bad{color:var(--tangerine)}
+
+/* ============ GAME / KUIS ============ */
+.game-frame{max-width:900px;margin:0 auto}
+.game-hud{display:flex;justify-content:space-between;font-weight:700;margin-bottom:12px;background:var(--card);border:3px solid var(--ink);border-radius:999px;padding:8px 20px;box-shadow:var(--sh-sm)}
+.guess-body{display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:center;padding:22px}
+.guess-art{display:grid;place-items:center;background:#FFF9EC;border:3px dashed var(--ink);border-radius:16px;min-height:220px;overflow:hidden}
+.guess-art svg{max-width:88%;height:auto;max-height:200px}
+.guess-art .triple{display:flex;gap:10px;align-items:center}
+.clue{font-size:1.2rem;font-weight:600;line-height:1.45;margin-bottom:16px}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{display:flex;align-items:center;gap:12px;border:3px solid var(--ink);background:#fff;border-radius:13px;padding:10px 14px;font-weight:600;font-size:1.02rem;box-shadow:var(--sh-sm);text-align:left;transition:transform .12s, background .15s}
+.opt:hover:not(:disabled){transform:translate(-2px,-2px)}
+.slide.active .opt{animation:riseIn .4s backwards}
+.slide.active .opt:nth-child(2){animation-delay:.07s}
+.slide.active .opt:nth-child(3){animation-delay:.14s}
+.slide.active .opt:nth-child(4){animation-delay:.21s}
+.opt .letter{width:30px;height:30px;border-radius:9px;border:2.5px solid var(--ink);display:grid;place-items:center;flex:none;background:var(--paper);font-weight:700}
+.opt.ok{background:var(--leaf);color:#fff}
+.opt.ok .letter{background:#fff;color:var(--ink)}
+.opt.no{background:var(--tangerine);color:#fff}
+.opt.no .letter{background:#fff;color:var(--ink)}
+.opt.reveal{background:var(--leaf);color:#fff}
+.feedback{min-height:28px;font-weight:600;margin:10px 0 4px}
+.feedback.ok{color:var(--leaf)}.feedback.no{color:var(--tangerine)}
+.qbar{height:14px;border:3px solid var(--ink);border-radius:999px;background:#fff;overflow:hidden;margin-bottom:14px}
+.qbar>div{height:100%;width:0;background:var(--ocean);transition:width .35s ease}
+.end-panel{text-align:center;padding:36px 24px;animation:riseIn .5s cubic-bezier(.22,.68,.34,1) backwards}
+.end-panel .big{font-size:3.2rem;font-weight:700;line-height:1}
+.stars{display:inline-flex;gap:4px;vertical-align:middle}
+.stars svg{width:30px;height:30px}
+
+/* ============ MEMORI (kartu dibaca-jelas) ============ */
+.mem-head{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.mem-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;max-width:780px;margin:0 auto}
+.mcard{aspect-ratio:3/3.5;perspective:800px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.slide.active .mcard{animation:popIn .45s backwards}
+.slide.active .mcard:nth-child(odd){animation-delay:.1s}
+.slide.active .mcard:nth-child(even){animation-delay:.18s}
+.slide.active .mcard:nth-child(3n){animation-delay:.26s}
+.mcard-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.5,.1,.3,1.3)}
+.mcard.flipped .mcard-inner,.mcard.matched .mcard-inner{transform:rotateY(180deg)}
+.mface{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:3px solid var(--ink);border-radius:14px;display:grid;place-items:center;box-shadow:var(--sh-sm);padding:8px;text-align:center;overflow:hidden}
+.mface.back{background:var(--ocean);color:#fff;font-weight:700}
+.mface.back .qmark{font-size:2.6rem;line-height:1}
+.mface.back .mini{font-size:.72rem;letter-spacing:2px;opacity:.95;margin-top:4px}
+.mface.front{background:#fff;transform:rotateY(180deg);font-weight:700;line-height:1.15}
+.mface.front svg{max-width:100%;height:auto;display:block}
+.mcard.matched .mface.front{background:#DFF0E2;border-color:var(--leaf)}
+.mn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:100%}
+.mn b{font-size:clamp(.95rem,1.6vw,1.15rem);line-height:1.1}
+.men{font-size:.68rem;font-weight:700;letter-spacing:.5px;background:var(--violet);color:#fff;border-radius:999px;padding:2px 10px;white-space:nowrap}
+.mem-done{max-width:520px;margin:18px auto 0;text-align:center;padding:26px}
+
+/* ============ FLASHCARD ============ */
+.flash-wrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+.flash-hud{font-weight:700}
+.flash-card{width:min(560px,92vw);height:280px;perspective:1000px;cursor:pointer;animation:floaty 4.5s ease-in-out infinite}
+.flash-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.5,.1,.3,1.25)}
+.flash-card.flipped .flash-inner{transform:rotateY(180deg)}
+.flash-face{position:absolute;inset:0;backface-visibility:hidden;border:4px solid var(--ink);border-radius:22px;box-shadow:var(--sh);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:26px;text-align:center}
+.flash-face .tag{font-size:.72rem;font-weight:700;letter-spacing:2.5px;border:2.5px solid var(--ink);border-radius:999px;padding:3px 14px;background:var(--paper)}
+.flash-face.front{background:var(--sun)}
+.flash-face.back{background:#fff;transform:rotateY(180deg)}
+.flash-face p{font-size:1.25rem;font-weight:600;line-height:1.45}
+.flash-actions{display:flex;gap:16px}
+
+/* ============ LAPORAN ============ */
+.report{max-width:820px;margin:0 auto;padding:30px 34px}
+.report h2{margin-bottom:2px}
+.report .date{font-weight:500;opacity:.65;margin-bottom:18px}
+.r-row{display:flex;align-items:center;gap:14px;padding:13px 4px;border-bottom:2.5px dashed rgba(47,42,38,.3)}
+.r-row:last-of-type{border-bottom:none}
+.r-row .r-name{font-weight:700;flex:1}
+.r-row .r-val{font-weight:600}
+.r-row .todo{font-size:.85rem;font-weight:600;color:var(--tangerine)}
+.r-total{margin-top:14px;padding-top:14px;border-top:3px solid var(--ink);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.stamp{
+  display:inline-block;border:4px solid var(--berry);color:var(--berry);border-radius:14px;
+  padding:6px 18px;font-weight:700;font-size:1.3rem;letter-spacing:2px;transform:rotate(-6deg);
+}
+.slide.active .stamp{animation:stampIn .5s cubic-bezier(.5,1.6,.4,1) both}
+.report-actions{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+
+/* ============ REFLEKSI ============ */
+.reflect{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.ref-block{padding:18px 22px}
+.slide.active .ref-block{animation:riseIn .5s backwards}
+.slide.active .ref-block:nth-child(2){animation-delay:.1s}
+.slide.active .ref-block:nth-child(3){animation-delay:.2s}
+.ref-block h3{margin-bottom:12px}
+.moods{display:flex;gap:18px}
+.mood{background:none;border:3px solid transparent;border-radius:16px;padding:6px;transition:transform .15s}
+.mood svg{display:block}
+.mood:hover{transform:translateY(-4px)}
+.mood.sel{border-color:var(--ink);background:#FFF3D6;box-shadow:var(--sh-sm)}
+.slide.active .mood,.slide.active .fav{animation:popIn .45s backwards}
+.slide.active .mood:nth-child(2),.slide.active .fav:nth-child(2){animation-delay:.08s}
+.slide.active .mood:nth-child(3),.slide.active .fav:nth-child(3){animation-delay:.16s}
+.slide.active .fav:nth-child(4){animation-delay:.24s}
+.slide.active .fav:nth-child(5){animation-delay:.32s}
+.ref-block textarea{width:100%;border:3px solid var(--ink);border-radius:12px;padding:11px 14px;font-size:1rem;min-height:74px;resize:vertical;background:#fff;outline:none}
+.favs{display:flex;gap:10px;flex-wrap:wrap}
+.fav{border:2.5px solid var(--ink);background:#fff;border-radius:999px;padding:8px 17px;font-weight:600}
+.fav.sel{background:var(--ocean);color:#fff}
+
+/* ============ KESIMPULAN ============ */
+.numchip{width:30px;height:30px;border-radius:10px;border:3px solid var(--ink);background:var(--sun);display:grid;place-items:center;font-weight:700;flex:none}
+
+/* ============ THANK YOU ============ */
+.thanks-wrap{position:relative;text-align:center;min-height:calc(100vh - 210px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.confetti-wrap{position:absolute;inset:-62px 0 -74px;overflow:hidden;pointer-events:none}
+.confetti{position:absolute;top:-8vh;animation:fall linear infinite}
+#thanksTrio svg{animation:bob 3.6s ease-in-out infinite}
+#thanksTrio svg:nth-child(2){animation-delay:.35s}
+#thanksTrio svg:nth-child(3){animation-delay:.7s}
+.thanks-title{font-size:clamp(2.4rem,5.5vw,4.2rem);font-weight:700;position:relative}
+.thanks-title .hl{display:inline-block;transform:rotate(-1.5deg)}
+
+/* ============ OVERLAY MENU ============ */
+.overlay{position:fixed;inset:0;z-index:90;background:rgba(47,42,38,.45);display:grid;place-items:center;padding:20px}
+.menu-card{background:var(--card);border:3px solid var(--ink);border-radius:20px;box-shadow:8px 8px 0 var(--ink);width:min(560px,94vw);max-height:82vh;display:flex;flex-direction:column;overflow:hidden}
+.menu-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:3px solid var(--ink)}
+.menu-list{overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.menu-item{display:flex;gap:12px;align-items:center;border:2.5px solid var(--ink);background:#fff;border-radius:12px;padding:9px 13px;font-weight:600;text-align:left}
+.menu-item:hover{background:#FFF3D6;transform:translate(-1px,-1px)}
+.menu-item.active{background:var(--sun)}
+.menu-item .num{width:28px;height:28px;border-radius:8px;border:2.5px solid var(--ink);display:grid;place-items:center;font-weight:700;flex:none;background:var(--paper);font-size:.85rem}
+
+/* ============ RESPONSIF ============ */
+@media (max-width:960px){
+  .split,.cover,.gallery{grid-template-columns:1fr;gap:26px}
+  .dashmap{height:auto;display:grid;grid-template-columns:1fr;gap:14px}
+  .dashmap>svg{display:none}
+  .goal-node{position:static;transform:none;width:auto;display:flex;gap:12px;align-items:center;text-align:left}
+  .goal-node p{flex:1}
+  .mosaic{grid-template-columns:repeat(2,1fr)}
+  .guess-body{grid-template-columns:1fr}
+  .mem-grid{gap:9px}
+  .slide-tag{display:none}
+}
+@media (max-width:640px){
+  .mem-grid{grid-template-columns:repeat(3,1fr);max-width:540px}
+  .men{font-size:.62rem;padding:2px 8px}
+  .reason-ic{width:78px;height:58px}
+  .reason-ic svg{width:66px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span id="logoPoly"></span>
+    PETUALANGAN POLIGON <span class="brand-badge">Kelas 3 SD</span>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-small" id="menuBtn"></button>
+  <div class="progress"><div id="progressFill"></div></div>
+</header>
+
+<main id="stage">
+
+  <!-- 0. SAMPUL -->
+  <section class="slide active" data-title="Sampul">
+    <div class="cover">
+      <div>
+        <div class="kicker">MATEMATIKA · SEKOLAH DASAR · KELAS 3</div>
+        <h1 class="cover-title"><span>P</span><span>O</span><span>L</span><span>I</span><span>G</span><span>O</span><span>N</span></h1>
+        <p class="cover-sub">Ayo berpetualang mengenal <b>bangun datar</b> yang ada di sekitar kita — dari segitiga hingga segi sepuluh! Ada cerita, game, kuis, dan hadiah kecil di ujung perjalanan.</p>
+        <label class="name-field">Halo! Siapa namamu?
+          <input id="studentName" type="text" maxlength="24" placeholder="Tulis namamu di sini…" autocomplete="off">
+        </label>
+        <button class="btn btn-primary btn-big" id="startBtn">Mulai Belajar <span id="startArrow"></span></button>
+      </div>
+      <div style="text-align:center">
+        <div class="trio" id="trioStage"></div>
+        <div class="hand-note" style="margin-top:18px">“poly = banyak, gon = sudut.<br>Jadi poligon itu punya banyak sudut!”</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1. POLIGON DI KEHIDUPAN SEHARI-HARI -->
+  <section class="slide" data-title="Poligon di Sekitar Kita">
+    <div style="text-align:center;margin-bottom:20px">
+      <div class="kicker">PENGENALAN</div>
+      <h2>Poligon <span class="hl">Bersembunyi</span> di Sekitar Kita!</h2>
+      <p style="font-weight:500">Sebelum belajar, coba lihat dulu — bentuk-bentuk ini sering kamu temui setiap hari.</p>
+    </div>
+    <div class="mosaic" id="mosaic"></div>
+  </section>
+
+  <!-- 2. TUJUAN PEMBELAJARAN -->
+  <section class="slide" data-title="Tujuan Pembelajaran">
+    <div style="text-align:center;margin-bottom:6px">
+      <div class="kicker">PETA PERJALANAN</div>
+      <h2>Tujuan Pembelajaran Hari Ini</h2>
+      <p style="font-weight:500">Ikuti jalurnya satu per satu, sampai finish!</p>
+    </div>
+    <div class="dashmap" id="dashmap">
+      <svg viewBox="0 0 1000 470" preserveAspectRatio="none">
+        <path d="M 75 100 C 165 30 215 320 315 288 C 410 258 435 78 555 96 C 665 112 705 300 795 284 C 865 271 905 145 945 118"
+              fill="none" stroke="#2F2A26" stroke-width="4" stroke-dasharray="3 14" stroke-linecap="round" opacity=".55"/>
+      </svg>
+      <div class="goal-node" style="left:7.5%;top:9%"><span class="goal-badge"></span><p>Aku tahu <b>apa itu poligon</b>.</p></div>
+      <div class="goal-node" style="left:31.5%;top:55%"><span class="goal-badge"></span><p>Aku bisa menunjukkan <b>sisi, titik sudut, dan sudut</b>.</p></div>
+      <div class="goal-node" style="left:55.5%;top:11%"><span class="goal-badge"></span><p>Aku bisa membedakan poligon <b>beraturan</b> dan <b>tidak beraturan</b>.</p></div>
+      <div class="goal-node" style="left:79.5%;top:56%"><span class="goal-badge"></span><p>Aku hafal <b>nama poligon</b> dari segitiga sampai segi sepuluh.</p></div>
+      <div class="goal-node" style="left:94.5%;top:16%"><span class="goal-badge"></span><p>Aku bisa <b>menemukan poligon</b> di sekitarku.</p></div>
+    </div>
+  </section>
+
+  <!-- 3. DEFINISI -->
+  <section class="slide" data-title="Apa Itu Poligon?">
+    <div class="split">
+      <div>
+        <div class="kicker">MATERI 01</div>
+        <h2>Apa Itu <span class="hl">Poligon</span>?</h2>
+        <p class="def">Poligon adalah <span class="mark">bangun datar tertutup</span> yang dibatasi oleh <span class="mark">garis lurus</span>.</p>
+        <ul class="traits">
+          <li><span class="tick" data-ic="check"></span>Bangun datar — dia rata, seperti gambar di kertas.</li>
+          <li><span class="tick" data-ic="check"></span>Tertutup rapat — tidak ada celah terbuka.</li>
+          <li><span class="tick" data-ic="check"></span>Dibatasi garis lurus — bukan garis melengkung.</li>
+        </ul>
+        <div class="hand-note">Kalau salah satu ciri ini hilang… bukan poligon namanya!</div>
+      </div>
+      <div class="card" style="padding:22px 24px">
+        <h3 style="margin-bottom:4px">Cek Syaratnya!</h3>
+        <p style="font-weight:500;font-size:.92rem">Bandingkan pasangan bentuk di bawah ini, ya.</p>
+        <div id="defineDemo"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. SISI, TITIK SUDUT, SUDUT -->
+  <section class="slide" data-title="Sisi, Titik Sudut & Sudut">
+    <div class="split">
+      <div class="parts-stage">
+        <svg id="pentSVG" viewBox="0 0 400 410"></svg>
+        <div class="stage-caption" id="pentCaption"></div>
+      </div>
+      <div>
+        <div class="kicker">MATERI 02</div>
+        <h2>Bagian-Bagian Poligon</h2>
+        <div class="tabs" id="partTabs">
+          <button class="tab active" data-mode="sisi">Sisi</button>
+          <button class="tab" data-mode="titik">Titik Sudut</button>
+          <button class="tab" data-mode="sudut">Sudut</button>
+        </div>
+        <div class="part-info" id="partInfo"></div>
+        <button class="btn" id="replayParts" style="margin-top:10px"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. BERATURAN / TIDAK BERATURAN -->
+  <section class="slide" data-title="Beraturan & Tidak Beraturan">
+    <div class="split">
+      <div>
+        <div class="kicker">MATERI 03</div>
+        <h2>Poligon <span class="hl">Beraturan</span> &amp; Tidak Beraturan</h2>
+        <div class="def-cards">
+          <div class="def-mini g"><h4>Poligon Beraturan</h4><p>Semua sisinya <b>sama panjang</b> dan semua sudutnya <b>sama besar</b>. Rapi seperti pasukan!</p></div>
+          <div class="def-mini b"><h4>Poligon Tidak Beraturan</h4><p>Panjang sisinya <b>berbeda-beda</b>. Tetap poligon, hanya saja tidak serapi yang pertama.</p></div>
+        </div>
+        <p style="font-weight:500">Lihat bentuk di sebelah kanan. Geser tuasnya pelan-pelan dan perhatikan angka panjang sisi-sisinya berubah!</p>
+      </div>
+      <div class="reg-stage card" style="padding:22px">
+        <svg id="hexSVG" viewBox="0 0 340 340"></svg>
+        <input type="range" id="regSlider" min="0" max="100" value="0" aria-label="Geser dari beraturan ke tidak beraturan">
+        <div class="stage-caption" id="regCaption"></div>
+        <button class="btn btn-small" id="reshuffleHex"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. NAMA-NAMA POLIGON (slide 7 — layout baru) -->
+  <section class="slide" data-title="Galeri Nama Poligon">
+    <div style="text-align:center;margin-bottom:14px">
+      <div class="kicker">MATERI 04</div>
+      <h2>Mesin <span class="hl">Nama Poligon</span></h2>
+      <p style="font-weight:500">Tekan tombol + dan −, atau pilih di daftar. Setiap poligon punya <b>nama Indonesia</b> dan <b>nama internasional</b> dari bahasa Yunani!</p>
+    </div>
+    <div class="gallery">
+      <div class="machine">
+        <svg id="morphSVG" viewBox="0 0 360 360"></svg>
+        <div class="machine-name" id="polyName"></div>
+        <div class="machine-en" id="polyEn"></div>
+        <div class="machine-sub" id="polySub"></div>
+        <div class="stepper">
+          <button class="stepbtn" id="polyMinus" aria-label="Kurangi sisi">−</button>
+          <div class="chips" id="polyChips"></div>
+          <button class="stepbtn" id="polyPlus" aria-label="Tambah sisi">+</button>
+        </div>
+        <div class="greek-note">tri = 3 · tetra = 4 · penta = 5 · heksa = 6<br>hepta = 7 · okta = 8 · ennea = 9 · deka = 10</div>
+      </div>
+      <div class="poly-list" id="polyList"></div>
+    </div>
+  </section>
+
+  <!-- 7. BUKAN POLIGON (slide 8 — teks & layout baru) -->
+  <section class="slide" data-title="Ini Bukan Poligon!">
+    <div class="split">
+      <div>
+        <div class="kicker">MATERI 05</div>
+        <h2>Awas! Ini <span class="hl">Bukan</span> Poligon</h2>
+        <p style="font-weight:500">Sebuah bentuk <b>gagal</b> jadi poligon kalau melanggar salah satu aturan ini:</p>
+        <div class="reasons">
+          <div class="reason card" id="reasonCircle"></div>
+          <div class="reason card" id="reasonOpen"></div>
+          <div class="reason card" id="reason3d"></div>
+        </div>
+      </div>
+      <div class="card" style="padding:20px 22px">
+        <h3>Tangkap Poligonnya!</h3>
+        <p style="font-weight:500;font-size:.92rem;margin-top:4px">Klik semua bentuk yang termasuk <b>poligon</b>. Hati-hati, ada penyamar di antara mereka!</p>
+        <div class="catch-grid" id="catchGrid"></div>
+        <div class="catch-hud" id="catchHud">Poligon tertangkap: 0 / 3</div>
+        <div style="text-align:center;margin-top:8px"><button class="btn btn-small" id="catchAgain"></button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. GAME TEBAK-TEBAKAN -->
+  <section class="slide" data-title="Game: Tebak-Tebakan">
+    <div style="text-align:center;margin-bottom:14px">
+      <div class="kicker">GAME 01</div>
+      <h2>Tebak-Tebakan Poligon</h2>
+    </div>
+    <div class="game-frame" id="guessFrame"></div>
+  </section>
+
+  <!-- 9. GAME MEMORI -->
+  <section class="slide" data-title="Game: Memori Poligon">
+    <div style="text-align:center;margin-bottom:14px">
+      <div class="kicker">GAME 02</div>
+      <h2>Memori: Pasangkan Nama &amp; Gambar</h2>
+      <p style="font-weight:500">Buka dua kartu. Cari pasangan nama poligon dan gambar bentuknya!</p>
+    </div>
+    <div class="mem-head">
+      <span class="chip ocean">Langkah: <b id="memMoves" style="margin-left:5px">0</b></span>
+      <span class="chip leaf">Pasangan: <b id="memPairs" style="margin-left:5px">0 / 6</b></span>
+      <span class="chip sun">Waktu: <b id="memTime" style="margin-left:5px">0 dtk</b></span>
+      <button class="btn btn-small" id="memRestart"></button>
+    </div>
+    <div class="mem-grid" id="memGrid"></div>
+    <div class="mem-done card" id="memDone" hidden></div>
+  </section>
+
+  <!-- 10. KUIS EXIT TICKET -->
+  <section class="slide" data-title="Kuis Exit Ticket">
+    <div style="text-align:center;margin-bottom:14px">
+      <div class="kicker">EXIT TICKET</div>
+      <h2>Kuis 20 Soal</h2>
+      <p style="font-weight:500">Kerjakan dengan teliti. Ini tiketmu untuk pulang hari ini!</p>
+    </div>
+    <div class="game-frame" id="quizFrame"></div>
+  </section>
+
+  <!-- 11. FLASHCARD -->
+  <section class="slide" data-title="Flashcard">
+    <div style="text-align:center;margin-bottom:6px">
+      <div class="kicker">INGAT KEMBALI</div>
+      <h2>Flashcard Materi Hari Ini</h2>
+    </div>
+    <div class="flash-wrap" id="flashWrap">
+      <div class="flash-hud" id="flashHud"></div>
+      <div class="flash-card" id="flashCard">
+        <div class="flash-inner">
+          <div class="flash-face front"><span class="tag">PERTANYAAN</span><p id="flashFront"></p></div>
+          <div class="flash-face back"><span class="tag">JAWABAN</span><p id="flashBack"></p></div>
+        </div>
+      </div>
+      <div class="flash-actions">
+        <button class="btn btn-no" id="flashNo" disabled>Belum Paham (Tidak)</button>
+        <button class="btn btn-yes" id="flashYes" disabled>Paham! (Ya)</button>
+      </div>
+      <p class="hand-note" id="flashHint">Baca pertanyaannya, jawab dalam hati dulu, baru klik kartunya ya!</p>
+    </div>
+  </section>
+
+  <!-- 12. HASIL PENGERJAAN -->
+  <section class="slide" data-title="Lembar Hasil">
+    <div class="report card" id="reportCard"></div>
+  </section>
+
+  <!-- 13. KESIMPULAN -->
+  <section class="slide" data-title="Kesimpulan">
+    <div style="text-align:center;margin-bottom:20px">
+      <div class="kicker">RAYA KEMENANGAN</div>
+      <h2>Kesimpulan Hari Ini</h2>
+    </div>
+    <div class="split" style="align-items:start">
+      <div class="card" style="padding:26px 30px">
+        <ol style="display:flex;flex-direction:column;gap:16px;font-weight:500;line-height:1.5;list-style:none">
+          <li style="display:flex;gap:14px"><span class="numchip">1</span><span>Poligon adalah <b>bangun datar tertutup</b> yang dibatasi oleh <b>garis lurus</b>.</span></li>
+          <li style="display:flex;gap:14px"><span class="numchip">2</span><span>Setiap poligon punya <b>sisi</b>, <b>titik sudut</b>, dan <b>sudut</b> — jumlahnya sama banyak.</span></li>
+          <li style="display:flex;gap:14px"><span class="numchip">3</span><span><b>Beraturan</b>: sisi &amp; sudut sama besar. <b>Tidak beraturan</b>: sisi &amp; sudut berbeda.</span></li>
+          <li style="display:flex;gap:14px"><span class="numchip">4</span><span>Nama poligon mengikuti jumlah sisinya: <b>segitiga (trigon)</b> sampai <b>segi sepuluh (dekagon)</b>.</span></li>
+          <li style="display:flex;gap:14px"><span class="numchip">5</span><span>Yang melengkung atau terbuka — seperti lingkaran — <b>bukan poligon</b>.</span></li>
+        </ol>
+      </div>
+      <div style="text-align:center">
+        <div id="conclusionArt" style="display:flex;gap:14px;justify-content:center;align-items:flex-end;flex-wrap:wrap"></div>
+        <div class="card" style="display:inline-block;margin-top:22px;padding:18px 24px;background:var(--sun)">
+          <p style="font-weight:700;font-size:1.2rem">“Kalau lurus dan tertutup,<br>namanya poligon!”</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14. REFLEKSI -->
+  <section class="slide" data-title="Refleksi">
+    <div style="text-align:center;margin-bottom:18px">
+      <div class="kicker">CERITA DIRI</div>
+      <h2>Refleksi Diri</h2>
+    </div>
+    <div class="reflect" id="reflectForm">
+      <div class="ref-block card">
+        <h3>1 · Bagaimana perasaanmu belajar hari ini?</h3>
+        <div class="moods" id="moodRow"></div>
+      </div>
+      <div class="ref-block card">
+        <h3>2 · Hal baru apa yang kamu pelajari hari ini?</h3>
+        <textarea id="refLearn" placeholder="Contoh: Aku jadi tahu kalau tanda berhenti itu segi delapan…"></textarea>
+      </div>
+      <div class="ref-block card">
+        <h3>3 · Bagian mana yang paling kamu sukai?</h3>
+        <div class="favs" id="favRow"></div>
+      </div>
+      <div style="text-align:center"><button class="btn btn-primary btn-big" id="sendReflect">Kirim Refleksi</button></div>
+    </div>
+    <div class="card" id="reflectDone" hidden style="max-width:640px;margin:0 auto;padding:28px;text-align:center"></div>
+  </section>
+
+  <!-- 15. THANK YOU -->
+  <section class="slide" data-title="Sampai Jumpa!">
+    <div class="confetti-wrap" id="confettiWrap"></div>
+    <div class="thanks-wrap">
+      <div id="thanksTrio" style="display:flex;gap:10px;align-items:flex-end"></div>
+      <h2 class="thanks-title">Terima Kasih <span class="hl" id="thanksName">untuk Hari Ini!</span></h2>
+      <p style="font-weight:500;font-size:1.1rem;max-width:52ch">Kamu sudah berjuang belajar poligon sampai selesai. Sekarang, setiap kali lewat tanda berhenti atau sarang lebah, ucapkan: “Hei, aku mengenalmu — kamu poligon!”</p>
+      <div class="hand-note">Sampai jumpa di petualangan bentuk berikutnya…</div>
+      <button class="btn btn-big" id="restartAll"></button>
+    </div>
+  </section>
+
+</main>
+
+<nav class="bottombar">
+  <button class="navbtn" id="prevBtn" aria-label="Slide sebelumnya"></button>
+  <div class="slide-tag"><span id="slideLabel">Sampul</span><span class="muted">•</span><span class="muted" id="slideCounter">1 / 16</span></div>
+  <button class="navbtn" id="nextBtn" aria-label="Slide berikutnya"></button>
+</nav>
+
+<div class="overlay" id="menuOverlay" hidden>
+  <div class="menu-card">
+    <div class="menu-head"><b>Daftar Slide</b><button class="btn btn-small" id="menuClose">Tutup</button></div>
+    <div class="menu-list" id="menuList"></div>
+  </div>
+</div>
+
+<script>
+/* ================= UTIL ================= */
+const $  = (s,c=document)=>c.querySelector(s);
+const $$ = (s,c=document)=>[...c.querySelectorAll(s)];
+const NS = 'http://www.w3.org/2000/svg';
+const lerp = (a,b,t)=>a+(b-a)*t;
+const easeInOut = t=>t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2;
+const shuffle = a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const fmt = n=>n.toFixed(1).replace('.',',');
+
+function svgEl(t,a={},p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+
+const PATHS = {
+  arrow:'M4 12h15 M13 6l6 6-6 6',
+  back :'M20 12H5 M11 18l-6-6 6-6',
+  check:'M4 12.5l5 5L20 6.5',
+  x    :'M6 6l12 12M18 6L6 18',
+  list :'M4 6h16M4 12h16M4 18h10',
+  replay:'M20 12a8 8 0 1 1-2.4-5.7M20 3.5V8h-4.5',
+};
+function icon(name,size=20){
+  const s=svgEl('svg',{viewBox:'0 0 24 24',width:size,height:size});
+  svgEl('path',{d:PATHS[name],fill:'none',stroke:'currentColor','stroke-width':2.6,'stroke-linecap':'round','stroke-linejoin':'round'},s);
+  return s;
+}
+
+const COLORS=['#F2542D','#FFC533','#3E9B57','#1D8FA8','#C74B7B','#7A6AAB'];
+
+function vertsOf(n,cx,cy,R,rot=-90,jit){
+  const out=[];
+  for(let i=0;i<n;i++){
+    let a=(rot+i*360/n)*Math.PI/180, r=R;
+    if(jit){a+=jit.ang[i]; r*=jit.rad[i];}
+    out.push([cx+r*Math.cos(a), cy+r*Math.sin(a)]);
+  }
+  return out;
+}
+const ptsAttr = v=>v.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+
+function addFace(svg,cx,cy,s){
+  const g=svgEl('g',{},svg);
+  svgEl('circle',{cx:cx-9*s,cy:cy-5*s,r:2.6*s,fill:'#2F2A26'},g);
+  svgEl('circle',{cx:cx+9*s,cy:cy-5*s,r:2.6*s,fill:'#2F2A26'},g);
+  svgEl('path',{d:`M ${cx-8*s} ${cy+4*s} Q ${cx} ${cy+12*s} ${cx+8*s} ${cy+4*s}`,fill:'none',stroke:'#2F2A26','stroke-width':2.4*s,'stroke-linecap':'round'},g);
+  svgEl('circle',{cx:cx-14*s,cy:cy+3*s,r:2.3*s,fill:'rgba(242,84,45,.4)'},g);
+  svgEl('circle',{cx:cx+14*s,cy:cy+3*s,r:2.3*s,fill:'rgba(242,84,45,.4)'},g);
+}
+
+/* PERBAIKAN UTAMA: width & height eksplisit agar SVG tidak melebar
+   menggantungkan diri pada container (penyebab layout slide 7 & 8 rusak
+   dan gambar menutupi teks kartu memori) */
+function polySVG(n,o={}){
+  const size=o.size||120, R=size/2-(o.pad??12);
+  const s=svgEl('svg',{viewBox:`0 0 ${size} ${size}`,width:size,height:size});
+  const cx=size/2, cy=size/2;
+  const vs=vertsOf(n,cx,cy,R,o.rot??-90);
+  if(o.shadow) svgEl('polygon',{points:ptsAttr(vs),fill:'rgba(47,42,38,.18)',transform:'translate(4,5)'},s);
+  svgEl('polygon',{points:ptsAttr(vs),fill:o.fill||'#FFC533',stroke:'#2F2A26','stroke-width':o.sw??5,'stroke-linejoin':'round'},s);
+  if(o.num!=null) svgEl('text',{x:cx,y:cy,'text-anchor':'middle','dominant-baseline':'central','font-family':'Fredoka, sans-serif','font-size':size*.32,'font-weight':700,fill:'#2F2A26'},s).textContent=o.num;
+  if(o.dots) vs.forEach(v=>svgEl('circle',{cx:v[0],cy:v[1],r:4,fill:'#2F2A26'},s));
+  if(o.face) addFace(s,cx,cy+size*.03,size/60);
+  return s;
+}
+
+function starRow(n){
+  const w=document.createElement('span'); w.className='stars';
+  for(let i=0;i<3;i++){
+    const s=svgEl('svg',{viewBox:'0 0 24 24',width:24,height:24});
+    svgEl('path',{d:'M12 3l2.7 5.8 6.3.8-4.6 4.3 1.2 6.1L12 17l-5.6 3 1.2-6.1L3 9.6l6.3-.8z',
+      fill:i<n?'#FFC533':'none',stroke:'#2F2A26','stroke-width':1.8,'stroke-linejoin':'round'},s);
+    w.appendChild(s);
+  }
+  return w;
+}
+
+/* ================= DATA & REKAM JEJAK ================= */
+const record={name:'',guess:null,memory:null,quiz:null,flash:null};
+try{Object.assign(record,JSON.parse(localStorage.getItem('poligon3')||'{}'));}catch(e){}
+const save=()=>{try{localStorage.setItem('poligon3',JSON.stringify(record));}catch(e){}};
+
+const NAMES ={3:'Segitiga',4:'Segi Empat',5:'Segi Lima',6:'Segi Enam',7:'Segi Tujuh',8:'Segi Delapan',9:'Segi Sembilan',10:'Segi Sepuluh'};
+const ENAMES={3:'Trigon',4:'Tetragon',5:'Pentagon',6:'Heksagon',7:'Heptagon',8:'Oktagon',9:'Nonagon',10:'Dekagon'};
+const NCOLOR={3:'#F2542D',4:'#1D8FA8',5:'#FFC533',6:'#3E9B57',7:'#C74B7B',8:'#7A6AAB',9:'#E88BB1',10:'#F2A03D'};
+
+/* ================= NAVIGASI SLIDE ================= */
+const slides=$$('.slide'), N=slides.length;
+const PARTS_IDX=slides.findIndex(s=>s.dataset.title.startsWith('Sisi,'));
+let cur=0;
+const menuList=$('#menuList');
+slides.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.className='menu-item';
+  b.innerHTML=`<span class="num">${i+1}</span>${s.dataset.title}`;
+  b.onclick=()=>{go(i);toggleMenu(false);};
+  menuList.appendChild(b);
+});
+function go(i){
+  if(i<0||i>=N)return;
+  slides[cur].classList.remove('active');
+  cur=i;
+  slides[cur].classList.add('active');
+  slides[cur].scrollTop=0;
+  $('#progressFill').style.width=((cur+1)/N*100)+'%';
+  $('#slideCounter').textContent=`${cur+1} / ${N}`;
+  $('#slideLabel').textContent=slides[cur].dataset.title;
+  $('#prevBtn').disabled=cur===0;
+  $('#nextBtn').disabled=cur===N-1;
+  $$('.menu-item').forEach((m,k)=>m.classList.toggle('active',k===cur));
+  if(cur===PARTS_IDX){
+    setTimeout(()=>{if(cur===PARTS_IDX&&window.__replayParts)window.__replayParts();},430);
+  }
+  if(slides[cur].dataset.title==='Lembar Hasil') renderResults();
+}
+ $('#prevBtn').appendChild(icon('back',24));
+ $('#nextBtn').appendChild(icon('arrow',24));
+ $('#prevBtn').onclick=()=>go(cur-1);
+ $('#nextBtn').onclick=()=>go(cur+1);
+ $('#startBtn').onclick=()=>go(1);
+ $('#restartAll').onclick=()=>go(0);
+function toggleMenu(open){$('#menuOverlay').hidden=!open;}
+ $('#menuBtn').appendChild(icon('list',18));$('#menuBtn').append(' Daftar Slide');
+ $('#menuBtn').onclick=()=>toggleMenu(true);
+ $('#menuClose').onclick=()=>toggleMenu(false);
+ $('#menuOverlay').addEventListener('click',e=>{if(e.target.id==='menuOverlay')toggleMenu(false);});
+document.addEventListener('keydown',e=>{
+  if(e.target.closest('input,textarea'))return;
+  if(e.key==='ArrowRight')go(cur+1);
+  if(e.key==='ArrowLeft')go(cur-1);
+});
+
+/* ================= 0. SAMPUL ================= */
+(function initCover(){
+  $('#logoPoly').appendChild(polySVG(5,{size:34,fill:'#FFC533',sw:3,pad:5}));
+  $('#startArrow').appendChild(icon('arrow',20));
+  const t=$('#trioStage');
+  t.appendChild(polySVG(3,{size:120,fill:'#F2542D',face:true,shadow:true}));
+  t.appendChild(polySVG(4,{size:165,fill:'#1D8FA8',face:true,shadow:true}));
+  t.appendChild(polySVG(5,{size:135,fill:'#FFC533',face:true,shadow:true}));
+  const inp=$('#studentName');
+  inp.value=record.name||'';
+  inp.addEventListener('input',()=>{record.name=inp.value.trim();save();});
+})();
+
+/* ================= 1. POLIGON SEHARI-HARI ================= */
+(function initDaily(){
+  function drawRoof(){
+    const s=svgEl('svg',{viewBox:'0 0 220 180',width:220,height:180});
+    svgEl('rect',{x:50,y:95,width:120,height:70,fill:'#F3E4C4',stroke:'#2F2A26','stroke-width':5},s);
+    svgEl('rect',{x:95,y:120,width:32,height:45,fill:'#C77B4A',stroke:'#2F2A26','stroke-width':4},s);
+    svgEl('polygon',{points:'26,100 194,100 110,32',fill:'#F2542D',stroke:'#2F2A26','stroke-width':5,'stroke-linejoin':'round'},s);
+    [[26,100],[194,100],[110,32]].forEach(v=>svgEl('circle',{cx:v[0],cy:v[1],r:5,fill:'#2F2A26'},s));
+    return s;
+  }
+  function drawWindow(){
+    const s=svgEl('svg',{viewBox:'0 0 220 180',width:220,height:180});
+    svgEl('rect',{x:30,y:22,width:160,height:140,fill:'#EFE0BE',stroke:'#2F2A26','stroke-width':5},s);
+    svgEl('rect',{x:68,y:52,width:84,height:84,fill:'#BFE3EA',stroke:'#2F2A26','stroke-width':5},s);
+    svgEl('line',{x1:110,y1:52,x2:110,y2:136,stroke:'#2F2A26','stroke-width':4},s);
+    svgEl('line',{x1:68,y1:94,x2:152,y2:94,stroke:'#2F2A26','stroke-width':4},s);
+    return s;
+  }
+  function drawStop(){
+    const s=svgEl('svg',{viewBox:'0 0 220 180',width:220,height:180});
+    svgEl('rect',{x:104,y:92,width:12,height:76,fill:'#8A6E58',stroke:'#2F2A26','stroke-width':4},s);
+    const vs=vertsOf(8,110,62,52,-67.5);
+    svgEl('polygon',{points:ptsAttr(vs),fill:'#E4572E',stroke:'#2F2A26','stroke-width':5,'stroke-linejoin':'round'},s);
+    const t=svgEl('text',{x:110,y:62,'text-anchor':'middle','dominant-baseline':'central','font-family':'Fredoka, sans-serif','font-weight':700,'font-size':20,fill:'#fff'},s);
+    t.textContent='STOP';
+    return s;
+  }
+  function drawBee(){
+    const s=svgEl('svg',{viewBox:'0 0 220 180',width:220,height:180});
+    [[52,52,26],[168,52,26]].forEach(h=>{
+      const vs=vertsOf(6,h[0],h[1],h[2]);
+      svgEl('polygon',{points:ptsAttr(vs),fill:'#F7DE8B',stroke:'#2F2A26','stroke-width':4,'stroke-linejoin':'round'},s);
+    });
+    const vs=vertsOf(6,110,105,58);
+    svgEl('polygon',{points:ptsAttr(vs),fill:'#FFC533',stroke:'#2F2A26','stroke-width':5,'stroke-linejoin':'round'},s);
+    return s;
+  }
+  function drawPizza(){
+    const s=svgEl('svg',{viewBox:'0 0 220 180',width:220,height:180});
+    svgEl('polygon',{points:'48,42 172,42 110,152',fill:'#FFC533',stroke:'#2F2A26','stroke-width':5,'stroke-linejoin':'round'},s);
+    svgEl('line',{x1:48,y1:42,x2:172,y2:42,stroke:'#D8953B','stroke-width':13,'stroke-linecap':'round'},s);
+    [[92,66],[128,72],[110,108]].forEach(p=>svgEl('circle',{cx:p[0],cy:p[1],r:10,fill:'#E4572E',stroke:'#2F2A26','stroke-width':3},s));
+    return s;
+  }
+  function drawKite(){
+    const s=svgEl('svg',{viewBox:'0 0 220 180',width:220,height:180});
+    svgEl('polyline',{points:'110,150 122,162 108,172 120,178',fill:'none',stroke:'#2F2A26','stroke-width':3.5,'stroke-linecap':'round'},s);
+    svgEl('polygon',{points:'104,158 118,156 110,170',fill:'#3E9B57',stroke:'#2F2A26','stroke-width':3},s);
+    svgEl('polygon',{points:'110,18 162,84 110,150 58,84',fill:'#C74B7B',stroke:'#2F2A26','stroke-width':5,'stroke-linejoin':'round'},s);
+    svgEl('line',{x1:110,y1:18,x2:110,y2:150,stroke:'rgba(255,255,255,.6)','stroke-width':3},s);
+    svgEl('line',{x1:58,y1:84,x2:162,y2:84,stroke:'rgba(255,255,255,.6)','stroke-width':3},s);
+    return s;
+  }
+  const tiles=[
+    {svg:drawStop ,name:'Tanda Berhenti',chip:'Oktagon · 8 sisi'    ,cls:'chip tang',big:true},
+    {svg:drawRoof ,name:'Atap Rumah'    ,chip:'Trigon · 3 sisi'     ,cls:'chip tang'},
+    {svg:drawWindow,name:'Jendela'      ,chip:'Tetragon · 4 sisi'   ,cls:'chip ocean'},
+    {svg:drawBee  ,name:'Sarang Lebah'  ,chip:'Heksagon · 6 sisi'   ,cls:'chip sun'},
+    {svg:drawPizza,name:'Potongan Pizza',chip:'Trigon · 3 sisi'     ,cls:'chip tang'},
+    {svg:drawKite ,name:'Layang-Layang' ,chip:'Tetragon · 4 sisi'   ,cls:'chip berry'},
+  ];
+  const m=$('#mosaic');
+  tiles.forEach(t=>{
+    const f=document.createElement('figure');
+    f.className='tile card'+(t.big?' big':'');
+    f.appendChild(t.svg());
+    const c=document.createElement('figcaption');
+    c.innerHTML=`<b>${t.name}</b>`;
+    const ch=document.createElement('span');ch.className=t.cls;ch.textContent=t.chip;
+    c.appendChild(ch);f.appendChild(c);m.appendChild(f);
+  });
+})();
+
+/* ================= 2. TUJUAN (badge poligon) ================= */
+ $$('.goal-badge').forEach((b,i)=>{
+  b.appendChild(polySVG(3+i,{size:58,fill:COLORS[i],num:3+i,sw:4,pad:10}));
+});
+
+/* ================= 3. DEFINISI (cek syarat) ================= */
+ $$('.tick').forEach(t=>t.appendChild(icon('check',17)));
+(function initDefine(){
+  const d=$('#defineDemo');
+  function cell(bad,svgFn,label){
+    const c=document.createElement('div');
+    c.className='demo-cell '+(bad?'bad':'good');
+    c.appendChild(svgFn());
+    c.appendChild(icon(bad?'x':'check',16));
+    c.append(' '+label);
+    return c;
+  }
+  const curve=()=>{const s=svgEl('svg',{viewBox:'0 0 90 50',width:90,height:50});svgEl('path',{d:'M8 38 Q45 -8 82 30',fill:'none',stroke:'#2F2A26','stroke-width':5,'stroke-linecap':'round'},s);return s;};
+  const straight=()=>{const s=svgEl('svg',{viewBox:'0 0 90 50',width:90,height:50});svgEl('line',{x1:8,y1:34,x2:82,y2:20,stroke:'#2F2A26','stroke-width':5,'stroke-linecap':'round'},s);return s;};
+  const open=()=>{const s=svgEl('svg',{viewBox:'0 0 90 60',width:90,height:60});svgEl('polyline',{points:'10,50 30,14 52,50 74,16',fill:'none',stroke:'#2F2A26','stroke-width':5,'stroke-linecap':'round','stroke-linejoin':'round'},s);return s;};
+  const closed=()=>{const s=svgEl('svg',{viewBox:'0 0 90 60',width:90,height:60});svgEl('polygon',{points:'45,6 82,30 68,54 22,54 8,30',fill:'#FFC533',stroke:'#2F2A26','stroke-width':5,'stroke-linejoin':'round'},s);return s;};
+  const r1=document.createElement('div');r1.className='demo-row';
+  r1.append(cell(true,curve,'Garis lengkung'),cell(false,straight,'Garis lurus'));
+  const r2=document.createElement('div');r2.className='demo-row';
+  r2.append(cell(true,open,'Terbuka — ada celah'),cell(false,closed,'Tertutup rapat'));
+  d.append(r1,r2);
+})();
+
+/* ================= 4. SISI / TITIK SUDUT / SUDUT ================= */
+(function initParts(){
+  const svg=$('#pentSVG'), cx=200, cy=205, R=128;
+  const vs=vertsOf(5,cx,cy,R);
+  const lbl=['A','B','C','D','E'];
+  svgEl('polygon',{points:ptsAttr(vs),fill:'rgba(29,143,168,.12)',stroke:'#2F2A26','stroke-width':7,'stroke-linejoin':'round'},svg);
+  const gWedge=svgEl('g',{},svg), gArc=svgEl('g',{},svg), gSide=svgEl('g',{},svg),
+        gVert=svgEl('g',{},svg), gLbl=svgEl('g',{},svg);
+  function arcPath(v,p1,p2,r){
+    const a1=Math.atan2(p1[1]-v[1],p1[0]-v[0]);
+    let a2=Math.atan2(p2[1]-v[1],p2[0]-v[0]);
+    let d=a2-a1; while(d>Math.PI)d-=2*Math.PI; while(d<-Math.PI)d+=2*Math.PI;
+    let p='';
+    for(let i=0;i<=12;i++){
+      const a=a1+d*(i/12);
+      p+=(i?'L':'M')+(v[0]+r*Math.cos(a)).toFixed(1)+' '+(v[1]+r*Math.sin(a)).toFixed(1);
+    }
+    return p;
+  }
+  for(let i=0;i<5;i++){
+    const v=vs[i], prev=vs[(i+4)%5], next=vs[(i+1)%5];
+    svgEl('path',{d:`M ${v[0]} ${v[1]} L ${lerp(v[0],next[0],.26).toFixed(1)} ${lerp(v[1],next[1],.26).toFixed(1)} L ${lerp(v[0],prev[0],.26).toFixed(1)} ${lerp(v[1],prev[1],.26).toFixed(1)} Z`,
+      fill:'rgba(199,75,123,.18)','class':'p-wedge'},gWedge);
+    svgEl('path',{d:arcPath(v,next,prev,34),fill:'none',stroke:'#C74B7B','stroke-width':6,'stroke-linecap':'round',pathLength:1,'class':'p-arc'},gArc);
+    svgEl('line',{x1:v[0],y1:v[1],x2:next[0],y2:next[1],stroke:'#F2542D','stroke-width':11,'stroke-linecap':'round',pathLength:1,'class':'p-side'},gSide);
+    svgEl('circle',{cx:v[0],cy:v[1],r:12,fill:'#FFC533',stroke:'#2F2A26','stroke-width':4.5,'class':'p-vert'},gVert);
+    const lx=lerp(cx,v[0],1.19), ly=lerp(cy,v[1],1.19);
+    const t=svgEl('text',{x:lx,y:ly,'text-anchor':'middle','dominant-baseline':'central','font-family':'Fredoka, sans-serif','font-weight':700,'font-size':24,fill:'#2F2A26','class':'p-vlabel'},gLbl);
+    t.textContent=lbl[i];
+  }
+  const INFO={
+    sisi :{t:'Apa itu Sisi?',d:'Sisi adalah garis lurus yang menjadi tepi atau pembatas poligon.',f:'Pentagon ini punya 5 sisi. Hitung sambil garis oranye digambar satu per satu!',cap:'5 SISI — garis lurus pembatas'},
+    titik:{t:'Apa itu Titik Sudut?',d:'Titik sudut adalah titik pertemuan dua sisi. Setiap pojok poligon adalah titik sudut.',f:'Ada 5 titik sudut. Kita beri nama A, B, C, D, dan E.',cap:'5 TITIK SUDUT — pojok bertemu garis'},
+    sudut:{t:'Apa itu Sudut?',d:'Sudut adalah daerah di antara dua sisi yang bertemu di satu titik sudut.',f:'Pentagon juga punya 5 sudut — tandanya berwarna merah muda.',cap:'5 SUDUT — jalan berbelok di pojok'},
+  };
+  const SEQ={sisi:['p-side'],titik:['p-vert','p-vlabel'],sudut:['p-wedge','p-arc']};
+  const ALL='.p-side,.p-arc,.p-wedge,.p-vert,.p-vlabel';
+  let curMode='sisi';
+  function show(mode){
+    curMode=mode;
+    svg.querySelectorAll(ALL).forEach(e=>{e.classList.remove('show');e.style.animationDelay='';});
+    void svg.getBoundingClientRect();
+    SEQ[mode].forEach(c=>{
+      svg.querySelectorAll('.'+c).forEach((e,i)=>{
+        e.style.animationDelay=(i*.18)+'s';
+        e.classList.add('show');
+      });
+    });
+    $('#partInfo').innerHTML=`<h3>${INFO[mode].t}</h3><p>${INFO[mode].d}</p><p class="fact">${INFO[mode].f}</p>`;
+    $('#pentCaption').textContent=INFO[mode].cap;
+  }
+  window.__replayParts=()=>show(curMode);
+  $$('#partTabs .tab').forEach(b=>b.onclick=()=>{
+    $$('#partTabs .tab').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    show(b.dataset.mode);
+  });
+  const rp=$('#replayParts'); rp.appendChild(icon('replay',18)); rp.append(' Putar Ulang Animasi');
+  rp.onclick=()=>show(curMode);
+  show('sisi');
+})();
+
+/* ================= 5. BERATURAN / TIDAK (slider morf) ================= */
+(function initRegular(){
+  const svg=$('#hexSVG'), cx=170, cy=172, R=112, SCALE=3/R;
+  const polyEl=svgEl('polygon',{points:'',fill:'#3E9B57',stroke:'#2F2A26','stroke-width':6,'stroke-linejoin':'round'},svg);
+  const labels=[];
+  for(let i=0;i<6;i++){
+    const t=svgEl('text',{x:0,y:0,'text-anchor':'middle','dominant-baseline':'central','class':'hex-len'},svg);
+    labels.push(t);
+  }
+  const slider=$('#regSlider'), cap=$('#regCaption');
+  let jit={ang:[0,0,0,0,0,0],rad:[1,1,1,1,1,1]};
+  function draw(){
+    const t=slider.value/100;
+    const vs=vertsOf(6,cx,cy,R,-90,{ang:jit.ang.map(a=>a*t),rad:jit.rad.map(r=>1+(r-1)*t)});
+    polyEl.setAttribute('points',ptsAttr(vs));
+    for(let i=0;i<6;i++){
+      const a=vs[i],b=vs[(i+1)%6];
+      const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
+      const dx=mx-cx,dy=my-cy,L=Math.hypot(dx,dy);
+      labels[i].setAttribute('x',mx+dx/L*22);
+      labels[i].setAttribute('y',my+dy/L*22);
+      labels[i].textContent=fmt(Math.hypot(b[0]-a[0],b[1]-a[1])*SCALE);
+    }
+    cap.textContent = t===0 ? 'BERATURAN — keenam sisinya sama panjang'
+                   : t===1 ? 'TIDAK BERATURAN — panjang sisinya berbeda-beda'
+                   : t<.5  ? 'Digeser dikit… sisinya mulai berbeda panjang'
+                           : 'Hampir tidak beraturan nih!';
+  }
+  function reshuffle(){
+    jit={ang:[],rad:[]};
+    for(let i=0;i<6;i++){jit.ang.push((Math.random()-.5)*.36);jit.rad.push(.72+Math.random()*.55);}
+    slider.value=65; draw();
+  }
+  slider.addEventListener('input',draw);
+  const rs=$('#reshuffleHex'); rs.appendChild(icon('replay',16)); rs.append(' Acak Bentuknya!');
+  rs.onclick=reshuffle;
+  draw();
+})();
+
+/* ================= 6. MESIN NAMA POLIGON (slide 7) ================= */
+(function initGallery(){
+  const svg=$('#morphSVG'), cx=180, cy=178, R=142;
+  const poly=svgEl('path',{d:'',fill:'#FFC533',stroke:'#2F2A26','stroke-width':6,'stroke-linejoin':'round'},svg);
+  poly.style.transition='fill .5s';
+  const dotsG=svgEl('g',{id:'morphDots'},svg);
+  let mN=5, mPrev=5, anim=null;
+  function radiusAt(th,n){
+    const a=Math.PI/n; let m=th%(2*a); if(m<0)m+=2*a;
+    return Math.cos(a)/Math.cos(m-a);
+  }
+  function pathD(n0,n1,t){
+    let d='';
+    for(let i=0;i<=220;i++){
+      const ang=i/220*2*Math.PI;
+      const r=lerp(radiusAt(ang+Math.PI/2,n0),radiusAt(ang+Math.PI/2,n1),easeInOut(t));
+      d+=(i?'L':'M')+(cx+R*r*Math.cos(ang)).toFixed(1)+' '+(cy+R*r*Math.sin(ang)).toFixed(1);
+    }
+    return d+'Z';
+  }
+  function drawDots(n){
+    dotsG.innerHTML='';
+    vertsOf(n,cx,cy,R).forEach(v=>svgEl('circle',{cx:v[0],cy:v[1],r:6,fill:'#2F2A26'},dotsG));
+  }
+  function setUI(){
+    $('#polyName').textContent=NAMES[mN];
+    $('#polyEn').textContent=ENAMES[mN];
+    $('#polySub').textContent=`${mN} sisi · ${mN} titik sudut · ${mN} sudut`;
+    poly.style.fill=NCOLOR[mN];
+    $$('#polyChips button').forEach(b=>b.classList.toggle('active',+b.textContent===mN));
+    $$('#polyList .poly-row').forEach(r=>r.classList.toggle('active',+r.dataset.n===mN));
+  }
+  function setPoly(n){
+    n=Math.max(3,Math.min(10,n));
+    if(n===mN)return;
+    if(anim){cancelAnimationFrame(anim);anim=null;}
+    mPrev=mN; mN=n;
+    const nm=$('#polyName');
+    nm.classList.remove('pop-name'); void nm.offsetWidth; nm.classList.add('pop-name');
+    dotsG.style.opacity='0';
+    const t0=performance.now(), DUR=650;
+    (function step(now){
+      const t=Math.min(1,(now-t0)/DUR);
+      poly.setAttribute('d',pathD(mPrev,mN,t));
+      if(t<1)anim=requestAnimationFrame(step);
+      else{anim=null;drawDots(mN);dotsG.style.opacity='1';}
+    })(t0);
+    setUI();
+    drawDots(n);
+  }
+  const chips=$('#polyChips');
+  for(let n=3;n<=10;n++){
+    const b=document.createElement('button');
+    b.textContent=n;
+    b.onclick=()=>setPoly(n);
+    chips.appendChild(b);
+  }
+  $('#polyMinus').onclick=()=>setPoly(mN-1);
+  $('#polyPlus').onclick=()=>setPoly(mN+1);
+  const list=$('#polyList');
+  for(let n=3;n<=10;n++){
+    const r=document.createElement('button');
+    r.className='poly-row';
+    r.dataset.n=n;
+    r.appendChild(polySVG(n,{size:52,fill:NCOLOR[n],sw:4,pad:7}));
+    const nm=document.createElement('span');
+    nm.className='pr-names';
+    nm.innerHTML=`<b>${NAMES[n]}</b><span class="pen">${ENAMES[n]}</span>`;
+    r.appendChild(nm);
+    const cnt=document.createElement('span');
+    cnt.className='pcount'; cnt.textContent=n;
+    r.appendChild(cnt);
+    r.onclick=()=>setPoly(n);
+    list.appendChild(r);
+  }
+  poly.setAttribute('d',pathD(5,5,1));
+  drawDots(5); setUI();
+})();
+
+/* ================= 7. BUKAN POLIGON + GAME TANGKAP (slide 8) ================= */
+(function initNotPoly(){
+  /* ikon alasan: ukuran seragam 90x64 dalam bingkai */
+  const circleSVG=()=>{const s=svgEl('svg',{viewBox:'0 0 90 64',width:90,height:64});svgEl('circle',{cx:45,cy:32,r:25,fill:'#E88BB1',stroke:'#2F2A26','stroke-width':4.5},s);return s;};
+  const openSVG=()=>{const s=svgEl('svg',{viewBox:'0 0 90 64',width:90,height:64});svgEl('polyline',{points:'10,54 29,16 48,54 66,20 82,42',fill:'none',stroke:'#2F2A26','stroke-width':4.5,'stroke-linecap':'round','stroke-linejoin':'round'},s);return s;};
+  const cubeSVG=()=>{const s=svgEl('svg',{viewBox:'0 0 90 64',width:90,height:64});
+    svgEl('rect',{x:20,y:8,width:31,height:31,fill:'#F7DE8B',stroke:'#2F2A26','stroke-width':4},s);
+    svgEl('rect',{x:37,y:25,width:31,height:31,fill:'#FFC533',stroke:'#2F2A26','stroke-width':4},s);return s;};
+  function fill(host,num,svg,title,text){
+    const ic=document.createElement('span'); ic.className='reason-ic'; ic.appendChild(svg);
+    const tx=document.createElement('span'); tx.className='reason-tx';
+    tx.innerHTML=`<b><span class="rno">Alasan ${num}</span>${title}</b><p>${text}</p>`;
+    host.appendChild(ic); host.appendChild(tx);
+  }
+  fill($('#reasonCircle'),1,circleSVG(),'Ada garis lengkung',
+    'Lingkaran dibatasi oleh satu garis lengkung. Syarat poligon: garis lurus semua. Jadi, lingkaran bukan poligon.');
+  fill($('#reasonOpen'),2,openSVG(),'Ujungnya tidak bertemu',
+    'Bangun ini masih terbuka — ujung-ujung garisnya belum saling bertemu. Poligon harus tertutup rapat.');
+  fill($('#reason3d'),3,cubeSVG(),'Bukan bangun datar',
+    'Kubus dan bola adalah bangun ruang (punya isi/volume). Poligon adalah bangun datar yang rata seperti gambar.');
+
+  const leaf=()=>{const s=svgEl('svg',{viewBox:'0 0 120 120',width:120,height:120});svgEl('path',{d:'M25 95 Q25 25 95 25 Q95 95 25 95 Z',fill:'#E88BB1',stroke:'#2F2A26','stroke-width':5},s);return s;};
+  const openBig=()=>{const s=svgEl('svg',{viewBox:'0 0 120 120',width:120,height:120});svgEl('polyline',{points:'12,95 34,25 60,95 82,30 108,70',fill:'none',stroke:'#2F2A26','stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round'},s);return s;};
+  const shapes=[
+    {poly:true ,svg:()=>polySVG(3,{size:120,fill:'#F2542D',pad:16})},
+    {poly:false,why:'Lingkaran punya garis lengkung!',svg:()=>{const s=svgEl('svg',{viewBox:'0 0 120 120',width:120,height:120});svgEl('circle',{cx:60,cy:60,r:42,fill:'#E88BB1',stroke:'#2F2A26','stroke-width':5},s);return s;}},
+    {poly:false,why:'Garisnya belum tertutup!',svg:openBig},
+    {poly:true ,svg:()=>polySVG(6,{size:120,fill:'#FFC533',pad:14})},
+    {poly:false,why:'Bentuknya memakai garis lengkung!',svg:leaf},
+    {poly:true ,svg:()=>polySVG(8,{size:120,fill:'#1D8FA8',pad:12})},
+  ];
+  const grid=$('#catchGrid'), hud=$('#catchHud');
+  let caught=0;
+  function build(){
+    grid.innerHTML=''; caught=0;
+    hud.textContent='Poligon tertangkap: 0 / 3'; hud.classList.remove('bad');
+    shuffle([...shapes]).forEach(sh=>{
+      const b=document.createElement('button');
+      b.className='catch-cell';
+      b.appendChild(sh.svg());
+      b.onclick=()=>{
+        if(b.classList.contains('caught'))return;
+        if(sh.poly){
+          b.classList.add('caught'); caught++;
+          hud.textContent=`Poligon tertangkap: ${caught} / 3`; hud.classList.remove('bad');
+          if(caught===3)hud.textContent='Hebat! Semua poligon berhasil tertangkap!';
+        }else{
+          b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+          hud.textContent=sh.why; hud.classList.add('bad');
+          setTimeout(()=>{if(caught<3){hud.textContent=`Poligon tertangkap: ${caught} / 3`;hud.classList.remove('bad');}},1600);
+        }
+      };
+      grid.appendChild(b);
+    });
+  }
+  const again=$('#catchAgain'); again.appendChild(icon('replay',16)); again.append(' Main Lagi');
+  again.onclick=build;
+  build();
+})();
+
+/* ================= 8. GAME TEBAK-TEBAKAN ================= */
+(function initGuess(){
+  function triple(){
+    const w=document.createElement('div');w.className='triple';
+    w.appendChild(polySVG(3,{size:84,fill:'#F2542D',pad:10}));
+    w.appendChild(polySVG(10,{size:84,fill:'#F2A03D',pad:8}));
+    w.appendChild(polySVG(6,{size:84,fill:'#3E9B57',pad:10}));
+    return w;
+  }
+  const G=[
+    {art:()=>polySVG(3,{size:150,fill:'#F2542D'}),clue:'Aku punya 3 sisi dan 3 titik sudut. Siapakah aku?',opts:['Segi Lima','Segitiga','Lingkaran'],a:1,why:'Bangun dengan 3 sisi bernama segitiga (trigon).'},
+    {art:()=>polySVG(4,{size:150,fill:'#1D8FA8'}),clue:'Bangunku seperti papan catur, keempat sisinya sama semua.',opts:['Persegi','Segitiga','Segi Enam'],a:0,why:'Persegi punya 4 sisi yang sama panjang.'},
+    {art:()=>polySVG(5,{size:150,fill:'#FFC533'}),clue:'Namaku pentagon. Berapa banyak sisiku?',opts:['3 sisi','5 sisi','8 sisi'],a:1,why:'Pentagon adalah sebutan lain untuk segi lima (5 sisi).'},
+    {art:()=>polySVG(8,{size:150,fill:'#E4572E',rot:-67.5}),clue:'Tanda berhenti di jalan berbentuk poligon bersisi…',opts:['6','8','10'],a:1,why:'Tanda berhenti berbentuk oktagon — segi delapan (8 sisi).'},
+    {art:()=>polySVG(6,{size:150,fill:'#FFC533'}),clue:'Aku punya 6 sisi, bentukku seperti sarang lebah.',opts:['Segi Enam','Segi Empat','Segi Sepuluh'],a:0,why:'Sarang lebah berbentuk segi enam (heksagon).'},
+    {art:triple,clue:'Manakah bangun dengan sisi paling banyak?',opts:['Segitiga','Segi Sepuluh','Segi Enam'],a:1,why:'Segi sepuluh (dekagon) punya 10 sisi — paling banyak di antara ketiganya.'},
+    {art:()=>polySVG(10,{size:150,fill:'#F2A03D'}),clue:'Aku punya 10 sisi. Namaku?',opts:['Segi Delapan','Segi Sembilan','Segi Sepuluh'],a:2,why:'Poligon bersisi 10 bernama segi sepuluh (dekagon).'},
+    {art:()=>polySVG(7,{size:150,fill:'#C74B7B'}),clue:'Poligon bersisi 7 disebut…',opts:['Segi Tujuh','Segi Delapan','Segi Enam'],a:0,why:'Tujuh sisi berarti segi tujuh (heptagon).'},
+    {art:()=>{const s=svgEl('svg',{viewBox:'0 0 150 150',width:150,height:150});svgEl('circle',{cx:75,cy:75,r:56,fill:'#E88BB1',stroke:'#2F2A26','stroke-width':5},s);return s;},clue:'Manakah yang BUKAN poligon?',opts:['Persegi','Segi Lima','Lingkaran'],a:2,why:'Lingkaran dibatasi garis lengkung, jadi bukan poligon.'},
+    {art:()=>polySVG(9,{size:150,fill:'#7A6AAB'}),clue:'Namaku segi sembilan. Berapa titik sudutku?',opts:['7','9','10'],a:1,why:'Banyak titik sudut selalu sama dengan banyak sisi, yaitu 9.'},
+  ];
+  const frame=$('#guessFrame');
+  let idx=0,score=0,locked=false;
+  function render(){
+    locked=false;
+    const g=G[idx];
+    frame.innerHTML=`
+      <div class="game-hud"><span>Soal ${idx+1} / ${G.length}</span><span>Skor: ${score}</span></div>
+      <div class="guess-body card">
+        <div class="guess-art" id="gArt"></div>
+        <div>
+          <p class="clue">${g.clue}</p>
+          <div class="opts" id="gOpts"></div>
+          <p class="feedback" id="gFb"></p>
+          <button class="btn btn-primary" id="gNext" hidden>${idx===G.length-1?'Lihat Hasil':'Soal Berikutnya'} </button>
+        </div>
+      </div>`;
+    $('#gArt').appendChild(g.art());
+    const L=['A','B','C'];
+    g.opts.forEach((o,i)=>{
+      const b=document.createElement('button');
+      b.className='opt';
+      b.innerHTML=`<span class="letter">${L[i]}</span>${o}`;
+      b.onclick=()=>{
+        if(locked)return; locked=true;
+        if(i===g.a){score++;b.classList.add('ok');fb(true,g.why);}
+        else{b.classList.add('no');$$('#gOpts .opt')[g.a].classList.add('reveal');fb(false,g.why);}
+        $('#gNext').hidden=false;
+        frame.querySelector('.game-hud span:last-child').textContent='Skor: '+score;
+      };
+      $('#gOpts').appendChild(b);
+    });
+    $('#gNext').appendChild(icon('arrow',18));
+    $('#gNext').onclick=()=>{
+      idx++;
+      if(idx<G.length)render();
+      else finish();
+    };
+  }
+  function fb(ok,why){
+    const f=$('#gFb');
+    f.className='feedback '+(ok?'ok':'no');
+    f.textContent=(ok?'Benar! ':'Kurang tepat. ')+why;
+  }
+  function finish(){
+    record.guess=score; save();
+    const st=score>=9?3:score>=7?2:score>=5?1:0;
+    const msg=score>=9?'Luar biasa, kamu detektif poligon sejati!':score>=7?'Hebat! Sedikit lagi sempurna.':'Bagus, coba main lagi biar makin jago!';
+    frame.innerHTML=`
+      <div class="end-panel card">
+        <p style="font-weight:600;letter-spacing:2px;font-size:.8rem;color:var(--berry)">GAME SELESAI</p>
+        <div class="big">${score} / ${G.length}</div>
+        <div class="starslot" style="margin:10px 0"></div>
+        <p style="font-weight:600;margin-bottom:18px">${msg}</p>
+        <button class="btn" id="gAgain">Main Lagi</button>
+      </div>`;
+    frame.querySelector('.starslot').appendChild(starRow(st));
+    $('#gAgain').prepend(icon('replay',18));
+    $('#gAgain').onclick=()=>{idx=0;score=0;render();};
+  }
+  render();
+})();
+
+/* ================= 9. GAME MEMORI (teks kartu diperbaiki) ================= */
+(function initMemory(){
+  const PAIRS=[3,4,5,6,8,10];
+  const grid=$('#memGrid'), done=$('#memDone');
+  let first=null,lock=false,moves=0,found=0,sec=0,timer=null,started=false;
+  const hud=()=>{$('#memMoves').textContent=moves;$('#memPairs').textContent=`${found} / 6`;$('#memTime').textContent=sec+' dtk';};
+  function stopTimer(){clearInterval(timer);timer=null;}
+  function build(){
+    stopTimer(); first=null; lock=false; moves=0; found=0; sec=0; started=false;
+    hud(); done.hidden=true; grid.innerHTML='';
+    const cards=[];
+    PAIRS.forEach(n=>{cards.push({n,type:'name'});cards.push({n,type:'pic'});});
+    shuffle(cards);
+    cards.forEach(c=>{
+      const el=document.createElement('div');
+      el.className='mcard';
+      el.innerHTML=`<div class="mcard-inner">
+          <div class="mface back"><div><div class="qmark">?</div><div class="mini">POLIGON</div></div></div>
+          <div class="mface front"></div>
+        </div>`;
+      const front=el.querySelector('.mface.front');
+      if(c.type==='pic'){
+        front.appendChild(polySVG(c.n,{size:110,fill:NCOLOR[c.n],pad:10}));
+      }else{
+        /* nama Indonesia besar + nama internasional kecil agar mudah dibaca */
+        const mn=document.createElement('div');
+        mn.className='mn';
+        mn.innerHTML=`<b>${NAMES[c.n]}</b><span class="men">${ENAMES[c.n]}</span>`;
+        front.appendChild(mn);
+      }
+      el.onclick=()=>{
+        if(lock||el.classList.contains('flipped')||el.classList.contains('matched'))return;
+        if(!started){started=true;timer=setInterval(()=>{sec++;hud();},1000);}
+        el.classList.add('flipped');
+        if(!first){first=el;return;}
+        moves++; hud();
+        const a=first, b=el;
+        if(a.dataset.n===b.dataset.n){
+          first=null;
+          setTimeout(()=>{
+            a.classList.add('matched');b.classList.add('matched');
+            found++; hud();
+            if(found===6)finish();
+          },350);
+        }else{
+          lock=true; first=null;
+          setTimeout(()=>{a.classList.remove('flipped');b.classList.remove('flipped');lock=false;},950);
+        }
+      };
+      el.dataset.n=c.n;
+      grid.appendChild(el);
+    });
+  }
+  function finish(){
+    stopTimer();
+    record.memory={moves,time:sec}; save();
+    done.hidden=false;
+    done.innerHTML=`<h3>Semua pasangan ditemukan!</h3>
+      <p style="font-weight:600;margin:8px 0 16px">${moves} langkah dalam ${sec} detik. Ingatanmu tajam sekali!</p>
+      <button class="btn btn-primary" id="memAgain">Main Lagi</button>`;
+    $('#memAgain').onclick=build;
+  }
+  const rs=$('#memRestart'); rs.appendChild(icon('replay',16)); rs.append(' Ulang');
+  rs.onclick=build;
+  build();
+})();
+
+/* ================= 10. KUIS EXIT TICKET (20 SOAL) ================= */
+(function initQuiz(){
+  const Q=[
+    {q:'Poligon adalah bangun datar yang dibatasi oleh …',opts:['garis lengkung','garis lurus','titik-titik','warna'],a:1,why:'Poligon selalu dibatasi oleh garis lurus.'},
+    {q:'Banyak sisi pada segitiga adalah …',opts:['2','3','4','5'],a:1,why:'Segitiga berarti bangun dengan tiga sisi.'},
+    {q:'Poligon yang memiliki 5 sisi disebut …',opts:['segi empat','segi enam','segi lima','segitiga'],a:2,why:'Lima sisi berarti segi lima (pentagon).'},
+    {q:'Berikut ini yang BUKAN poligon adalah …',opts:['persegi','segitiga','segi enam','lingkaran'],a:3,why:'Lingkaran dibatasi garis lengkung.'},
+    {q:'Titik pertemuan dua sisi pada poligon disebut …',opts:['sisi','titik sudut','pusat','garis tinggi'],a:1,why:'Pojok pertemuan dua sisi bernama titik sudut.'},
+    {q:'Segi enam memiliki … titik sudut.',opts:['5','6','7','8'],a:1,why:'Banyaknya sama dengan jumlah sisinya, yaitu 6.'},
+    {q:'Poligon beraturan adalah poligon yang …',opts:['semua sisinya sama panjang','sisinya berbeda-beda','punya garis lengkung','tidak tertutup'],a:0,why:'Beraturan berarti sisi dan sudutnya sama besar.'},
+    {q:'Persegi termasuk poligon …',opts:['beraturan','tidak beraturan','lengkung','terbuka'],a:0,why:'Keempat sisinya sama panjang.'},
+    {q:'Banyak sisi pada segi delapan adalah …',opts:['6','7','8','9'],a:2,why:'Segi delapan (oktagon) berarti delapan sisi.'},
+    {q:'Tanda berhenti di jalan berbentuk poligon bersisi …',opts:['3','4','6','8'],a:3,why:'Tanda berhenti berbentuk segi delapan (oktagon).',img:8},
+    {q:'Manakah yang merupakan poligon?',opts:['segitiga','lingkaran','garis terbuka','bola'],a:0,why:'Segitiga tertutup dan lurus semua sisinya.'},
+    {q:'Bangun datar tertutup yang dibatasi garis lengkung … poligon.',opts:['termasuk','bukan','sama dengan','mirip'],a:1,why:'Syarat poligon adalah garis lurus.'},
+    {q:'Segi empat memiliki … titik sudut.',opts:['3','4','5','6'],a:1,why:'Jumlah titik sudutnya sama dengan jumlah sisinya.'},
+    {q:'Poligon bersisi 10 disebut …',opts:['segi sembilan','segi sepuluh','segi delapan','segi tujuh'],a:1,why:'Sepuluh sisi berarti segi sepuluh (dekagon).'},
+    {q:'Segitiga sama sisi termasuk poligon …',opts:['beraturan','tidak beraturan','terbuka','lengkung'],a:0,why:'Ketiga sisinya sama panjang.'},
+    {q:'Banyak sudut pada segi lima adalah …',opts:['4','5','6','7'],a:1,why:'Sisi, titik sudut, dan sudut sama banyak: 5.'},
+    {q:'Nama lain (internasional) segi enam adalah …',opts:['heksagon','pentagon','oktagon','dekagon'],a:0,why:'Heksagon = segi enam, dari bahasa Yunani "heksa" = 6.'},
+    {q:'Sebuah poligon memiliki 6 sisi. Bangun itu adalah …',opts:['segi lima','segi enam','segi tujuh','segi delapan'],a:1,why:'Enam sisi berarti segi enam.'},
+    {q:'Banyak sisi bangun pada gambar adalah …',opts:['6','7','8','9'],a:1,why:'Bangun itu segi tujuh (heptagon) — ada 7 sisinya.',img:7},
+    {q:'Bangun datar tertutup yang dibatasi oleh garis lurus disebut …',opts:['poligon','lingkaran','garis lengkung','titik sudut'],a:0,why:'Itulah poligon! Sampai jumpa di soal berikutnya.'},
+  ];
+  const frame=$('#quizFrame');
+  let idx=0,score=0,locked=false;
+  function render(){
+    locked=false;
+    const q=Q[idx], pct=(idx/Q.length*100).toFixed(0);
+    frame.innerHTML=`
+      <div class="qbar"><div style="width:0"></div></div>
+      <div class="game-hud"><span>Soal ${idx+1} dari ${Q.length}</span><span>Benar: ${score}</span></div>
+      <div class="guess-body card" style="grid-template-columns:${q.img?'240px 1fr':'1fr'}">
+        <div class="guess-art" id="qArt" ${q.img?'':'hidden'}></div>
+        <div>
+          <p class="clue">${q.q}</p>
+          <div class="opts" id="qOpts"></div>
+          <p class="feedback" id="qFb"></p>
+          <button class="btn btn-primary" id="qNext" hidden>${idx===Q.length-1?'Lihat Hasil':'Soal Berikutnya'}</button>
+        </div>
+      </div>`;
+    const bar=frame.querySelector('.qbar>div');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{bar.style.width=pct+'%';}));
+    if(q.img)$('#qArt').appendChild(polySVG(q.img,{size:150,fill:NCOLOR[q.img]||'#FFC533'}));
+    const L=['A','B','C','D'];
+    q.opts.forEach((o,i)=>{
+      const b=document.createElement('button');
+      b.className='opt';
+      b.innerHTML=`<span class="letter">${L[i]}</span>${o}`;
+      b.onclick=()=>{
+        if(locked)return; locked=true;
+        if(i===q.a){score++;b.classList.add('ok');fb(true,q.why);}
+        else{b.classList.add('no');$$('#qOpts .opt')[q.a].classList.add('reveal');fb(false,q.why);}
+        frame.querySelector('.game-hud span:last-child').textContent='Benar: '+score;
+        $('#qNext').hidden=false;
+      };
+      $('#qOpts').appendChild(b);
+    });
+    $('#qNext').appendChild(icon('arrow',18));
+    $('#qNext').onclick=()=>{idx++; if(idx<Q.length)render(); else finish();};
+  }
+  function fb(ok,why){
+    const f=$('#qFb'); f.className='feedback '+(ok?'ok':'no');
+    f.textContent=(ok?'Benar! ':'Belum tepat. ')+why;
+  }
+  function finish(){
+    record.quiz=score; save();
+    const pct=Math.round(score/Q.length*100);
+    const st=pct>=90?3:pct>=70?2:pct>=50?1:0;
+    const msg=pct>=90?'Sempurna! Kamu benar-benar paham poligon.':pct>=70?'Hebat! Pemahamanmu sudah kuat.':pct>=50?'Cukup baik. Yuk baca lagi flashcard-nya!':'Jangan menyerah, ayo pelajari lagi materinya!';
+    frame.innerHTML=`
+      <div class="end-panel card">
+        <p style="font-weight:600;letter-spacing:2px;font-size:.8rem;color:var(--berry)">EXIT TICKET SELESAI</p>
+        <div class="big">${score} / ${Q.length}</div>
+        <p style="font-weight:600;opacity:.7">Nilai: ${pct}</p>
+        <div class="starslot" style="margin:10px 0"></div>
+        <p style="font-weight:600;margin-bottom:18px">${msg}</p>
+        <button class="btn btn-primary" id="qAgain">Ulangi Kuis</button>
+      </div>`;
+    frame.querySelector('.starslot').appendChild(starRow(st));
+    $('#qAgain').prepend(icon('replay',18));
+    $('#qAgain').onclick=()=>{idx=0;score=0;render();};
+  }
+  render();
+})();
+
+/* ================= 11. FLASHCARD ================= */
+(function initFlash(){
+  const F=[
+    {f:'Apa itu poligon?',b:'Bangun datar tertutup yang dibatasi oleh garis lurus.'},
+    {f:'Sebutkan 3 ciri poligon!',b:'(1) Bangun datar, (2) tertutup rapat, (3) dibatasi garis lurus.'},
+    {f:'Apa itu sisi?',b:'Garis lurus yang menjadi tepi atau pembatas poligon.'},
+    {f:'Apa itu titik sudut?',b:'Titik tempat bertemunya dua sisi pada poligon.'},
+    {f:'Apa bedanya poligon beraturan dan tidak beraturan?',b:'Beraturan: semua sisi dan sudutnya sama besar. Tidak beraturan: sisinya tidak sama panjang.'},
+    {f:'Sebutkan nama poligon bersisi 3, 4, dan 5!',b:'Segitiga (trigon), segi empat (tetragon), dan segi lima (pentagon).'},
+    {f:'Apa nama internasional poligon bersisi 8?',b:'Oktagon — sama dengan segi delapan, seperti tanda berhenti di jalan.'},
+    {f:'Berikan 3 contoh poligon di sekitar kita!',b:'Tanda berhenti (oktagon), atap rumah (segitiga), dan jendela (segi empat).'},
+    {f:'Mengapa lingkaran bukan poligon?',b:'Karena lingkaran dibatasi garis lengkung, bukan garis lurus.'},
+  ];
+  const card=$('#flashCard'), wrap=$('#flashWrap');
+  let deck=[...F.keys()], repeats=0, firstTry=0, answered=new Set(), flipped=false;
+  const btnY=$('#flashYes'), btnN=$('#flashNo');
+  function hud(){
+    $('#flashHud').textContent=`Kartu tersisa: ${deck.length} dari ${F.length} · Kartu diulang: ${repeats}`;
+  }
+  function show(){
+    if(!deck.length)return finish();
+    flipped=false;
+    card.classList.remove('flipped');
+    btnY.disabled=true; btnN.disabled=true;
+    $('#flashHint').style.display='';
+    const k=deck[0];
+    $('#flashFront').textContent=F[k].f;
+    $('#flashBack').textContent=F[k].b;
+    hud();
+  }
+  card.onclick=()=>{
+    if(flipped)return;
+    flipped=true;
+    card.classList.add('flipped');
+    btnY.disabled=false; btnN.disabled=false;
+    $('#flashHint').style.display='none';
+  };
+  btnY.onclick=()=>{
+    const k=deck.shift();
+    if(!answered.has(k)){answered.add(k);firstTry++;}
+    record.flash={total:F.length,repeats}; save();
+    show();
+  };
+  btnN.onclick=()=>{
+    const k=deck.shift(); deck.push(k); repeats++;
+    record.flash={total:F.length,repeats}; save();
+    show();
+  };
+  function finish(){
+    card.style.display='none';
+    btnY.style.display='none'; btnN.style.display='none';
+    $('#flashHint').style.display='none';
+    $('#flashHud').textContent='';
+    const p=document.createElement('div');
+    p.className='end-panel card';
+    p.innerHTML=`<h3>Luar biasa!</h3>
+      <p style="font-weight:600;margin:8px 0 4px">Semua kartu sudah kamu pahami.</p>
+      <p style="font-weight:500;opacity:.75;margin-bottom:16px">Pengulangan: ${repeats} kali · Langsung paham: ${firstTry} kartu</p>
+      <button class="btn btn-primary" id="fAgain">Ulangi Flashcard</button>`;
+    wrap.appendChild(p);
+    $('#fAgain').onclick=()=>{
+      p.remove(); card.style.display='';
+      btnY.style.display=''; btnN.style.display='';
+      deck=[...F.keys()]; repeats=0; firstTry=0; answered.clear();
+      show();
+    };
+  }
+  show();
+})();
+
+/* ================= 12. LEMBAR HASIL ================= */
+function renderResults(){
+  const c=$('#reportCard');
+  const name=record.name||'Sahabat Poligon';
+  const date=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const pctOf=(s,t)=>Math.round(s/t*100);
+  const starOf=p=>p>=90?3:p>=70?2:p>=50?1:0;
+  function row(label,val,st,slideGo){
+    const d=document.createElement('div'); d.className='r-row';
+    d.innerHTML=`<span class="r-name">${label}</span><span class="r-val">${val}</span>`;
+    if(st!=null)d.appendChild(starRow(st));
+    if(slideGo!=null){
+      const b=document.createElement('button');b.className='btn btn-small';b.textContent='Ke slide';
+      b.onclick=()=>go(slideGo);d.appendChild(b);
+    }
+    return d;
+  }
+  const rows=[];
+  rows.push(record.guess!=null
+    ? row('Game Tebak-Tebakan',`${record.guess} / 10 benar`,starOf(pctOf(record.guess,10)),8)
+    : row('Game Tebak-Tebakan','<span class="todo">Belum dikerjakan — ayo coba!</span>',null,8));
+  rows.push(record.memory
+    ? row('Game Memori',`${record.memory.moves} langkah · ${record.memory.time} dtk`,record.memory.moves<=14?3:record.memory.moves<=20?2:1,9)
+    : row('Game Memori','<span class="todo">Belum dikerjakan — ayo coba!</span>',null,9));
+  rows.push(record.quiz!=null
+    ? row('Kuis Exit Ticket',`${record.quiz} / 20 benar (${pctOf(record.quiz,20)})`,starOf(pctOf(record.quiz,20)),10)
+    : row('Kuis Exit Ticket','<span class="todo">Belum dikerjakan — ayo coba!</span>',null,10));
+  rows.push(record.flash
+    ? row('Flashcard',`${record.flash.total} kartu dipahami · diulang ${record.flash.repeats}×`,null,11)
+    : row('Flashcard','<span class="todo">Belum dikerjakan — ayo coba!</span>',null,11));
+  let totalHTML;
+  if(record.guess!=null&&record.quiz!=null){
+    const avg=Math.round((pctOf(record.guess,10)+pctOf(record.quiz,20))/2);
+    const stars=starRow(starOf(avg)).outerHTML;
+    totalHTML=`<div class="r-total">
+        <div><span style="font-weight:700">Rata-rata pemahaman: ${avg}</span>
+        <div style="margin-top:4px">${stars}</div></div>
+        <span class="stamp">${avg>=70?'HEBAT!':'SEMANGAT!'}</span></div>`;
+  }else{
+    totalHTML=`<div class="r-total"><span style="font-weight:600">Kerjakan dulu game dan kuisnya, lalu kembali ke sini ya!</span></div>`;
+  }
+  c.innerHTML=`<div class="kicker">LAPORAN BELAJAR</div>
+    <h2>Lembar Hasil <span class="hl">${name}</span></h2>
+    <p class="date">${date}</p>
+    <div id="rRows"></div>${totalHTML}
+    <div class="report-actions">
+      <button class="btn btn-small" id="rRefresh">Segarkan</button>
+      <button class="btn btn-small" id="rReset">Hapus Semua Hasil</button>
+    </div>`;
+  const rr=$('#rRows'); rows.forEach(r=>rr.appendChild(r));
+  $('#rRefresh').onclick=renderResults;
+  $('#rReset').onclick=()=>{record.guess=record.memory=record.quiz=record.flash=null;save();renderResults();};
+}
+
+/* ================= 13. KESIMPULAN (barisan poligon) ================= */
+(function initConclusion(){
+  const art=$('#conclusionArt');
+  for(let n=3;n<=8;n++){
+    art.appendChild(polySVG(n,{size:52+(n-3)*9,fill:NCOLOR[n],face:true}));
+  }
+})();
+
+/* ================= 14. REFLEKSI ================= */
+(function initReflect(){
+  let mood=null,fav=null;
+  const faces={senang:'M20 38 Q32 52 44 38',biasa:'M22 42 H42',sedih:'M20 48 Q32 36 44 48'};
+  const faceCol={senang:'#FFC533',biasa:'#BFE3EA',sedih:'#C7D4E8'};
+  const rowM=$('#moodRow');
+  Object.keys(faces).forEach(k=>{
+    const b=document.createElement('button');
+    b.className='mood';
+    const s=svgEl('svg',{viewBox:'0 0 64 64',width:64,height:64});
+    svgEl('circle',{cx:32,cy:32,r:28,fill:faceCol[k],stroke:'#2F2A26','stroke-width':4},s);
+    svgEl('circle',{cx:23,cy:26,r:3.4,fill:'#2F2A26'},s);
+    svgEl('circle',{cx:41,cy:26,r:3.4,fill:'#2F2A26'},s);
+    svgEl('path',{d:faces[k],fill:'none',stroke:'#2F2A26','stroke-width':4,'stroke-linecap':'round'},s);
+    b.appendChild(s);
+    b.onclick=()=>{mood=k;$$('.mood').forEach(x=>x.classList.toggle('sel',x===b));};
+    rowM.appendChild(b);
+  });
+  const favs=['Game Tebak-Tebakan','Game Memori','Kuis','Flashcard','Materi & gambar poligon'];
+  const rowF=$('#favRow');
+  favs.forEach(f=>{
+    const b=document.createElement('button');
+    b.className='fav'; b.textContent=f;
+    b.onclick=()=>{fav=f;$$('.fav').forEach(x=>x.classList.toggle('sel',x===b));};
+    rowF.appendChild(b);
+  });
+  $('#sendReflect').onclick=()=>{
+    const learn=$('#refLearn').value.trim();
+    if(!mood&&!fav&&!learn){
+      $('#sendReflect').textContent='Isi dulu salah satunya ya!';
+      setTimeout(()=>$('#sendReflect').textContent='Kirim Refleksi',1500);
+      return;
+    }
+    const name=record.name||'Sahabat Poligon';
+    const moodTxt={senang:'Senang dan ceria',biasa:'Biasa saja',sedih:'Masih bingung sedikit'}[mood||'']||'-';
+    $('#reflectForm').hidden=true;
+    const d=$('#reflectDone');
+    d.hidden=false;
+    d.innerHTML=`<div class="kicker">REFLEKSI TERKIRIM</div>
+      <h3 style="margin-bottom:12px">Terima kasih sudah berbagi, ${name}!</h3>
+      <p style="font-weight:500;line-height:1.7;text-align:left;display:inline-block">
+      Perasaan hari ini: <b>${moodTxt}</b><br>
+      Hal baru yang dipelajari: <b>${learn||'-'}</b><br>
+      Bagian favorit: <b>${fav||'-'}</b></p>
+      <div style="margin-top:18px"><button class="btn" id="refEdit">Ubah Refleksi</button></div>`;
+    $('#refEdit').onclick=()=>{d.hidden=true;$('#reflectForm').hidden=false;};
+  };
+})();
+
+/* ================= 15. THANK YOU ================= */
+(function initThanks(){
+  const trio=$('#thanksTrio');
+  trio.appendChild(polySVG(3,{size:96,fill:'#F2542D',face:true}));
+  trio.appendChild(polySVG(4,{size:126,fill:'#1D8FA8',face:true}));
+  trio.appendChild(polySVG(6,{size:110,fill:'#3E9B57',face:true}));
+  const rs=$('#restartAll');
+  rs.appendChild(icon('replay',18)); rs.append(' Ulangi dari Awal');
+  if(record.name)$('#thanksName').textContent=', '+record.name+'!';
+  const cw=$('#confettiWrap');
+  for(let i=0;i<26;i++){
+    const d=document.createElement('div');
+    d.className='confetti';
+    d.style.left=(Math.random()*100)+'%';
+    d.style.animationDuration=(5+Math.random()*5)+'s';
+    d.style.animationDelay=(-Math.random()*8)+'s';
+    d.style.setProperty('--sway',(Math.random()*120-60)+'px');
+    d.appendChild(polySVG(3+Math.floor(Math.random()*4),{size:16+Math.random()*20,fill:COLORS[i%COLORS.length],sw:3,pad:4}));
+    cw.appendChild(d);
+  }
+})();
+
+go(0);
+</script>
+</body>
+</html>
