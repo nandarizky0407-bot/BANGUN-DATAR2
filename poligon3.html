@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Poligon — Matematika Kelas 3 SD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --paper:#FBF2E0; --ink:#33302A; --white:#FFFDF6;
+  --red:#EF5B3F; --orange:#F08A24; --yellow:#FFC93C; --green:#37A85B;
+  --blue:#3E8ED0; --teal:#159E8C; --pink:#E85D8A;
+  --r:18px; --sh:6px 6px 0 var(--ink);
+}
+html,body{height:100%}
+body{font-family:'Nunito',sans-serif;color:var(--ink);background:var(--paper);overflow:hidden;
+  background-image:radial-gradient(rgba(51,48,42,.07) 1.6px,transparent 1.6px);background-size:26px 26px}
+h1,h2,h3,h4,.disp{font-family:'Fredoka',sans-serif;font-weight:600}
+button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
+input,textarea{font-family:inherit;color:inherit}
+svg text{user-select:none}
+
+/* ============ DEKORASI LATAR ============ */
+#deco{position:fixed;inset:0;z-index:0;pointer-events:none}
+#deco svg{position:absolute;animation:floaty 9s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-18px) rotate(7deg)}}
+
+/* ============ DECK & SLIDE ============ */
+#deck{position:fixed;inset:0 0 62px 0;overflow-y:auto;z-index:1}
+.slide{display:none;min-height:100%;padding:38px clamp(16px,4vw,48px) 46px}
+.slide.active{display:flex}
+.wrap{margin:auto;width:min(1180px,100%)}
+@keyframes inUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.slide.active .wrap{animation:inUp .55s cubic-bezier(.2,.7,.3,1) both}
+
+.kicker{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--yellow);
+  font:800 13px 'Nunito';letter-spacing:.14em;padding:7px 15px;border-radius:999px;text-transform:uppercase}
+.slide h2{font-size:clamp(26px,3.6vw,44px);margin:14px 0 6px}
+.lead{font-size:clamp(15px,1.6vw,18px);font-weight:700;opacity:.72;max-width:780px}
+
+.card{background:var(--white);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh)}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--white);border:3px solid var(--ink);
+  border-radius:14px;box-shadow:4px 4px 0 var(--ink);font:800 16px 'Nunito';padding:11px 20px;
+  transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn:disabled{opacity:.45;pointer-events:none}
+.btn-red{background:var(--red);color:#fff}.btn-green{background:var(--green);color:#fff}
+.btn-yellow{background:var(--yellow)}.btn-blue{background:var(--blue);color:#fff}
+.btn-ink{background:var(--ink);color:#fff}
+.btn-big{font-size:20px;padding:16px 32px;border-radius:18px}
+.btn-sm{font-size:14px;padding:8px 14px;box-shadow:3px 3px 0 var(--ink)}
+.chip{border:3px solid var(--ink);background:var(--white);border-radius:999px;font:800 14px 'Nunito';
+  padding:8px 16px;box-shadow:3px 3px 0 var(--ink);transition:.15s}
+.chip:hover{transform:translate(-1px,-1px)}
+.chip.on{background:var(--ink);color:var(--yellow)}
+.icon{width:20px;height:20px;flex:none}
+.icon svg{width:100%;height:100%;display:block}
+.svg-lbl{font:700 13px 'Nunito';fill:rgba(51,48,42,.65);text-anchor:middle}
+
+/* ============ NAVIGASI ============ */
+#nav{position:fixed;left:0;right:0;bottom:0;height:62px;background:var(--white);
+  border-top:3px solid var(--ink);display:flex;align-items:center;gap:18px;padding:0 18px;z-index:5}
+#navFillWrap{flex:1;height:12px;border:2.5px solid var(--ink);border-radius:99px;overflow:hidden;background:var(--paper)}
+#navFill{height:100%;background:var(--green);width:0;transition:width .4s;border-radius:99px}
+#navCount{font:800 14px 'Nunito';min-width:112px;text-align:center}
+.navbtn{width:44px;height:44px;border-radius:50%;border:3px solid var(--ink);background:var(--yellow);
+  box-shadow:3px 3px 0 var(--ink);display:grid;place-items:center;transition:.15s}
+.navbtn:hover{transform:translate(-1px,-1px)}
+.navbtn:disabled{opacity:.35}
+.navbtn svg{width:20px;height:20px}
+
+#toast{position:fixed;left:50%;bottom:82px;transform:translateX(-50%) translateY(20px);background:var(--ink);
+  color:#fff;font:800 15px 'Nunito';padding:12px 22px;border-radius:14px;opacity:0;pointer-events:none;
+  transition:.3s;z-index:50}
+#toast.show{opacity:1;transform:translateX(-50%)}
+
+.cf{position:fixed;width:11px;height:11px;pointer-events:none;z-index:99}
+.cf.sq{border-radius:2px}.cf.rd{border-radius:50%}.cf.tr{clip-path:polygon(50% 0,100% 100%,0 100%)}
+
+/* ============ COVER ============ */
+.cover{text-align:center}
+.cover-title{font-size:clamp(60px,11vw,140px);font-weight:700;line-height:1;margin:14px 0 2px}
+.cover-title .dot{color:var(--red)}
+.cover-squig{display:block;margin:0 auto 8px;width:min(340px,70vw)}
+.cover-sub{font:800 clamp(15px,2vw,19px) 'Nunito';opacity:.7;max-width:560px;margin:0 auto}
+.cover-cards{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin:34px 0 28px}
+.name-card{background:var(--white);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh);
+  padding:18px 22px;text-align:left;width:min(300px,86vw)}
+.name-card label{display:flex;align-items:center;gap:10px;font:800 13px 'Nunito';letter-spacing:.06em;
+  text-transform:uppercase;opacity:.7}
+.nc-num{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font:600 16px 'Fredoka';
+  color:#fff;border:2.5px solid var(--ink)}
+.nc1 .nc-num{background:var(--red)}.nc2 .nc-num{background:var(--blue)}
+.name-card input{width:100%;margin-top:10px;border:none;border-bottom:3px dashed var(--ink);background:transparent;
+  font:600 22px 'Fredoka';padding:6px 2px;outline:none;text-align:center}
+.name-card input:focus{border-bottom-color:var(--red)}
+.cover-hint{font:800 14px 'Nunito';opacity:.55;margin-top:16px}
+
+/* ============ SLIDE SEHARI-HARI ============ */
+.daily-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px;margin-top:24px}
+.thing{position:relative;padding:14px 14px 12px;cursor:pointer;transition:transform .18s;background:var(--white)}
+.thing:hover{transform:translateY(-5px) rotate(-1deg)}
+.thing svg{width:100%;height:auto;display:block}
+.thing .hl{opacity:0;transition:.25s;stroke:var(--red);fill:none;stroke-width:5;stroke-linejoin:round}
+.thing.open .hl{opacity:1;stroke-dasharray:10 8;animation:march 2.2s linear infinite}
+@keyframes march{to{stroke-dashoffset:-72}}
+.thing .tag{margin-top:8px;font:800 13px 'Nunito';background:var(--yellow);border:2.5px solid var(--ink);
+  border-radius:10px;padding:6px 10px;display:none;line-height:1.35}
+.thing.open .tag{display:block;animation:inUp .3s both}
+.thing .tag.bad{background:var(--red);color:#fff}
+.thing .pin{position:absolute;top:-12px;left:-10px;width:30px;height:30px;border-radius:50%;
+  border:3px solid var(--ink);display:grid;place-items:center;font:600 13px 'Fredoka';color:#fff}
+
+/* ============ TUJUAN ============ */
+.goals{display:grid;gap:14px;margin-top:24px;max-width:840px}
+.goal{display:flex;align-items:center;gap:16px;padding:14px 20px;cursor:pointer;transition:.18s;background:var(--white)}
+.goal:hover{transform:translateX(6px)}
+.goal .gnum{width:46px;height:46px;flex:none;display:grid;place-items:center}
+.goal .gnum svg{width:42px;height:42px}
+.goal p{font:700 16.5px 'Nunito';flex:1}
+.goal .gchk{width:30px;height:30px;border:3px solid var(--ink);border-radius:9px;background:var(--paper);
+  display:grid;place-items:center;flex:none}
+.goal .gchk .icon{width:18px;height:18px;color:#fff;opacity:0;transform:scale(.4);transition:.2s}
+.goal.done{background:#EAF7EE}
+.goal.done .gchk{background:var(--green)}
+.goal.done .gchk .icon{opacity:1;transform:scale(1)}
+.goal.done p{opacity:.55;text-decoration:line-through}
+
+/* ============ DEFINISI ============ */
+.split{display:grid;grid-template-columns:minmax(300px,5fr) 6fr;gap:30px;margin-top:20px;align-items:start}
+@media(max-width:900px){.split{grid-template-columns:1fr}}
+.def-stage{padding:18px;display:grid;place-items:center}
+.def-stage svg{width:100%;max-width:440px;height:auto}
+.def-line{stroke:var(--ink);stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;
+  transition:stroke-dashoffset .5s ease}
+#defSvg.go .def-line{stroke-dashoffset:0}
+#defSvg.go .def-line:nth-of-type(1){transition-delay:.2s}
+#defSvg.go .def-line:nth-of-type(2){transition-delay:.55s}
+#defSvg.go .def-line:nth-of-type(3){transition-delay:.9s}
+#defSvg.go .def-line:nth-of-type(4){transition-delay:1.25s}
+#defSvg.go .def-line:nth-of-type(5){transition-delay:1.6s}
+.def-fill{fill:var(--yellow);opacity:0;transition:opacity .5s 2.2s}
+#defSvg.go .def-fill{opacity:.75}
+.def-dot{fill:var(--red);stroke:var(--ink);stroke-width:3;transition:fill .4s 2.2s}
+#defSvg.go .def-dot{fill:var(--yellow)}
+.def-done{font:600 30px 'Fredoka';fill:var(--ink);opacity:0;transform:scale(.6);
+  transform-origin:center;transform-box:fill-box;transition:opacity .4s 2.6s,transform .4s 2.6s}
+#defSvg.go .def-done{opacity:1;transform:scale(1)}
+.ciri{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 20px}
+.def-steps{display:grid;gap:10px}
+.def-step{display:flex;gap:12px;align-items:center;font:700 15.5px 'Nunito'}
+.def-step b{font:600 17px 'Fredoka'}
+.def-step .num{width:30px;height:30px;flex:none;border-radius:50%;border:2.5px solid var(--ink);
+  background:var(--yellow);display:grid;place-items:center;font:600 15px 'Fredoka'}
+
+/* ============ UNSUR POLIGON ============ */
+.pent-stage{padding:16px;position:relative}
+.pent-stage svg{width:100%;max-width:420px;display:block;margin:auto}
+.pside{stroke:var(--ink);stroke-width:5;stroke-linecap:round;transition:stroke .2s}
+.pside.found{stroke:var(--green)}
+.pside-hit{stroke:transparent;stroke-width:24}
+.pvtx{fill:var(--yellow);stroke:var(--ink);stroke-width:3;transition:fill .2s}
+.pvtx.found{fill:var(--green)}
+.pvtx-hit{fill:transparent}
+.parc{fill:none;stroke:var(--red);stroke-width:3.5;stroke-linecap:round}
+.pdeg{font:800 13px 'Nunito';fill:var(--red);text-anchor:middle}
+.fact-card{padding:16px 18px;margin-bottom:14px;cursor:pointer;display:flex;gap:14px;align-items:flex-start;
+  transition:.18s;border-left:12px solid var(--ink)}
+.fact-card:hover{transform:translateX(5px)}
+.fact-card.on{background:#FFF4CF;transform:translateX(8px)}
+.fact-sisi{border-left-color:var(--green)}.fact-titik{border-left-color:var(--orange)}.fact-sudut{border-left-color:var(--red)}
+.fact-card h4{font-size:19px;margin-bottom:4px}
+.fact-card p{font:700 14.5px 'Nunito';opacity:.8;line-height:1.5}
+.pent-hud{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.pent-count{font:800 15px 'Nunito';padding:9px 16px;background:var(--white);border:3px solid var(--ink);border-radius:12px}
+#pentMsg{font:700 14.5px 'Nunito';opacity:.75;margin-top:10px;min-height:22px}
+
+/* ============ BERATURAN ============ */
+.reg-stage{padding:14px;text-align:center}
+.reg-stage svg{width:100%;max-width:380px}
+.reg-len{font:800 12px 'Nunito';fill:var(--ink);text-anchor:middle}
+.reg-status{display:inline-block;font:800 14.5px 'Nunito';padding:9px 18px;border:3px solid var(--ink);
+  border-radius:12px;margin-top:8px;transition:.2s}
+.reg-status.tidy{background:var(--green);color:#fff}
+.reg-status.messy{background:var(--red);color:#fff}
+.vs-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+@media(max-width:700px){.vs-cols{grid-template-columns:1fr}}
+.vs-col{padding:14px}
+.vs-col h4{font-size:18px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.vs-col.t h4{color:var(--green)}.vs-col.f h4{color:var(--red)}
+.vs-row{display:flex;gap:10px}
+.vs-cell{flex:1;text-align:center;font:800 12px 'Nunito';background:var(--paper);border:2.5px solid var(--ink);
+  border-radius:12px;padding:6px 4px}
+.vs-cell svg{width:100%;max-width:66px;height:auto;display:block;margin:0 auto 2px}
+
+/* ============ KELUARGA POLIGON ============ */
+.fam-grid{display:grid;grid-template-columns:minmax(280px,440px) 1fr;gap:30px;align-items:start}
+@media(max-width:880px){.fam-grid{grid-template-columns:1fr}}
+.fam-stage{padding:14px;text-align:center}
+.fam-stage svg{width:100%}
+.fam-ctrl{display:flex;align-items:center;gap:16px;justify-content:center;margin-top:4px}
+.roundbtn{width:48px;height:48px;border-radius:50%;border:3px solid var(--ink);background:var(--yellow);
+  font:600 26px 'Fredoka';box-shadow:3px 3px 0 var(--ink);display:grid;place-items:center;transition:.15s}
+.roundbtn:hover{transform:translate(-1px,-1px)}
+.roundbtn:disabled{opacity:.4}
+.fam-alias{font:800 15px 'Nunito';color:var(--red);letter-spacing:.08em;text-transform:uppercase}
+.fam-name{font-size:clamp(30px,4vw,46px);line-height:1.1}
+.fam-info{font:700 16px 'Nunito';margin-top:8px}
+.fam-ex{font:800 14px 'Nunito';opacity:.6;margin-top:4px}
+.fam-badge{display:inline-block;margin-top:12px;font:800 13px 'Nunito';padding:6px 14px;border:2.5px solid var(--ink);
+  border-radius:99px;background:var(--green);color:#fff}
+.fam-chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+.fam-chips .chip.on{background:var(--red);color:#fff}
+
+/* ============ SORT BUKAN POLIGON ============ */
+.sort-wrap{display:grid;grid-template-columns:minmax(260px,400px) 1fr;gap:30px;align-items:start;margin-top:20px}
+@media(max-width:860px){.sort-wrap{grid-template-columns:1fr}}
+.sort-card{padding:20px;text-align:center}
+.sort-card svg{width:100%;max-width:260px;height:auto}
+.sort-btns{display:flex;gap:14px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.sort-feed{margin-top:16px;font:800 15.5px 'Nunito';min-height:52px;padding:10px 14px;border-radius:12px;
+  border:3px dashed transparent;line-height:1.4}
+.sort-feed.good{border-color:var(--green);color:var(--green);background:#EAF7EE}
+.sort-feed.badf{border-color:var(--red);color:var(--red);background:#FDEBE7}
+.sort-side .stat{display:inline-flex;align-items:center;gap:10px;background:var(--white);border:3px solid var(--ink);
+  border-radius:12px;padding:9px 16px;font:800 15px 'Nunito';box-shadow:3px 3px 0 var(--ink);margin:0 8px 10px 0}
+
+/* ============ GARIS ============ */
+.line-grid{display:grid;grid-template-columns:250px 1fr;gap:26px;margin-top:20px;align-items:start}
+@media(max-width:760px){.line-grid{grid-template-columns:1fr}}
+.line-chips{display:grid;gap:10px}
+.line-chips .chip{text-align:left;border-radius:14px;display:flex;align-items:center;gap:10px;justify-content:flex-start}
+.line-chips .sw{width:14px;height:14px;border-radius:4px;border:2.5px solid var(--ink);flex:none}
+.line-stage{padding:20px}
+.line-stage svg{width:100%;height:auto;max-height:280px;display:block}
+#lineTxt{margin-top:12px;font:700 16.5px 'Nunito';max-width:660px;line-height:1.55}
+@keyframes walkx{0%,100%{transform:translateX(0)}50%{transform:translateX(16px)}}
+.walk{animation:walkx 2.6s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.12}}
+.blink{animation:blink 1.1s infinite}
+
+/* ============ SEJAJAR PADA POLIGON ============ */
+.par-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:20px;margin-top:24px}
+.par-card{padding:16px;text-align:center}
+.par-card h4{font-size:20px}
+.par-card svg{width:100%;max-width:250px;height:auto;margin:6px auto;display:block}
+.par-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.par-btns .chip{padding:6px 13px;font-size:13px}
+.par-res{margin-top:10px;font:800 14px 'Nunito';min-height:22px;color:var(--blue)}
+
+/* ============ GAME TEBAK ============ */
+.rid-hud{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:16px 0 18px}
+.pscore{display:inline-flex;align-items:center;gap:10px;background:var(--white);border:3px solid var(--ink);
+  border-radius:14px;padding:8px 16px;font:800 15px 'Nunito';box-shadow:3px 3px 0 var(--ink)}
+.pscore .dot2{width:14px;height:14px;border-radius:50%;border:2.5px solid var(--ink);flex:none}
+.pscore b{font:600 21px 'Fredoka'}
+.rid-turn{flex:1;min-width:230px;text-align:center;font:600 clamp(16px,2vw,21px) 'Fredoka';background:var(--yellow);
+  border:3px solid var(--ink);border-radius:14px;padding:10px 16px;box-shadow:var(--sh)}
+.rid-grid{display:grid;grid-template-columns:minmax(260px,400px) 1fr;gap:26px;align-items:start}
+@media(max-width:880px){.rid-grid{grid-template-columns:1fr}}
+.rboard{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:18px}
+.rnum{aspect-ratio:1;border:3px solid var(--ink);border-radius:16px;background:var(--white);
+  box-shadow:4px 4px 0 var(--ink);font:600 34px 'Fredoka';display:grid;place-items:center;position:relative;transition:.15s}
+.rnum:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.rnum .rwho{position:absolute;bottom:7px;left:0;right:0;font:800 10.5px 'Nunito';display:none;padding:0 4px}
+.rnum.picked{background:#E8E2D5!important;box-shadow:2px 2px 0 var(--ink);cursor:default;transform:none}
+.rnum.picked .rn{transform:scale(.75);opacity:.5}
+.rnum.picked .rwho{display:block}
+.rpanel{padding:22px;min-height:320px;display:flex;flex-direction:column}
+.rq-for{align-self:flex-start;font:800 12.5px 'Nunito';letter-spacing:.06em;padding:6px 13px;border-radius:99px;
+  border:2.5px solid var(--ink);background:var(--teal);color:#fff;margin-bottom:14px}
+.rq-text{font:600 clamp(18px,2.3vw,25px) 'Fredoka';line-height:1.35}
+.r-opts{display:grid;gap:10px;margin-top:18px}
+.r-opt{text-align:left;border:3px solid var(--ink);border-radius:12px;background:var(--paper);
+  padding:12px 16px;font:800 15.5px 'Nunito';box-shadow:3px 3px 0 var(--ink);transition:.15s}
+.r-opt:hover:not(:disabled){transform:translate(-2px,-2px)}
+.r-opt:disabled{cursor:default}
+.r-opt.right{background:var(--green);color:#fff}
+.r-opt.wrong{background:var(--red);color:#fff}
+.r-feed{margin-top:14px;font:800 15.5px 'Nunito';min-height:24px}
+
+/* ============ MEMORI ============ */
+.mem-hud{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;font:800 15px 'Nunito';margin-top:16px}
+.mem-hud .stat{background:var(--white);border:3px solid var(--ink);border-radius:12px;padding:8px 16px;
+  box-shadow:3px 3px 0 var(--ink)}
+.mem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:580px;margin:18px auto 0}
+.mem-card{aspect-ratio:5/6;perspective:600px;cursor:pointer}
+.mc-in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.3,.8,.4,1.15)}
+.mem-card.open .mc-in{transform:rotateY(180deg)}
+.mc-f{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:3px solid var(--ink);
+  border-radius:14px;display:grid;place-items:center;box-shadow:3px 3px 0 var(--ink);overflow:hidden}
+.mc-back{background:repeating-linear-gradient(45deg,var(--yellow) 0 10px,#FFD76B 10px 20px)}
+.mc-back .q{width:42px;height:42px;background:var(--white);border:3px solid var(--ink);border-radius:50%;
+  display:grid;place-items:center;font:600 21px 'Fredoka'}
+.mc-front{background:var(--white);transform:rotateY(180deg);padding:6px}
+.mc-front svg{width:72%;height:72%}
+.mc-front .nm{font:600 clamp(12px,1.4vw,16px) 'Fredoka';text-align:center;line-height:1.2}
+.mem-card.matched .mc-f{border-color:var(--green);box-shadow:3px 3px 0 var(--green);background:#EAF7EE}
+.mem-card.matched{cursor:default;animation:pulse .5s}
+@keyframes pulse{50%{transform:scale(1.06)}}
+.mem-end{max-width:480px;margin:20px auto 0;padding:20px;text-align:center;display:none}
+.mem-end.show{display:block;animation:inUp .4s both}
+.mem-end p{font:700 15.5px 'Nunito';margin:8px 0 14px}
+.mem-preview{display:none;max-width:640px;margin:16px auto 0;background:var(--yellow);
+  border:3px solid var(--ink);border-radius:14px;box-shadow:var(--sh);padding:11px 16px;
+  align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;font:800 16px 'Nunito';text-align:center}
+.mem-preview.show{display:flex;animation:inUp .3s both}
+.mem-preview .cnum{font:600 24px 'Fredoka';background:var(--white);border:2.5px solid var(--ink);
+  border-radius:10px;min-width:48px;text-align:center;padding:0 8px}
+
+/* ============ KUIS ============ */
+.quiz-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:22px}
+@media(max-width:940px){.quiz-row{grid-template-columns:1fr}}
+.qz{position:relative;padding:18px;display:flex;flex-direction:column;gap:12px}
+.qz-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.qz-head .dot2{width:16px;height:16px;border-radius:50%;border:3px solid var(--ink);flex:none}
+.qz-head h3{font-size:20px;flex:1}
+.qz-score{font:800 14px 'Nunito';background:var(--yellow);border:2.5px solid var(--ink);border-radius:10px;padding:5px 12px}
+.qz-prog{height:10px;border:2.5px solid var(--ink);border-radius:99px;overflow:hidden;background:var(--paper)}
+.qz-prog i{display:block;height:100%;background:var(--blue);transition:width .3s}
+.qz-body{background:var(--paper);border:2.5px dashed var(--ink);border-radius:14px;padding:16px;flex:1}
+.qz-q{font:600 16.5px 'Fredoka';line-height:1.4;min-height:46px}
+.qz-opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.qz-opts .r-opt{padding:10px 12px;font-size:14px}
+.qz-foot{display:flex;align-items:center;gap:12px}
+.qz-nav{width:42px;height:42px;border-radius:12px;border:3px solid var(--ink);background:var(--white);
+  box-shadow:3px 3px 0 var(--ink);display:grid;place-items:center;transition:.15s}
+.qz-nav:hover{transform:translate(-1px,-1px)}
+.qz-nav:disabled{opacity:.4}
+.qz-idx{flex:1;text-align:center;font:800 14px 'Nunito'}
+.qz-done-btn{display:none}
+.qz-done-btn.show{display:inline-flex}
+.qz-over{position:absolute;inset:-3px;background:rgba(51,48,42,.55);border-radius:var(--r);display:none;
+  place-items:center;z-index:3}
+.qz-over.show{display:grid}
+.qz-over .inner{background:var(--white);border:3px solid var(--ink);border-radius:16px;box-shadow:var(--sh);
+  padding:26px 30px;text-align:center;max-width:330px;animation:inUp .35s both}
+.qz-over h3{font-size:26px}
+.qz-over .big{font:600 52px 'Fredoka';color:var(--red);line-height:1.1}
+.qz-over p{font:800 14.5px 'Nunito';margin:8px 0 14px;line-height:1.45}
+
+/* ============ FLASHCARD ============ */
+.fc-stage{max-width:620px;margin:22px auto 0;position:relative}
+.fc-card{position:relative;height:238px;perspective:900px;cursor:pointer}
+.fc-in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,.9,.4,1.1)}
+.fc-card.flip .fc-in{transform:rotateY(180deg)}
+.fc-f{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:3px solid var(--ink);
+  border-radius:20px;box-shadow:var(--sh);padding:24px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;gap:12px}
+.fc-front{background:var(--white)}
+.fc-back{background:var(--yellow);transform:rotateY(180deg)}
+.fc-k{font:800 12px 'Nunito';letter-spacing:.12em;text-transform:uppercase;opacity:.6}
+.fc-q{font:600 clamp(19px,2.4vw,26px) 'Fredoka';line-height:1.3}
+.fc-hintflip{font:800 12px 'Nunito';opacity:.55}
+.fc-rate{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+@media(max-width:620px){.fc-rate{grid-template-columns:1fr}}
+.fc-row{padding:12px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.fc-row b{font:600 17px 'Fredoka'}
+.fc-count{font:800 12.5px 'Nunito';opacity:.7;width:100%}
+.fc-nav{display:flex;align-items:center;gap:12px;justify-content:center;margin-top:16px}
+
+/* ============ HASIL ============ */
+.res-row{display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:20px;margin-top:24px}
+@media(max-width:960px){.res-row{grid-template-columns:1fr}}
+.res-card{padding:20px;text-align:center}
+.res-card h3{font-size:21px;display:flex;align-items:center;justify-content:center;gap:10px}
+.res-dot{width:16px;height:16px;border-radius:50%;border:3px solid var(--ink)}
+.res-stars{display:flex;gap:6px;justify-content:center;margin:12px 0}
+.res-stars svg{width:36px;height:36px}
+.res-stars .off{opacity:.2}
+.res-line{display:flex;justify-content:space-between;gap:10px;font:800 14.5px 'Nunito';padding:9px 4px;
+  border-bottom:2.5px dashed rgba(51,48,42,.25);text-align:left}
+.res-line b{font:600 16px 'Fredoka';white-space:nowrap}
+.res-label{font:800 12.5px 'Nunito';letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;
+  border-radius:99px;display:inline-block;margin-top:12px;border:2.5px solid var(--ink)}
+
+/* ============ KESIMPULAN & REFLEKSI ============ */
+.end-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:28px;margin-top:22px;align-items:start}
+@media(max-width:920px){.end-grid{grid-template-columns:1fr}}
+.con-list{display:grid;gap:12px}
+.con-item{display:flex;gap:14px;align-items:center;padding:13px 16px;background:var(--white);
+  border:3px solid var(--ink);border-radius:14px;box-shadow:4px 4px 0 var(--ink)}
+.con-item svg{width:34px;height:34px;flex:none}
+.con-item p{font:700 14.5px 'Nunito';line-height:1.45}
+.ref-card{padding:18px;margin-bottom:16px}
+.ref-card h4{font-size:20px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ref-dot{width:16px;height:16px;border-radius:50%;border:3px solid var(--ink)}
+.faces{display:flex;gap:10px;margin-bottom:12px}
+.face{width:56px;height:56px;border-radius:16px;border:3px solid var(--ink);background:var(--white);
+  display:grid;place-items:center;transition:.15s;box-shadow:3px 3px 0 var(--ink)}
+.face svg{width:40px;height:40px}
+.face:hover{transform:translateY(-3px)}
+.face.sel{background:var(--yellow);transform:translateY(-3px) rotate(-4deg)}
+.ref-card textarea{width:100%;border:2.5px dashed var(--ink);border-radius:12px;background:var(--paper);
+  padding:10px 12px;font:700 14.5px 'Nunito';resize:none;outline:none;min-height:58px}
+
+/* ============ THANKS ============ */
+.thanks{text-align:center}
+.thanks h1{font-size:clamp(46px,8.5vw,104px);font-weight:700;line-height:1.05}
+.th-names{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:28px 0}
+.th-chip{display:inline-flex;align-items:center;gap:12px;background:var(--white);border:3px solid var(--ink);
+  border-radius:999px;padding:12px 26px;font:600 clamp(17px,2.4vw,24px) 'Fredoka';box-shadow:var(--sh)}
+.th-chip .dot2{width:18px;height:18px;border-radius:50%;border:3px solid var(--ink)}
+</style>
+</head>
+<body>
+
+<!-- Dekorasi poligon melayang -->
+<div id="deco" aria-hidden="true">
+  <svg style="top:6%;left:4%;width:120px;animation-delay:0s" viewBox="0 0 100 100"><polygon points="50,8 92,80 8,80" fill="none" stroke="#33302A" stroke-width="3" opacity=".12"/></svg>
+  <svg style="top:10%;right:6%;width:100px;animation-delay:1.2s" viewBox="0 0 100 100"><polygon points="50,5 95,28 95,72 50,95 5,72 5,28" fill="#FFC93C" stroke="#33302A" stroke-width="3" opacity=".14"/></svg>
+  <svg style="bottom:14%;left:7%;width:90px;animation-delay:2.1s" viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" rx="8" fill="#BFE3FF" stroke="#33302A" stroke-width="3" opacity=".18"/></svg>
+  <svg style="bottom:8%;right:9%;width:130px;animation-delay:.7s" viewBox="0 0 100 100"><polygon points="50,6 90,35 75,88 25,88 10,35" fill="none" stroke="#33302A" stroke-width="3" opacity=".13"/></svg>
+  <svg style="top:44%;left:1.5%;width:70px;animation-delay:1.7s" viewBox="0 0 100 100"><polygon points="50,5 95,28 95,72 50,95 5,72 5,28" fill="none" stroke="#33302A" stroke-width="3" opacity=".12"/></svg>
+</div>
+
+<div id="deck">
+
+<!-- ============ SLIDE 0 : COVER ============ -->
+<section class="slide s-cover">
+  <div class="wrap cover">
+    <span class="kicker">Matematika &bull; Kelas 3 SD</span>
+    <h1 class="cover-title">POLIGON<span class="dot">.</span></h1>
+    <svg class="cover-squig" viewBox="0 0 340 20"><path d="M4 12 q20 -12 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke="#EF5B3F" stroke-width="5" stroke-linecap="round"/></svg>
+    <p class="cover-sub">Petualangan seru mengenal bangun datar dari garis-garis lurus — bersama dua penjelajah hebat!</p>
+    <div class="cover-cards">
+      <div class="name-card nc1">
+        <label><span class="nc-num">1</span> Nama Siswa Pertama</label>
+        <input id="name1" placeholder="Tulis namamu…" maxlength="16">
+      </div>
+      <div class="name-card nc2">
+        <label><span class="nc-num">2</span> Nama Siswa Kedua</label>
+        <input id="name2" placeholder="Tulis namamu…" maxlength="16">
+      </div>
+    </div>
+    <button class="btn btn-red btn-big" id="btnStart">Mulai Belajar
+      <span class="icon"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </button>
+    <p class="cover-hint">Isi nama kalian berdua, lalu tekan tombolnya ya!</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 1 : POLIGON SEHARI-HARI ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Yuk, Amati!</span>
+    <h2>Poligon di Sekitar Kita</h2>
+    <p class="lead">Poligon bersembunyi di benda-benda di sekitar kita. Klik setiap kartu untuk menemukan bentuk poligonnya!</p>
+    <div class="daily-grid">
+      <div class="thing card"><span class="pin" style="background:var(--blue)">1</span>
+        <svg viewBox="0 0 120 120"><rect x="25" y="22" width="70" height="76" rx="5" fill="#BFE3FF" stroke="#33302A" stroke-width="4"/><line x1="60" y1="22" x2="60" y2="98" stroke="#33302A" stroke-width="3"/><line x1="25" y1="60" x2="95" y2="60" stroke="#33302A" stroke-width="3"/><rect class="hl" x="25" y="22" width="70" height="76" rx="5"/></svg>
+        <div class="tag">Persegi panjang — 4 sisi &amp; 4 titik sudut!</div>
+      </div>
+      <div class="thing card"><span class="pin" style="background:var(--red)">2</span>
+        <svg viewBox="0 0 120 120"><polygon points="40,14 80,14 106,40 106,80 80,106 40,106 14,80 14,40" fill="#EF5B3F" stroke="#33302A" stroke-width="4" stroke-linejoin="round"/><text x="60" y="66" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="19" fill="#fff">STOP</text><polygon class="hl" points="40,14 80,14 106,40 106,80 80,106 40,106 14,80 14,40"/></svg>
+        <div class="tag">Rambu berhenti — segi delapan (oktagon)!</div>
+      </div>
+      <div class="thing card"><span class="pin" style="background:var(--orange)">3</span>
+        <svg viewBox="0 0 120 120"><polygon points="60,14 104,98 16,98" fill="#FFD98E" stroke="#33302A" stroke-width="4" stroke-linejoin="round"/><circle cx="60" cy="62" r="7" fill="#EF5B3F" stroke="#33302A" stroke-width="2.5"/><circle cx="44" cy="84" r="6" fill="#EF5B3F" stroke="#33302A" stroke-width="2.5"/><circle cx="76" cy="84" r="6" fill="#EF5B3F" stroke="#33302A" stroke-width="2.5"/><polygon class="hl" points="60,14 104,98 16,98"/></svg>
+        <div class="tag">Potongan pizza — segitiga (triangle)!</div>
+      </div>
+      <div class="thing card"><span class="pin" style="background:var(--yellow);color:var(--ink)">4</span>
+        <svg viewBox="0 0 120 120"><polygon points="86,30 112,45 112,75 86,90 60,75 60,45" fill="#FFC93C" opacity=".55" stroke="#33302A" stroke-width="3"/><polygon points="56,28 88,46 88,82 56,100 24,82 24,46" fill="#FFC93C" stroke="#33302A" stroke-width="4" stroke-linejoin="round"/><polygon class="hl" points="56,28 88,46 88,82 56,100 24,82 24,46"/></svg>
+        <div class="tag">Sarang lebah — segi enam (hexagon)!</div>
+      </div>
+      <div class="thing card"><span class="pin" style="background:var(--green)">5</span>
+        <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="46" fill="#FFFDF6" stroke="#33302A" stroke-width="4"/><polygon points="60,38 82,54 74,80 46,80 38,54" fill="#33302A"/><line x1="60" y1="38" x2="60" y2="16" stroke="#33302A" stroke-width="3"/><line x1="82" y1="54" x2="102" y2="47" stroke="#33302A" stroke-width="3"/><line x1="74" y1="80" x2="88" y2="97" stroke="#33302A" stroke-width="3"/><line x1="46" y1="80" x2="32" y2="97" stroke="#33302A" stroke-width="3"/><line x1="38" y1="54" x2="18" y2="47" stroke="#33302A" stroke-width="3"/><polygon class="hl" points="60,38 82,54 74,80 46,80 38,54"/></svg>
+        <div class="tag">Bola sepak — pola segi lima (pentagon)!</div>
+      </div>
+      <div class="thing card"><span class="pin" style="background:var(--teal)">6</span>
+        <svg viewBox="0 0 120 120"><polygon points="60,10 96,54 60,104 24,54" fill="#7FB8F0" stroke="#33302A" stroke-width="4" stroke-linejoin="round"/><line x1="60" y1="104" x2="86" y2="116" stroke="#33302A" stroke-width="3"/><polygon points="86,116 96,110 94,120" fill="#EF5B3F" stroke="#33302A" stroke-width="2"/><line x1="42" y1="54" x2="78" y2="54" stroke="#33302A" stroke-width="2.5" opacity=".6"/><polygon class="hl" points="60,10 96,54 60,104 24,54"/></svg>
+        <div class="tag">Layang-layang — segi empat!</div>
+      </div>
+      <div class="thing card"><span class="pin" style="background:var(--pink)">?</span>
+        <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="42" fill="#FFFDF6" stroke="#33302A" stroke-width="4"/><line x1="60" y1="60" x2="60" y2="34" stroke="#33302A" stroke-width="4" stroke-linecap="round"/><line x1="60" y1="60" x2="78" y2="70" stroke="#EF5B3F" stroke-width="4" stroke-linecap="round"/><line x1="60" y1="22" x2="60" y2="28" stroke="#33302A" stroke-width="3"/><line x1="60" y1="92" x2="60" y2="98" stroke="#33302A" stroke-width="3"/><line x1="26" y1="60" x2="32" y2="60" stroke="#33302A" stroke-width="3"/><line x1="88" y1="60" x2="94" y2="60" stroke="#33302A" stroke-width="3"/><circle class="hl" cx="60" cy="60" r="42"/></svg>
+        <div class="tag bad">Jam dinding — LINGKARAN, bukan poligon! Sisinya melengkung…</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2 : TUJUAN ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Target Kita</span>
+    <h2>Tujuan Pembelajaran</h2>
+    <p class="lead">Klik setiap tujuan setelah kalian merasa bisa ya! Kumpulkan semua centangnya.</p>
+    <div class="goals">
+      <div class="goal card"><span class="gnum"><svg viewBox="0 0 50 50"><polygon points="25,4 46,42 4,42" fill="#EF5B3F" stroke="#33302A" stroke-width="3" stroke-linejoin="round"/></svg></span>
+        <p>Aku bisa menjelaskan <b>apa itu poligon</b> dengan kata-kataku sendiri.</p>
+        <span class="gchk"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 7" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></div>
+      <div class="goal card"><span class="gnum"><svg viewBox="0 0 50 50"><rect x="8" y="8" width="34" height="34" rx="4" fill="#3E8ED0" stroke="#33302A" stroke-width="3"/></svg></span>
+        <p>Aku bisa menunjukkan <b>sisi, titik sudut, dan sudut</b> pada sebuah poligon.</p>
+        <span class="gchk"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 7" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></div>
+      <div class="goal card"><span class="gnum"><svg viewBox="0 0 50 50"><polygon points="25,3 47,18 39,45 11,45 3,18" fill="#F08A24" stroke="#33302A" stroke-width="3" stroke-linejoin="round"/></svg></span>
+        <p>Aku bisa membedakan <b>poligon beraturan dan tidak beraturan</b>.</p>
+        <span class="gchk"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 7" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></div>
+      <div class="goal card"><span class="gnum"><svg viewBox="0 0 50 50"><polygon points="25,3 46,19 38,44 12,44 4,19" fill="#FFC93C" stroke="#33302A" stroke-width="3" stroke-linejoin="round"/></svg></span>
+        <p>Aku bisa <b>menamai poligon</b> dari segitiga sampai segi sepuluh.</p>
+        <span class="gchk"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 7" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></div>
+      <div class="goal card"><span class="gnum"><svg viewBox="0 0 50 50"><polygon points="25,3 47,19 39,45 11,45 3,19" fill="#37A85B" stroke="#33302A" stroke-width="3" stroke-linejoin="round"/></svg></span>
+        <p>Aku bisa menemukan <b>garis sejajar dan tegak lurus</b> pada poligon.</p>
+        <span class="gchk"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 7" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3 : DEFINISI ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Materi 1</span>
+    <h2>Apa Itu Poligon?</h2>
+    <div class="split">
+      <div class="def-stage card">
+        <svg id="defSvg" viewBox="0 0 240 220">
+          <polygon class="def-fill" points="70,50 165,32 205,105 135,178 38,130"/>
+          <line class="def-line" x1="70" y1="50" x2="165" y2="32" pathLength="1"/>
+          <line class="def-line" x1="165" y1="32" x2="205" y2="105" pathLength="1"/>
+          <line class="def-line" x1="205" y1="105" x2="135" y2="178" pathLength="1"/>
+          <line class="def-line" x1="135" y1="178" x2="38" y2="130" pathLength="1"/>
+          <line class="def-line" x1="38" y1="130" x2="70" y2="50" pathLength="1"/>
+          <circle class="def-dot" cx="70" cy="50" r="7"/>
+          <circle class="def-dot" cx="165" cy="32" r="7"/>
+          <circle class="def-dot" cx="205" cy="105" r="7"/>
+          <circle class="def-dot" cx="135" cy="178" r="7"/>
+          <circle class="def-dot" cx="38" cy="130" r="7"/>
+          <text class="def-done" x="120" y="120" text-anchor="middle">Poligon!</text>
+        </svg>
+      </div>
+      <div class="def-side">
+        <p class="lead">Poligon adalah <b>bangun datar tertutup</b> yang dibentuk oleh <b>garis-garis lurus</b>.</p>
+        <div class="ciri">
+          <span class="chip" style="cursor:default;background:#EAF7EE">Garis lurus</span>
+          <span class="chip" style="cursor:default;background:#FFF4CF">Tertutup</span>
+          <span class="chip" style="cursor:default;background:#FDE7E2">Datar (2 dimensi)</span>
+        </div>
+        <div class="def-steps">
+          <div class="def-step"><span class="num">1</span><span><b> Taruh titik-titik</b> — seperti pasang bendera di tanah.</span></div>
+          <div class="def-step"><span class="num">2</span><span><b>Hubungkan dengan garis lurus</b> — satu sisi demi satu sisi.</span></div>
+          <div class="def-step"><span class="num">3</span><span><b>Tutup bangunnya!</b> Semua sisi bertemu… jadilah poligon!</span></div>
+        </div>
+        <div style="margin-top:22px"><button class="btn btn-red" id="defRun">
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg></span>
+          Bangun Poligonnya!</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4 : SISI, TITIK SUDUT, SUDUT ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Materi 2</span>
+    <h2>Sisi, Titik Sudut, dan Sudut</h2>
+    <p class="lead">Klik kartu di kanan untuk memilih mode, lalu bermainlah dengan pentagonnya!</p>
+    <div class="split">
+      <div class="pent-stage card">
+        <svg id="pentSvg" viewBox="0 0 220 228"></svg>
+        <div class="pent-hud">
+          <span class="pent-count" id="pentCount"></span>
+          <button class="btn btn-sm" id="pentReset">Ulangi</button>
+        </div>
+        <p id="pentMsg"></p>
+      </div>
+      <div>
+        <div class="fact-card card fact-sisi" data-mode="sisi">
+          <div><h4>Sisi</h4><p>Ruas garis lurus yang membentuk pinggiran poligon. Coba klik semua sisinya!</p></div>
+        </div>
+        <div class="fact-card card fact-titik" data-mode="titik">
+          <div><h4>Titik Sudut</h4><p>Titik tempat dua sisi bertemu. Rahasia: jumlahnya selalu sama dengan jumlah sisi!</p></div>
+        </div>
+        <div class="fact-card card fact-sudut" data-mode="sudut">
+          <div><h4>Sudut</h4><p>Daerah di antara dua sisi yang bertemu di titik sudut. Pada pentagon beraturan, setiap sudutnya 108°.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 5 : BERATURAN / TIDAK ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Materi 3</span>
+    <h2>Poligon Beraturan &amp; Tidak Beraturan</h2>
+    <p class="lead"><b>Beraturan</b> = semua sisi sama panjang dan semua sudut sama besar. Kalau tidak? Namanya <b>tidak beraturan</b>. Coba acak heksagonnya!</p>
+    <div class="split" style="margin-top:16px">
+      <div class="reg-stage card">
+        <svg id="regSvg" viewBox="0 0 240 240"></svg>
+        <div><button class="btn btn-red btn-sm" id="btnShuffle">Acak Bentuknya!</button>
+        <button class="btn btn-green btn-sm" id="btnTidy">Rapikan Lagi</button></div>
+        <br><span class="reg-status tidy" id="regStatus"></span>
+      </div>
+      <div>
+        <div class="vs-cols">
+          <div class="vs-col t card"><h4><span class="icon" style="color:var(--green)"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 7" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Beraturan</h4>
+            <div class="vs-row">
+              <div class="vs-cell"><svg viewBox="0 0 120 120"><polygon points="60,8 108,92 12,92" fill="#CDEFC3" stroke="#33302A" stroke-width="4" stroke-linejoin="round"/></svg>Segitiga sama sisi</div>
+              <div class="vs-cell"><svg viewBox="0 0 120 120"><rect x="28" y="28" width="64" height="64" rx="4" fill="#CDEFC3" stroke="#33302A" stroke-width="4"/></svg>Persegi</div>
+              <div class="vs-cell"><svg viewBox="0 0 120 120"><polygon points="60,10 106,44 88,100 32,100 14,44" fill="#CDEFC3" stroke="#33302A" stroke-width="4" stroke-linejoin="round"/></svg>Segi lima beraturan</div>
+            </div>
+          </div>
+          <div class="vs-col f card"><h4><span class="icon" style="color:var(--red)"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg></span> Tidak Beraturan</h4>
+            <div class="vs-row">
+              <div class="vs-cell"><svg viewBox="0 0 120 120"><polygon points="30,14 106,60 20,100" fill="#FFD1BA" stroke="#33302A" stroke-width="4" stroke-linejoin="round"/></svg>Segitiga sembarang</div>
+              <div class="vs-cell"><svg viewBox="0 0 120 120"><rect x="14" y="38" width="92" height="44" rx="3" fill="#FFD1BA" stroke="#33302A" stroke-width="4"/></svg>Persegi panjang</div>
+              <div class="vs-cell"><svg viewBox="0 0 120 120"><polygon points="60,12 104,36 98,86 50,104 16,72 26,30" fill="#FFD1BA" stroke="#33302A" stroke-width="4" stroke-linejoin="round"/></svg>Segi enam acak</div>
+            </div>
+          </div>
+        </div>
+        <p style="font:700 15px 'Nunito';opacity:.7;margin-top:14px">Perhatikan angka di tengah setiap sisi heksagon — saat beraturan semuanya <b>7,8</b>, saat diacak angkanya berbeda-beda!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6 : KELUARGA POLIGON ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Materi 4</span>
+    <h2>Keluarga Besar Poligon (3 – 10 Sisi)</h2>
+    <p class="lead">Namanya mengikuti jumlah sisi. Tekan tombol <b>+</b> dan <b>−</b> untuk mengubah bentuknya — lihat dia berubah!</p>
+    <div class="fam-grid" style="margin-top:18px">
+      <div class="fam-stage card">
+        <svg id="famSvg" viewBox="0 0 320 324"></svg>
+        <div class="fam-ctrl">
+          <button class="roundbtn" id="famMinus">−</button>
+          <span style="font:600 20px 'Fredoka'" id="famCount"></span>
+          <button class="roundbtn" id="famPlus">+</button>
+        </div>
+        <div class="fam-chips" id="famChips"></div>
+      </div>
+      <div>
+        <span class="fam-alias" id="famAlias"></span>
+        <h3 class="fam-name" id="famName" style="font-size:clamp(30px,4vw,46px)"></h3>
+        <p class="fam-info" id="famInfo"></p>
+        <p class="fam-ex" id="famEx"></p>
+        <span class="fam-badge">Poligon beraturan — semua sisinya sama panjang!</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 7 : BUKAN POLIGON ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Materi 5</span>
+    <h2>Mana yang Bukan Poligon?</h2>
+    <p class="lead">Tidak semua bangun datar adalah poligon! Mainkan penyortir bentuk: tebakanmu harus disertai alasan.</p>
+    <div class="sort-wrap">
+      <div class="sort-card card">
+        <svg id="sortSvg" viewBox="0 0 120 120"></svg>
+        <div class="sort-btns">
+          <button class="btn btn-green" id="btnPoly">Poligon</button>
+          <button class="btn btn-red" id="btnNot">Bukan Poligon</button>
+        </div>
+        <div class="sort-feed" id="sortFeed"></div>
+        <button class="btn btn-ink btn-sm" id="sortNext" style="display:none">Lanjut &rarr;</button>
+      </div>
+      <div class="sort-side">
+        <span class="stat">Soal: <b id="sortProg" style="font:600 18px 'Fredoka'">1/8</b></span>
+        <span class="stat">Skor: <b id="sortScore" style="font:600 18px 'Fredoka'">0</b></span>
+        <div class="card" style="padding:16px 18px;margin-top:8px">
+          <h4 style="margin-bottom:8px">Ingat, poligon harus…</h4>
+          <p style="font:700 15px 'Nunito';line-height:1.7;opacity:.8">
+          1. Dibatasi <b>garis lurus</b> (bukan lengkung)<br>
+          2. <b>Tertutup</b> — tidak bolong<br>
+          3. <b>Datar</b>, dan garis-garisnya tidak berpotongan sendiri</p>
+        </div>
+        <div class="card" id="sortEnd" style="padding:18px;margin-top:14px;display:none;text-align:center">
+          <h3 style="font-size:22px">Permainan selesai!</h3>
+          <p id="sortEndMsg" style="font:800 16px 'Nunito';margin:8px 0 12px"></p>
+          <button class="btn btn-blue btn-sm" id="btnSortAgain">Main Lagi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 8 : MENGENAL GARIS ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Materi 6</span>
+    <h2>Keluarga Garis</h2>
+    <p class="lead">Sebelum melihat garis di dalam poligon, kenalan dulu dengan anggota keluarga garis. Klik setiap namanya!</p>
+    <div class="line-grid">
+      <div class="line-chips">
+        <button class="chip" data-k="garis"><span class="sw" style="background:#EF5B3F"></span>Garis</button>
+        <button class="chip" data-k="ruas"><span class="sw" style="background:#F08A24"></span>Ruas Garis</button>
+        <button class="chip" data-k="berkas"><span class="sw" style="background:#FFC93C"></span>Berkas Garis</button>
+        <button class="chip" data-k="sejajar"><span class="sw" style="background:#37A85B"></span>Garis Sejajar</button>
+        <button class="chip" data-k="potong"><span class="sw" style="background:#3E8ED0"></span>Garis Berpotongan</button>
+        <button class="chip" data-k="tegak"><span class="sw" style="background:#159E8C"></span>Garis Tegak Lurus</button>
+      </div>
+      <div class="line-stage card">
+        <svg id="lineSvg" viewBox="0 0 320 160"></svg>
+        <p id="lineTxt"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 9 : SEJAJAR PADA POLIGON ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Materi 7</span>
+    <h2>Garis Sejajar pada Poligon</h2>
+    <p class="lead">Banyak poligon menyimpan garis sejajar di dalamnya! Warna yang sama = pasangan yang sejajar. Klik tombolnya untuk menyalakan lampu sorot.</p>
+    <div class="par-row" id="parRow"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10 : GAME TEBAK ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Game 1</span>
+    <h2>Tebak-tebakan Gantian</h2>
+    <p class="lead">Bergantian: satu siswa <b>memilihkan nomor</b> untuk temannya, lalu temannya <b>menjawab</b>. Jawaban benar = 10 poin!</p>
+    <div class="rid-hud">
+      <div class="pscore"><span class="dot2" style="background:var(--red)"></span><span data-name="0">Siswa 1</span><b id="rS0">0</b></div>
+      <div class="rid-turn" id="rTurn"></div>
+      <div class="pscore"><span class="dot2" style="background:var(--blue)"></span><span data-name="1">Siswa 2</span><b id="rS1">0</b></div>
+    </div>
+    <div class="rid-grid">
+      <div class="rboard card" id="rBoard"></div>
+      <div class="rpanel card" id="rPanel"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 11 : GAME MEMORI ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Game 2</span>
+    <h2>Uji Memori Tim</h2>
+    <p class="lead">Pertama, <b>semua kartu terbuka selama 10 detik</b> — hafalkan posisinya bersama-sama! Setelah tertutup, buka dua kartu yang cocok: <b>gambar bentuk</b> dan <b>namanya</b>. Ingin menghafal lagi? Tekan tombol <b>Hafal Ulang</b>.</p>
+    <div class="mem-hud">
+      <span class="stat">Pasangan: <b id="memPairs" style="font:600 18px 'Fredoka'">0/8</b></span>
+      <span class="stat">Percobaan: <b id="memSteps" style="font:600 18px 'Fredoka'">0</b></span>
+      <button class="btn btn-sm" id="btnMemPeek">Hafal Ulang</button>
+    </div>
+    <div class="mem-preview" id="memPrev">
+      <span class="icon"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg></span>
+      Hafalkan posisinya! Kartu menutup dalam <span class="cnum" id="memPrevN">10</span> detik
+      <button class="btn btn-sm" id="memPrevSkip">Tutup Sekarang</button>
+    </div>
+    <div class="mem-grid" id="memGrid"></div>
+    <div class="mem-end card" id="memEnd">
+      <h3 id="memEndT" style="font-size:24px"></h3>
+      <p id="memEndP"></p>
+      <button class="btn btn-blue" id="btnMemAgain">Main Lagi</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 12 : KUIS EXIT TICKET ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Exit Ticket</span>
+    <h2>Kuis 20 Soal — Sisi ke Sisi</h2>
+    <p class="lead">Setiap siswa mengerjakan 20 soal pilihan ganda: <b>Siswa 1 di kiri, Siswa 2 di kanan</b>. Kerjakan dengan jujur dan teliti!</p>
+    <div class="quiz-row">
+      <div class="qz card" id="qz0wrap">
+        <div class="qz-head"><span class="dot2" style="background:var(--red)"></span><h3><span data-name="0">Siswa 1</span></h3><span class="qz-score" id="qz0Score">Skor: 0</span></div>
+        <div class="qz-prog"><i id="qz0Fill" style="width:0%"></i></div>
+        <div class="qz-body"><p class="qz-q" id="qz0Q"></p><div class="qz-opts" id="qz0Opts"></div></div>
+        <div class="qz-foot">
+          <button class="qz-nav" id="qz0Prev"><svg viewBox="0 0 24 24" width="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="qz-idx" id="qz0Idx"></span>
+          <button class="qz-nav" id="qz0Next"><svg viewBox="0 0 24 24" width="18"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="btn btn-yellow btn-sm qz-done-btn" id="qz0Done">Lihat Skor Akhir</button>
+        </div>
+        <div class="qz-over" id="qz0Over"><div class="inner"><h3 id="qz0Grade"></h3><div class="big" id="qz0Big"></div><p id="qz0Msg"></p><button class="btn btn-yellow btn-sm" id="qz0Review">Tinjau Jawabanku</button></div></div>
+      </div>
+      <div class="qz card" id="qz1wrap">
+        <div class="qz-head"><span class="dot2" style="background:var(--blue)"></span><h3><span data-name="1">Siswa 2</span></h3><span class="qz-score" id="qz1Score">Skor: 0</span></div>
+        <div class="qz-prog"><i id="qz1Fill" style="width:0%"></i></div>
+        <div class="qz-body"><p class="qz-q" id="qz1Q"></p><div class="qz-opts" id="qz1Opts"></div></div>
+        <div class="qz-foot">
+          <button class="qz-nav" id="qz1Prev"><svg viewBox="0 0 24 24" width="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="qz-idx" id="qz1Idx"></span>
+          <button class="qz-nav" id="qz1Next"><svg viewBox="0 0 24 24" width="18"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="btn btn-yellow btn-sm qz-done-btn" id="qz1Done">Lihat Skor Akhir</button>
+        </div>
+        <div class="qz-over" id="qz1Over"><div class="inner"><h3 id="qz1Grade"></h3><div class="big" id="qz1Big"></div><p id="qz1Msg"></p><button class="btn btn-yellow btn-sm" id="qz1Review">Tinjau Jawabanku</button></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 13 : FLASHCARD ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Refleksi Cepat</span>
+    <h2>Flashcard: Paham atau Belum?</h2>
+    <p class="lead">Putar kartunya, baca dengan teliti, lalu masing-masing siswa menjawab dengan jujur: <b>Paham</b> atau <b>Belum</b>?</p>
+    <div class="fc-stage">
+      <div class="fc-card" id="fcCard">
+        <div class="fc-in">
+          <div class="fc-f fc-front"><span class="fc-k">Pertanyaan</span><p class="fc-q" id="fcQ"></p><span class="fc-hintflip">Klik kartu untuk melihat jawaban</span></div>
+          <div class="fc-f fc-back"><span class="fc-k">Jawaban</span><p class="fc-q" id="fcA"></p></div>
+        </div>
+      </div>
+      <div class="fc-rate">
+        <div class="fc-row card"><b><span data-name="0">Siswa 1</span></b>
+          <span class="fc-count" id="fcC0"></span>
+          <button class="btn btn-green btn-sm" id="fcY0">Paham</button>
+          <button class="btn btn-red btn-sm" id="fcN0">Belum</button>
+        </div>
+        <div class="fc-row card"><b><span data-name="1">Siswa 2</span></b>
+          <span class="fc-count" id="fcC1"></span>
+          <button class="btn btn-green btn-sm" id="fcY1">Paham</button>
+          <button class="btn btn-red btn-sm" id="fcN1">Belum</button>
+        </div>
+      </div>
+      <div class="fc-nav">
+        <button class="qz-nav" id="fcPrev"><svg viewBox="0 0 24 24" width="18"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <span class="qz-idx" id="fcIdx" style="min-width:130px"></span>
+        <button class="qz-nav" id="fcNext"><svg viewBox="0 0 24 24" width="18"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="qz-over" id="fcOver"><div class="inner"><h3>Ringkasan Flashcard</h3><p id="fcSum" style="line-height:1.7"></p><button class="btn btn-green btn-sm" id="fcClose">Lanjut</button></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 14 : HASIL ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Laporan</span>
+    <h2>Hasil Belajar Hari Ini</h2>
+    <p class="lead">Inilah perjalanan kalian hari ini — game, kuis, dan flashcard. Tekan tombol segar untuk memperbarui.</p>
+    <div class="res-row" id="resRow"></div>
+    <div style="text-align:center;margin-top:22px">
+      <button class="btn btn-ink btn-sm" id="btnResRefresh">
+        <span class="icon"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 3v5h-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        Perbarui Hasil</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 15 : KESIMPULAN & REFLEKSI ============ -->
+<section class="slide">
+  <div class="wrap">
+    <span class="kicker">Penutup</span>
+    <h2>Kesimpulan &amp; Refleksi</h2>
+    <div class="end-grid">
+      <div>
+        <h3 style="font-size:22px;margin-bottom:14px">Hari ini kita sudah belajar…</h3>
+        <div class="con-list" id="conList"></div>
+      </div>
+      <div>
+        <h3 style="font-size:22px;margin-bottom:14px">Bagaimana perasaanmu?</h3>
+        <div class="ref-card card" data-s="0">
+          <h4><span class="ref-dot" style="background:var(--red)"></span><span data-name="0">Siswa 1</span></h4>
+          <div class="faces">
+            <button class="face" data-v="senang"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="19" fill="#FFC93C" stroke="#33302A" stroke-width="3"/><circle cx="17.5" cy="20" r="2.6" fill="#33302A"/><circle cx="30.5" cy="20" r="2.6" fill="#33302A"/><path d="M15 29q9 8 18 0" fill="none" stroke="#33302A" stroke-width="3" stroke-linecap="round"/></svg></button>
+            <button class="face" data-v="biasa"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="19" fill="#FFC93C" stroke="#33302A" stroke-width="3"/><circle cx="17.5" cy="20" r="2.6" fill="#33302A"/><circle cx="30.5" cy="20" r="2.6" fill="#33302A"/><path d="M16 30h16" fill="none" stroke="#33302A" stroke-width="3" stroke-linecap="round"/></svg></button>
+            <button class="face" data-v="bingung"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="19" fill="#FFC93C" stroke="#33302A" stroke-width="3"/><circle cx="17.5" cy="19" r="2.6" fill="#33302A"/><circle cx="30.5" cy="21" r="2.6" fill="#33302A"/><path d="M15 31q4 -5 9 0q4 5 9 0" fill="none" stroke="#33302A" stroke-width="3" stroke-linecap="round"/></svg></button>
+          </div>
+          <textarea placeholder="Hari ini aku belajar…"></textarea>
+        </div>
+        <div class="ref-card card" data-s="1">
+          <h4><span class="ref-dot" style="background:var(--blue)"></span><span data-name="1">Siswa 2</span></h4>
+          <div class="faces">
+            <button class="face" data-v="senang"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="19" fill="#FFC93C" stroke="#33302A" stroke-width="3"/><circle cx="17.5" cy="20" r="2.6" fill="#33302A"/><circle cx="30.5" cy="20" r="2.6" fill="#33302A"/><path d="M15 29q9 8 18 0" fill="none" stroke="#33302A" stroke-width="3" stroke-linecap="round"/></svg></button>
+            <button class="face" data-v="biasa"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="19" fill="#FFC93C" stroke="#33302A" stroke-width="3"/><circle cx="17.5" cy="20" r="2.6" fill="#33302A"/><circle cx="30.5" cy="20" r="2.6" fill="#33302A"/><path d="M16 30h16" fill="none" stroke="#33302A" stroke-width="3" stroke-linecap="round"/></svg></button>
+            <button class="face" data-v="bingung"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="19" fill="#FFC93C" stroke="#33302A" stroke-width="3"/><circle cx="17.5" cy="19" r="2.6" fill="#33302A"/><circle cx="30.5" cy="21" r="2.6" fill="#33302A"/><path d="M15 31q4 -5 9 0q4 5 9 0" fill="none" stroke="#33302A" stroke-width="3" stroke-linecap="round"/></svg></button>
+          </div>
+          <textarea placeholder="Hari ini aku belajar…"></textarea>
+        </div>
+        <button class="btn btn-green" id="btnRefSave">Simpan Refleksi Kami</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 16 : THANK YOU ============ -->
+<section class="slide">
+  <div class="wrap thanks">
+    <span class="kicker">Sampai Jumpa</span>
+    <h1>Thank You<br>for Today!</h1>
+    <svg class="cover-squig" viewBox="0 0 340 20"><path d="M4 12 q20 -12 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke="#37A85B" stroke-width="5" stroke-linecap="round"/></svg>
+    <p class="cover-sub">Terima kasih sudah belajar dengan semangat hari ini. Kalian adalah penjelajah poligon yang hebat!</p>
+    <div class="th-names">
+      <div class="th-chip"><span class="dot2" style="background:var(--red)"></span><span data-name="0">Siswa 1</span></div>
+      <div class="th-chip"><span class="dot2" style="background:var(--blue)"></span><span data-name="1">Siswa 2</span></div>
+    </div>
+    <button class="btn btn-red btn-big" id="btnAgain">Ulangi dari Awal</button>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<nav id="nav">
+  <button class="navbtn" id="btnPrev"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <div id="navFillWrap"><div id="navFill"></div></div>
+  <span id="navCount">Slide 1 / 17</span>
+  <button class="navbtn" id="btnNext"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</nav>
+<div id="toast"></div>
+
+<script>
+/* ================= UTIL ================= */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const C={ink:'#33302A',red:'#EF5B3F',orange:'#F08A24',yellow:'#FFC93C',green:'#37A85B',blue:'#3E8ED0',teal:'#159E8C',pink:'#E85D8A'};
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function reg(n,cx,cy,r,rot=-Math.PI/2){const o=[];for(let k=0;k<n;k++){const a=rot+2*Math.PI*k/n;o.push([cx+r*Math.cos(a),cy+r*Math.sin(a)])}return o}
+const pts2str=p=>p.map(x=>x[0].toFixed(1)+','+x[1].toFixed(1)).join(' ');
+function samplePoly(pts,n){const m=pts.length,seg=[],L=[];let tot=0;
+  for(let i=0;i<m;i++){const a=pts[i],b=pts[(i+1)%m],d=Math.hypot(b[0]-a[0],b[1]-a[1]);seg.push(d);tot+=d;L.push(tot)}
+  const out=[];for(let k=0;k<n;k++){let t=tot*k/n;let i=L.findIndex(x=>x>=t-1e-9);if(i<0)i=m-1;
+    const prev=i?L[i-1]:0,f=(t-prev)/seg[i],a=pts[i],b=pts[(i+1)%m];
+    out.push([a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f])}return out}
+const ease=p=>p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+
+let toastT;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2400)}
+
+function confetti(n=24){
+  const cols=[C.red,C.orange,C.yellow,C.green,C.blue,C.teal,C.pink];
+  for(let i=0;i<n;i++){const e=document.createElement('i');e.className='cf '+['sq','rd','tr'][i%3];
+    e.style.background=cols[i%cols.length];
+    e.style.left=(innerWidth/2+(Math.random()-.5)*260)+'px';
+    e.style.top=(innerHeight/2-60+(Math.random()-.5)*120)+'px';
+    document.body.appendChild(e);
+    const dx=(Math.random()-.5)*460,dy=Math.random()*380+140,rot=(Math.random()-.5)*720;
+    e.animate([{transform:'translate(0,-40px) rotate(0deg)',opacity:1},
+      {transform:`translate(${dx}px,${dy}px) rotate(${rot}deg)`,opacity:0}],
+      {duration:1000+Math.random()*500,easing:'cubic-bezier(.2,.6,.3,1)'}).onfinish=()=>e.remove()}
+}
+
+/* ================= NAVIGASI SLIDE ================= */
+const slides=$$('.slide');let cur=0;
+function goSlide(i){
+  i=Math.max(0,Math.min(slides.length-1,i));
+  slides[cur].classList.remove('active');cur=i;
+  slides[cur].classList.add('active');
+  $('#navFill').style.width=((cur+1)/slides.length*100)+'%';
+  $('#navCount').textContent=`Slide ${cur+1} / ${slides.length}`;
+  $('#btnPrev').disabled=cur===0;$('#btnNext').disabled=cur===slides.length-1;
+  $('#deck').scrollTop=0;
+  if(cur===3&&!defPlayed){defPlayed=true;setTimeout(()=>$('#defSvg').classList.add('go'),400)}
+  if(cur===11&&!memStarted){memStarted=true;setTimeout(()=>{if(cur===11)startMemPreview()},600)}
+  if(cur===14)renderResults();
+  if(cur===16){let n=0;const iv=setInterval(()=>{confetti(22);if(++n>=6)clearInterval(iv)},380)}
+}
+ $('#btnPrev').onclick=()=>goSlide(cur-1);
+ $('#btnNext').onclick=()=>goSlide(cur+1);
+addEventListener('keydown',e=>{
+  if(e.target.matches('input,textarea'))return;
+  if(e.key==='ArrowRight')goSlide(cur+1);
+  if(e.key==='ArrowLeft')goSlide(cur-1);
+});
+
+/* ================= NAMA SISWA ================= */
+const S={names:['Siswa 1','Siswa 2']};
+function applyNames(){$$('[data-name]').forEach(e=>e.textContent=S.names[+e.dataset.name])}
+ $('#btnStart').onclick=()=>{
+  S.names=[($('#name1').value.trim()||'Siswa 1'),($('#name2').value.trim()||'Siswa 2')];
+  applyNames();updTurn();showChoose();
+  toast(`Selamat datang, ${S.names[0]} & ${S.names[1]}!`);confetti(28);goSlide(1);
+};
+applyNames();
+
+/* ================= SLIDE: benda sehari-hari ================= */
+ $$('.thing').forEach(t=>t.addEventListener('click',()=>t.classList.toggle('open')));
+
+/* ================= SLIDE: tujuan ================= */
+ $$('.goal').forEach(g=>g.addEventListener('click',()=>{
+  g.classList.toggle('done');
+  if($$('.goal.done').length===5)toast('Semua tujuan tercapai — luar biasa!');
+}));
+
+/* ================= SLIDE: definisi (stepper) ================= */
+let defPlayed=false;
+ $('#defRun').onclick=()=>{const s=$('#defSvg');s.classList.remove('go');
+  void s.getBoundingClientRect();requestAnimationFrame(()=>s.classList.add('go'))};
+
+/* ================= SLIDE: unsur pentagon ================= */
+const pentSvg=$('#pentSvg'),P5=reg(5,110,116,76);
+el('polygon',{points:pts2str(P5),fill:'#FFE9A8',opacity:'.55'},pentSvg);
+const gSides=el('g',{},pentSvg);
+const sideEls=[],sideHits=[];
+for(let i=0;i<5;i++){const a=P5[i],b=P5[(i+1)%5];
+  sideEls.push(el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],class:'pside'},gSides));
+  sideHits.push(el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],class:'pside-hit','data-i':i},gSides));}
+function arcFor(v,a,b,r){
+  const A=Math.atan2(a[1]-v[1],a[0]-v[0]),B=Math.atan2(b[1]-v[1],b[0]-v[0]);
+  let d=B-A;while(d<-Math.PI)d+=2*Math.PI;while(d>Math.PI)d-=2*Math.PI;
+  const p1=[v[0]+r*Math.cos(A),v[1]+r*Math.sin(A)],p2=[v[0]+r*Math.cos(B),v[1]+r*Math.sin(B)];
+  const mid=A+d/2,lp=[v[0]+(r+20)*Math.cos(mid),v[1]+(r+20)*Math.sin(mid)];
+  return{d:`M ${p1[0].toFixed(1)} ${p1[1].toFixed(1)} A ${r} ${r} 0 0 ${d>0?1:0} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`,lp}}
+const gArcs=el('g',{opacity:0},pentSvg);
+P5.forEach((v,i)=>{const {d,lp}=arcFor(v,P5[(i+4)%5],P5[(i+1)%5],20);
+  el('path',{d,class:'parc'},gArcs);
+  const t=el('text',{x:lp[0],y:lp[1]+4,class:'pdeg'},gArcs);t.textContent='108\u00B0';});
+const gVtx=el('g',{},pentSvg);
+const vtxEls=[],vtxHits=[];
+P5.forEach((v,i)=>{vtxEls.push(el('circle',{cx:v[0],cy:v[1],r:7,class:'pvtx'},gVtx));
+  vtxHits.push(el('circle',{cx:v[0],cy:v[1],r:14,class:'pvtx-hit','data-i':i},gVtx));});
+let pmode='sisi';const pFound=new Set(),vFound=new Set();
+function pentHud(){const c=$('#pentCount');
+  if(pmode==='sisi'){c.textContent=`Sisi ditemukan: ${pFound.size} / 5`;
+    $('#pentMsg').textContent=pFound.size===5?'Hebat! Pentagon punya 5 sisi. Sekarang cari titik sudutnya!':'Klik garis-garis pinggirnya satu per satu!'}
+  else if(pmode==='titik'){c.textContent=`Titik sudut ditemukan: ${vFound.size} / 5`;
+    $('#pentMsg').textContent=vFound.size===5?'Tepat! Jumlah titik sudut selalu sama dengan jumlah sisinya.':'Klik bulatan-bulatan di ujung-ujung sisi!'}
+  else{c.textContent='Setiap sudut pentagon beraturan: 108\u00B0';
+    $('#pentMsg').textContent='Sudut adalah daerah di antara dua sisi yang bertemu di titik sudut — ditandai busur merah.'}}
+function pentReset(){pFound.clear();vFound.clear();
+  sideEls.forEach(s=>s.classList.remove('found'));vtxEls.forEach(v=>v.classList.remove('found'));pentHud()}
+function setPentMode(m){pmode=m;
+  $$('.fact-card').forEach(c=>c.classList.toggle('on',c.dataset.mode===m));
+  gArcs.setAttribute('opacity',m==='sudut'?1:0);
+  pentReset()}
+gSides.addEventListener('click',e=>{const t=e.target.closest('.pside-hit');
+  if(!t||pmode!=='sisi')return;const i=+t.dataset.i;
+  pFound.add(i);sideEls[i].classList.add('found');pentHud();
+  if(pFound.size===5)confetti(16)});
+gVtx.addEventListener('click',e=>{const t=e.target.closest('.pvtx-hit');
+  if(!t||pmode!=='titik')return;const i=+t.dataset.i;
+  vFound.add(i);vtxEls[i].classList.add('found');pentHud();
+  if(vFound.size===5)confetti(16)});
+ $$('.fact-card').forEach(c=>c.addEventListener('click',()=>setPentMode(c.dataset.mode)));
+ $('#pentReset').onclick=pentReset;
+setPentMode('sisi');
+
+/* ================= SLIDE: beraturan / acak ================= */
+const regSvg=$('#regSvg'),regC=[120,122],regR=78;
+let regCur=reg(6,regC[0],regC[1],regR),regAnim=null;
+const regPoly=el('polygon',{fill:'#FFE9A8',opacity:'.65',stroke:C.ink,'stroke-width':4,'stroke-linejoin':'round'},regSvg);
+const regSG=el('g',{},regSvg),regLG=el('g',{},regSvg),regDG=el('g',{},regSvg);
+const regSides=[],regLens=[],regDots=[];
+for(let i=0;i<6;i++){
+  regSides.push(el('line',{stroke:C.ink,'stroke-width':4,'stroke-linecap':'round'},regSG));
+  regLens.push(el('text',{class:'reg-len'},regLG));
+  regDots.push(el('circle',{r:6,fill:C.red,stroke:C.ink,'stroke-width':3},regDG));}
+function renderReg(){regPoly.setAttribute('points',pts2str(regCur));
+  for(let i=0;i<6;i++){const a=regCur[i],b=regCur[(i+1)%6],L=regSides[i];
+    L.setAttribute('x1',a[0]);L.setAttribute('y1',a[1]);L.setAttribute('x2',b[0]);L.setAttribute('y2',b[1]);
+    const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,dx=mx-regC[0],dy=my-regC[1],dl=Math.hypot(dx,dy)||1;
+    regLens[i].setAttribute('x',mx+dx/dl*17);regLens[i].setAttribute('y',my+dy/dl*17+4);
+    regLens[i].textContent=(Math.hypot(b[0]-a[0],b[1]-a[1])/10).toFixed(1).replace('.',',');
+    regDots[i].setAttribute('cx',a[0]);regDots[i].setAttribute('cy',a[1])}}
+function regTo(target){if(regAnim)return;const from=regCur.map(p=>[...p]),t0=performance.now(),D=560;
+  regAnim=requestAnimationFrame(function st(t){let p=Math.min(1,(t-t0)/D);p=ease(p);
+    regCur=from.map((pt,i)=>[pt[0]+(target[i][0]-pt[0])*p,pt[1]+(target[i][1]-pt[1])*p]);
+    renderReg();if(p<1)regAnim=requestAnimationFrame(st);else regAnim=null})}
+function setRegStatus(ok){const s=$('#regStatus');
+  s.textContent=ok?'BERATURAN \u2014 semua sisi sama panjang (7,8)':'TIDAK BERATURAN \u2014 panjang sisinya berbeda-beda!';
+  s.className='reg-status '+(ok?'tidy':'messy')}
+ $('#btnShuffle').onclick=()=>{const j=reg(6,regC[0],regC[1],regR).map(p=>{
+    const ang=Math.atan2(p[1]-regC[1],p[0]-regC[0])+(Math.random()-.5)*.5;
+    const rad=regR*(.6+Math.random()*.45);
+    return[regC[0]+rad*Math.cos(ang),regC[1]+rad*Math.sin(ang)]});
+  regTo(j);setRegStatus(false)};
+ $('#btnTidy').onclick=()=>{regTo(reg(6,regC[0],regC[1],regR));setRegStatus(true)};
+renderReg();setRegStatus(true);
+
+/* ================= SLIDE: keluarga poligon (morph) ================= */
+const famSvg=$('#famSvg'),FC=[160,162],FR=112;
+const FAM=[
+  {n:3,id:'Segitiga',en:'Triangle',ex:'Contoh: potongan pizza'},
+  {n:4,id:'Segi Empat',en:'Quadrilateral',ex:'Contoh: buku, pintu, jendela'},
+  {n:5,id:'Segi Lima',en:'Pentagon',ex:'Contoh: jahitan bola sepak'},
+  {n:6,id:'Segi Enam',en:'Hexagon',ex:'Contoh: sarang lebah'},
+  {n:7,id:'Segi Tujuh',en:'Heptagon',ex:'Contoh: koin di beberapa negara'},
+  {n:8,id:'Segi Delapan',en:'Octagon',ex:'Contoh: rambu berhenti'},
+  {n:9,id:'Segi Sembilan',en:'Nonagon',ex:'Jarang ditemui \u2014 tapi bentuknya keren!'},
+  {n:10,id:'Segi Sepuluh',en:'Decagon',ex:'Contoh: beberapa koin dan cetakan kue'}];
+let famN=3,famCur=reg(3,FC[0],FC[1],FR),famAnim=null;
+const famPoly=el('polygon',{fill:'#FFD98E',stroke:C.ink,'stroke-width':4.5,'stroke-linejoin':'round'},famSvg);
+const famParts=el('g',{},famSvg);
+function drawFam(){famPoly.setAttribute('points',pts2str(famCur))}
+function buildFamParts(){famParts.innerHTML='';
+  famCur.forEach(p=>el('circle',{cx:p[0],cy:p[1],r:6.5,fill:C.yellow,stroke:C.ink,'stroke-width':3},famParts))}
+function setFamUI(){const f=FAM.find(x=>x.n===famN);
+  $('#famName').textContent=f.id;$('#famAlias').textContent=f.en;
+  $('#famInfo').textContent=`${f.n} sisi \u2022 ${f.n} titik sudut \u2022 ${f.n} sudut`;
+  $('#famEx').textContent=f.ex;$('#famCount').textContent=f.n+' sisi';
+  $$('#famChips .chip').forEach(c=>c.classList.toggle('on',+c.dataset.n===famN));
+  $('#famMinus').disabled=famN<=3;$('#famPlus').disabled=famN>=10}
+function famTo(n){if(n===famN||famAnim||n<3||n>10)return;
+  const from=samplePoly(famCur,n),to=reg(n,FC[0],FC[1],FR);
+  famN=n;setFamUI();
+  const t0=performance.now(),D=560;
+  famAnim=requestAnimationFrame(function st(t){let p=Math.min(1,(t-t0)/D);p=ease(p);
+    famCur=from.map((pt,i)=>[pt[0]+(to[i][0]-pt[0])*p,pt[1]+(to[i][1]-pt[1])*p]);
+    drawFam();if(p<1)famAnim=requestAnimationFrame(st);else{famAnim=null;buildFamParts()}})}
+ $('#famMinus').onclick=()=>famTo(famN-1);
+ $('#famPlus').onclick=()=>famTo(famN+1);
+FAM.forEach(f=>{const b=document.createElement('button');b.className='chip';b.dataset.n=f.n;
+  b.innerHTML=`<b style="font:600 16px Fredoka">${f.n}</b>&nbsp;sisi`;b.onclick=()=>famTo(f.n);
+  $('#famChips').appendChild(b)});
+drawFam();buildFamParts();setFamUI();
+
+/* ================= SLIDE: penyortir "bukan poligon" ================= */
+const SHAPES=[
+ {name:'Lingkaran',isPoly:false,why:'Lingkaran punya sisi lengkung, bukan garis lurus.',
+  svg:'<circle cx="60" cy="60" r="42" fill="#FFE9A8" stroke="#33302A" stroke-width="4"/>'},
+ {name:'Segitiga',isPoly:true,why:'Dibatasi 3 garis lurus dan tertutup \u2014 jadi poligon!',
+  svg:'<polygon points="60,16 104,98 16,98" fill="#BFE3FF" stroke="#33302A" stroke-width="4" stroke-linejoin="round"/>'},
+ {name:'Bulan Sabit',isPoly:false,why:'Bentuknya melengkung \u2014 tidak ada garis lurus di sana.',
+  svg:'<path d="M78 20 A45 45 0 1 0 78 100 A34 34 0 1 1 78 20 Z" fill="#BFE3FF" stroke="#33302A" stroke-width="4" stroke-linejoin="round"/>'},
+ {name:'Zigzag Terbuka',isPoly:false,why:'Garisnya tidak tertutup \u2014 masih bolong di satu sisi!',
+  svg:'<polyline points="16,92 34,36 56,88 78,30 102,74" fill="none" stroke="#33302A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>'},
+ {name:'Kapsul',isPoly:false,why:'Ujung-ujungnya melengkung seperti setengah lingkaran.',
+  svg:'<rect x="14" y="38" width="92" height="44" rx="22" fill="#FFD1BA" stroke="#33302A" stroke-width="4"/>'},
+ {name:'Persegi',isPoly:true,why:'4 garis lurus membentuk bangun tertutup \u2014 jadi poligon!',
+  svg:'<rect x="22" y="22" width="76" height="76" rx="4" fill="#CDEFC3" stroke="#33302A" stroke-width="4"/>'},
+ {name:'Segi Lima',isPoly:true,why:'5 garis lurus yang saling bertemu membentuk bangun tertutup.',
+  svg:'<polygon points="60,18 100,47 85,94 35,94 20,47" fill="#CDEFC3" stroke="#33302A" stroke-width="4" stroke-linejoin="round"/>'},
+ {name:'Segi Enam Tidak Rata',isPoly:true,why:'Meski sisinya tidak sama panjang, tetap poligon \u2014 namanya poligon tidak beraturan.',
+  svg:'<polygon points="60,14 104,40 96,88 52,106 18,74 26,34" fill="#FFE9A8" stroke="#33302A" stroke-width="4" stroke-linejoin="round"/>'}];
+const sort={order:shuffle([...SHAPES.keys()]),idx:0,score:0,lock:false};
+function sortRender(){const s=SHAPES[sort.order[sort.idx]];
+  $('#sortSvg').innerHTML=s.svg;
+  $('#sortProg').textContent=(sort.idx+1)+'/8';
+  $('#sortScore').textContent=sort.score;
+  const f=$('#sortFeed');f.className='sort-feed';f.textContent='';
+  $('#btnPoly').disabled=false;$('#btnNot').disabled=false;
+  $('#sortNext').style.display='none'}
+function sortAnswer(guess){if(sort.lock)return;sort.lock=true;
+  const s=SHAPES[sort.order[sort.idx]],ok=guess===s.isPoly,f=$('#sortFeed');
+  $('#btnPoly').disabled=true;$('#btnNot').disabled=true;
+  if(ok){sort.score++;f.className='sort-feed good';f.textContent=`Benar! ${s.why}`;confetti(18)}
+  else{f.className='sort-feed badf';
+    f.textContent=`Hmm, ${s.name} ${s.isPoly?'adalah poligon':'bukan poligon'}. ${s.why}`}
+  $('#sortScore').textContent=sort.score;
+  $('#sortNext').style.display='inline-flex'}
+ $('#btnPoly').onclick=()=>sortAnswer(true);
+ $('#btnNot').onclick=()=>sortAnswer(false);
+ $('#sortNext').onclick=()=>{sort.idx++;sort.lock=false;
+  if(sort.idx>=8){$('#sortEnd').style.display='block';
+    $('#sortEndMsg').textContent=`Skor akhir: ${sort.score} / 8. ${sort.score>=6?'Kamu ahli membedakan poligon!':'Coba lagi supaya makin jago!'}`;
+    $('#sortSvg').innerHTML='';$('#sortFeed').textContent='';$('#sortFeed').className='sort-feed';
+    $('#btnPoly').disabled=true;$('#btnNot').disabled=true;$('#sortNext').style.display='none';
+    if(sort.score>=6)confetti(24)}
+  else sortRender()};
+ $('#btnSortAgain').onclick=()=>{sort.order=shuffle([...SHAPES.keys()]);sort.idx=0;sort.score=0;sort.lock=false;
+  $('#sortEnd').style.display='none';sortRender()};
+sortRender();
+
+/* ================= SLIDE: keluarga garis ================= */
+const chev=(x,y)=>`<path d="M${x-7} ${y-8} L${x+5} ${y} L${x-7} ${y+8}" fill="none" stroke="#EF5B3F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+const LINES={
+ garis:{t:'Garis lurus yang memanjang terus ke dua arah \u2014 tidak punya ujung, ditandai panah di kedua ujungnya.',
+  s:`<line x1="46" y1="80" x2="274" y2="80" stroke="#33302A" stroke-width="5"/>
+     <polygon points="28,80 50,70 50,90" fill="#33302A"/><polygon points="292,80 270,70 270,90" fill="#33302A"/>
+     <text x="160" y="122" class="svg-lbl">memanjang ke dua arah, tanpa ujung</text>`},
+ ruas:{t:'Ruas garis adalah potongan garis dengan titik ujung di kedua ujungnya. Panjangnya bisa diukur!',
+  s:`<line x1="70" y1="80" x2="250" y2="80" stroke="#33302A" stroke-width="5"/>
+     <circle cx="70" cy="80" r="7" fill="#F08A24" stroke="#33302A" stroke-width="3"/>
+     <circle cx="250" cy="80" r="7" fill="#F08A24" stroke="#33302A" stroke-width="3"/>
+     <text x="70" y="112" class="svg-lbl">A</text><text x="250" y="112" class="svg-lbl">B</text>
+     <text x="160" y="40" class="svg-lbl">titik ujung A dan B</text>`},
+ berkas:{t:'Berkas garis punya titik pangkal dan memanjang hanya ke satu arah \u2014 ditandai satu panah.',
+  s:`<circle cx="60" cy="80" r="7" fill="#FFC93C" stroke="#33302A" stroke-width="3"/>
+     <line x1="67" y1="80" x2="270" y2="80" stroke="#33302A" stroke-width="5"/>
+     <polygon points="290,80 268,70 268,90" fill="#33302A"/>
+     <text x="60" y="112" class="svg-lbl">O (pangkal)</text>
+     <text x="180" y="40" class="svg-lbl">memanjang satu arah</text>`},
+ sejajar:{t:'Dua garis sejajar jaraknya selalu sama dan tidak akan pernah bertemu, kapan pun! Tandanya seperti panah: >',
+  s:`<g class="walk">
+     <line x1="20" y1="55" x2="300" y2="55" stroke="#33302A" stroke-width="5"/>
+     <line x1="20" y1="110" x2="300" y2="110" stroke="#33302A" stroke-width="5"/>
+     <polygon points="308,55 292,47 292,63" fill="#33302A"/><polygon points="308,110 292,102 292,118" fill="#33302A"/>
+     ${chev(150,55)}${chev(150,110)}</g>
+     <text x="160" y="22" class="svg-lbl">jaraknya selalu sama \u2014 tidak akan bertemu!</text>`},
+ potong:{t:'Dua garis yang saling silang dan bertemu di satu titik disebut berpotongan. Titik temuannya disebut titik potong.',
+  s:`<line x1="40" y1="25" x2="280" y2="135" stroke="#33302A" stroke-width="5"/>
+     <line x1="40" y1="135" x2="280" y2="25" stroke="#33302A" stroke-width="5"/>
+     <circle class="blink" cx="160" cy="80" r="8" fill="#EF5B3F" stroke="#33302A" stroke-width="3"/>
+     <text x="196" y="150" class="svg-lbl">titik potong</text>`},
+ tegak:{t:'Dua garis yang berpotongan membentuk sudut siku-siku (90\u00B0) disebut tegak lurus. Tandanya kotak kecil.',
+  s:`<line x1="40" y1="80" x2="280" y2="80" stroke="#33302A" stroke-width="5"/>
+     <line x1="160" y1="18" x2="160" y2="142" stroke="#33302A" stroke-width="5"/>
+     <path d="M160 64 L176 64 L176 80" fill="none" stroke="#159E8C" stroke-width="4" stroke-linecap="round"/>
+     <rect x="160" y="64" width="16" height="16" fill="#159E8C" opacity=".25"/>
+     <text x="228" y="52" class="svg-lbl">sudut siku-siku 90\u00B0</text>`}};
+function setLine(k){$$('.line-chips .chip').forEach(c=>c.classList.toggle('on',c.dataset.k===k));
+  $('#lineSvg').innerHTML=LINES[k].s;$('#lineTxt').textContent=LINES[k].t}
+ $$('.line-chips .chip').forEach(c=>c.onclick=()=>setLine(c.dataset.k));
+setLine('sejajar');
+
+/* ================= SLIDE: sejajar pada poligon ================= */
+function sideMid(pts,i){const a=pts[i],b=pts[(i+1)%pts.length];
+  return{mid:[(a[0]+b[0])/2,(a[1]+b[1])/2],ang:Math.atan2(b[1]-a[1],b[0]-a[0])}}
+function addChev(svgEl,mid,ang,color,n){let a=ang;
+  if(a>Math.PI/2)a-=Math.PI;if(a<-Math.PI/2)a+=Math.PI;
+  const deg=(a*180/Math.PI).toFixed(1);
+  for(let k=0;k<n;k++){const off=(k-(n-1)/2)*13;
+    const g=el('g',{transform:`translate(${mid[0]} ${mid[1]}) rotate(${deg}) translate(${off} 0)`},svgEl);
+    el('path',{d:'M-4 -7 L5 0 L-4 7',fill:'none',stroke:color,'stroke-width':3.5,
+      'stroke-linecap':'round','stroke-linejoin':'round'},g)}}
+function perpMarks(svgEl,pts){const n=pts.length;
+  const c=[pts.reduce((s,p)=>s+p[0],0)/n,pts.reduce((s,p)=>s+p[1],0)/n];
+  pts.forEach((v,i)=>{const nx=pts[(i+1)%n],pv=pts[(i-1+n)%n];
+    const u1=[nx[0]-v[0],nx[1]-v[1]],l1=Math.hypot(...u1);
+    const u2=[pv[0]-v[0],pv[1]-v[1]],l2=Math.hypot(...u2);
+    const A=[v[0]+u1[0]/l1*15,v[1]+u1[1]/l1*15],B=[v[0]+u2[0]/l2*15,v[1]+u2[1]/l2*15];
+    const cc=[v[0]+(u1[0]/l1+u2[0]/l2)*15,v[1]+(u1[1]/l1+u2[1]/l2)*15];
+    el('path',{d:`M ${A[0]} ${A[1]} L ${cc[0]} ${cc[1]} L ${B[0]} ${B[1]} Z`,
+      fill:C.yellow,'fill-opacity':.85,stroke:C.ink,'stroke-width':2.5},svgEl)})}
+const PAR=[
+ {name:'Persegi Panjang',pts:[[35,52],[185,52],[185,148],[35,148]],pairs:[[0,2],[1,3]],
+  cols:[C.red,C.blue],perp:true},
+ {name:'Trapesium',pts:[[62,58],[158,58],[188,146],[32,146]],pairs:[[0,2]],cols:[C.red]},
+ {name:'Segi Enam',pts:reg(6,110,100,72),pairs:[[0,3],[1,4],[2,5]],cols:[C.red,C.green,C.blue]}];
+PAR.forEach(pc=>{
+  const wrap=document.createElement('div');wrap.className='par-card card';
+  wrap.innerHTML=`<h4>${pc.name}</h4><svg viewBox="0 0 220 200"></svg>
+    <div class="par-btns"><button class="chip" data-act="par">Sisi Sejajar</button>
+    ${pc.perp?'<button class="chip" data-act="perp">Sudut Siku</button>':''}</div>
+    <p class="par-res"></p>`;
+  $('#parRow').appendChild(wrap);
+  pc.svg=wrap.querySelector('svg');pc.res=wrap.querySelector('.par-res');
+  pc.st={par:false,perp:false};
+  wrap.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{
+    const act=b.dataset.act;pc.st[act]=!pc.st[act];b.classList.toggle('on',pc.st[act]);renderPar(pc)});
+  renderPar(pc)});
+function renderPar(pc){pc.svg.innerHTML='';
+  el('polygon',{points:pts2str(pc.pts),fill:'#FFFDF6',stroke:C.ink,'stroke-width':4,'stroke-linejoin':'round'},pc.svg);
+  if(pc.st.par){pc.pairs.forEach((pair,k)=>{const col=pc.cols[k];
+    pair.forEach(si=>{const a=pc.pts[si],b=pc.pts[(si+1)%pc.pts.length];
+      el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:col,'stroke-width':7,'stroke-linecap':'round'},pc.svg);
+      const sm=sideMid(pc.pts,si);addChev(pc.svg,sm.mid,sm.ang,col,k===0?1:2)})})}
+  if(pc.st.perp)perpMarks(pc.svg,pc.pts);
+  const msgs=[];
+  if(pc.st.par)msgs.push({2:'2 pasang sisi sejajar',1:'1 pasang sisi sejajar',3:'3 pasang sisi sejajar'}[pc.pairs.length]);
+  if(pc.st.perp)msgs.push('4 sudut siku-siku (90\u00B0)');
+  pc.res.textContent=msgs.join(' \u2022 ')||'Klik tombol di atas untuk melihat garis-garisnya!'}
+
+/* ================= GAME TEBAK-TEBAKAN ================= */
+const RD=[
+ {q:'Bangun datar dengan 3 sisi disebut \u2026',o:['Segitiga','Segi empat','Segi lima'],a:0},
+ {q:'Oktagon memiliki berapa sisi?',o:['6','8','10'],a:1},
+ {q:'Lingkaran termasuk poligon atau bukan?',o:['Poligon','Bukan poligon','Tergantung ukurannya'],a:1},
+ {q:'Dua garis yang tidak akan pernah bertemu disebut \u2026',o:['Tegak lurus','Berpotongan','Sejajar'],a:2},
+ {q:'Hexagon adalah nama lain dari segi \u2026',o:['Enam','Lima','Delapan'],a:0},
+ {q:'Berapa banyak titik sudut pada persegi?',o:['3','4','5'],a:1},
+ {q:'Poligon dengan semua sisi sama panjang disebut poligon \u2026',o:['Beraturan','Tidak beraturan','Terbuka'],a:0},
+ {q:'Dekagon adalah poligon dengan sisi berjumlah \u2026',o:['Sembilan','Sepuluh','Delapan'],a:1},
+ {q:'Ruas garis memiliki titik ujung sebanyak \u2026',o:['1','2','3'],a:1},
+ {q:'Sudut siku-siku besarnya \u2026',o:['45\u00B0','60\u00B0','90\u00B0'],a:2},
+ {q:'Trapesium memiliki \u2026 pasang sisi sejajar.',o:['1','2','3'],a:0},
+ {q:'Bangun datar tertutup dari garis-garis lurus disebut \u2026',o:['Poligon','Lingkaran','Garis lengkung'],a:0},
+ {q:'Pentagon berarti segi \u2026',o:['Empat','Lima','Enam'],a:1},
+ {q:'Dua garis yang berpotongan membentuk sudut siku-siku disebut \u2026',o:['Sejajar','Tegak lurus','Berhimpit'],a:1}];
+const rid={turn:0,score:[0,0],used:new Set(),pool:shuffle(RD),cur:null,over:false};
+function updTurn(){$('#rTurn').textContent=`${S.names[rid.turn]}, pilih nomor untuk ${S.names[1-rid.turn]}!`;
+  $('#rS0').textContent=rid.score[0];$('#rS1').textContent=rid.score[1]}
+function buildBoard(){const order=shuffle([1,2,3,4,5,6,7,8,9]);
+  const cols=['#FFC93C','#BFE3FF','#CDEFC3','#FFD1BA','#F9C6D6','#FFE9A8','#C9EBD9','#FCD9B8','#DCE7FF'];
+  const b=$('#rBoard');b.innerHTML='';
+  order.forEach((n,i)=>{const btn=document.createElement('button');btn.className='rnum';
+    btn.style.background=cols[i];
+    btn.innerHTML=`<span class="rn">${n}</span><span class="rwho"></span>`;
+    btn.onclick=()=>pickNum(btn,n);b.appendChild(btn)})}
+function pickNum(btn,n){if(rid.over||rid.cur||rid.used.has(n))return;
+  rid.used.add(n);btn.classList.add('picked');
+  btn.querySelector('.rwho').textContent=S.names[1-rid.turn];
+  rid.cur=rid.pool.pop();showQ(rid.cur)}
+function showChoose(){rid.cur=null;
+  $('#rPanel').innerHTML=`<div class="rq-for" style="background:var(--yellow);color:var(--ink)">GILIRAN MEMILIH</div>
+   <p class="rq-text">${S.names[rid.turn]}, pilih salah satu nomor di papan untuk <b>${S.names[1-rid.turn]}</b>!</p>
+   <p style="font:800 15px 'Nunito';opacity:.6;margin-top:16px">Nomor yang kamu pilih = soal yang harus dijawab temanmu. Jawaban benar bernilai 10 poin. Pilih nomor yang paling "menantang" ya!</p>`}
+function showQ(q){const p=$('#rPanel');
+  p.innerHTML=`<div class="rq-for">SOAL UNTUK ${S.names[1-rid.turn].toUpperCase()}</div>
+   <p class="rq-text">${q.q}</p>
+   <div class="r-opts">${q.o.map((o,i)=>`<button class="r-opt" data-i="${i}">${o}</button>`).join('')}</div>
+   <p class="r-feed"></p>
+   <div style="margin-top:auto;padding-top:14px"><button class="btn btn-ink btn-sm" id="rNext" style="display:none">Ganti Giliran &rarr;</button></div>`;
+  p.querySelectorAll('.r-opt').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;
+    p.querySelectorAll('.r-opt').forEach(x=>{x.disabled=true;
+      if(+x.dataset.i===q.a)x.classList.add('right');
+      else if(x===b)x.classList.add('wrong');else x.style.opacity=.5});
+    const f=p.querySelector('.r-feed');
+    if(i===q.a){rid.score[1-rid.turn]+=10;f.textContent=`Benar! +10 poin untuk ${S.names[1-rid.turn]}!`;confetti(20)}
+    else f.textContent=`Belum tepat. Jawaban yang benar: ${q.o[q.a]}`;
+    $('#rS0').textContent=rid.score[0];$('#rS1').textContent=rid.score[1];
+    p.querySelector('#rNext').style.display='inline-flex'});
+  p.querySelector('#rNext').onclick=()=>{rid.turn=1-rid.turn;
+    if(rid.used.size===9)showEnd();else{updTurn();showChoose()}}}
+function showEnd(){rid.over=true;
+  const w=rid.score[0]===rid.score[1]?null:(rid.score[0]>rid.score[1]?0:1);
+  $('#rPanel').innerHTML=`<div class="rq-for" style="background:var(--red)">PERMAINAN SELESAI</div>
+   <p class="rq-text">Skor akhir!</p>
+   <div style="display:flex;gap:12px;flex-wrap:wrap;margin:18px 0;justify-content:center">
+     <div class="pscore"><span class="dot2" style="background:var(--red)"></span>${S.names[0]}<b>${rid.score[0]}</b></div>
+     <div class="pscore"><span class="dot2" style="background:var(--blue)"></span>${S.names[1]}<b>${rid.score[1]}</b></div></div>
+   <p style="font:800 17px 'Nunito';line-height:1.5">${w===null?'Seri! Kalian sama-sama hebat!':`${S.names[w]} unggul \u2014 tapi kalian berdua kerja bagus!`}</p>
+   <div><button class="btn btn-blue" id="rAgain" style="margin-top:16px">Main Lagi</button></div>`;
+  $('#rAgain').onclick=resetRiddle;confetti(26)}
+function resetRiddle(){rid.used.clear();rid.pool=shuffle(RD);rid.score=[0,0];rid.over=false;rid.turn=0;
+  buildBoard();updTurn();showChoose()}
+buildBoard();updTurn();showChoose();
+
+/* ================= GAME MEMORI ================= */
+const MEM=[
+ {n:3,name:'Segitiga',c:C.red},{n:4,name:'Persegi',c:C.blue},
+ {rect:1,name:'Persegi Panjang',c:C.green},{n:5,name:'Segi Lima',c:C.orange},
+ {n:6,name:'Segi Enam',c:C.teal},{n:7,name:'Segi Tujuh',c:C.pink},
+ {n:8,name:'Segi Delapan',c:C.red},{n:10,name:'Segi Sepuluh',c:C.blue}];
+let memState={steps:0,found:0,first:null,lock:true};
+let memStarted=false,memPrevIv=null;
+function shapeSvg(m){let pts;
+  if(m.rect)pts='26,26 74,26 74,74 26,74';
+  else pts=pts2str(reg(m.n,50,53,36));
+  return`<svg viewBox="0 0 100 100"><polygon points="${pts}" fill="${m.c}" stroke="#33302A" stroke-width="3.5" stroke-linejoin="round" opacity=".92"/></svg>`}
+function clearMemPrev(){clearInterval(memPrevIv);memPrevIv=null;$('#memPrev').classList.remove('show')}
+function updMemHud(){$('#memPairs').textContent=memState.found+'/8';$('#memSteps').textContent=memState.steps}
+function startMemPreview(){
+  clearMemPrev();
+  memState={steps:0,found:0,first:null,lock:true};
+  updMemHud();$('#memEnd').classList.remove('show');
+  let left=10;
+  $('#memPrevN').textContent=left;
+  $('#memPrev').classList.add('show');
+  /* BUKA semua kartu: tambahkan class 'open' satu per satu agar terlihat menghadap ke atas */
+  $$('#memGrid .mem-card').forEach((c,k)=>{
+    c.classList.remove('matched');
+    setTimeout(()=>c.classList.add('open'),k*45)});
+  memPrevIv=setInterval(()=>{left--;
+    if(left>0)$('#memPrevN').textContent=left;
+    else endMemPreview()},1000)}
+function endMemPreview(){
+  clearMemPrev();
+  $$('#memGrid .mem-card').forEach(c=>c.classList.remove('open'));
+  memState.lock=false;
+  toast('Waktunya bermain! Cari 8 pasangan bentuk & namanya.')}
+function buildMem(){
+  clearMemPrev();
+  memState={steps:0,found:0,first:null,lock:true};
+  const cards=shuffle(MEM.flatMap((m,i)=>[{p:i,t:'s',m},{p:i,t:'n',m}]));
+  const g=$('#memGrid');g.innerHTML='';
+  cards.forEach(c=>{const b=document.createElement('button');b.className='mem-card';b.dataset.p=c.p;
+    b.innerHTML=`<div class="mc-in"><div class="mc-f mc-back"><span class="q">?</span></div>
+      <div class="mc-f mc-front">${c.t==='s'?shapeSvg(c.m):`<div class="nm">${c.m.name}</div>`}</div></div>`;
+    b.onclick=()=>memFlip(b);g.appendChild(b)});
+  updMemHud();$('#memEnd').classList.remove('show')}
+function memFlip(b){const st=memState;
+  if(st.lock||b.classList.contains('open'))return;
+  b.classList.add('open');
+  if(!st.first){st.first=b;return}
+  st.steps++;const a=st.first;st.first=null;
+  if(a.dataset.p===b.dataset.p){
+    a.classList.add('matched');b.classList.add('matched');st.found++;updMemHud();
+    if(st.found===8){$('#memEndT').textContent='Hebat, tim!';
+      $('#memEndP').textContent=`Kalian menemukan semua 8 pasangan hanya dalam ${st.steps} percobaan. Kerja sama yang keren!`;
+      $('#memEnd').classList.add('show');confetti(30)}}
+  else{st.lock=true;updMemHud();
+    setTimeout(()=>{a.classList.remove('open');b.classList.remove('open');st.lock=false},900)}}
+ $('#memPrevSkip').onclick=endMemPreview;
+ $('#btnMemAgain').onclick=()=>{buildMem();startMemPreview()};
+ $('#btnMemPeek').onclick=()=>{buildMem();startMemPreview()};
+buildMem();
+
+/* ================= KUIS EXIT TICKET ================= */
+const QUIZ=[
+ {q:'Poligon adalah bangun datar yang dibatasi oleh \u2026',o:['Garis lurus','Garis lengkung','Titik-titik','Lingkaran'],a:0},
+ {q:'Berapa banyak sisi pada segitiga?',o:['2','3','4','5'],a:1},
+ {q:'Bangun datar dengan 5 sisi disebut \u2026',o:['Segi enam','Segi lima','Segi empat','Segi delapan'],a:1},
+ {q:'Nama lain segi delapan adalah \u2026',o:['Hexagon','Pentagon','Oktagon','Dekagon'],a:2},
+ {q:'Hexagon adalah nama lain dari segi \u2026',o:['Enam','Lima','Tujuh','Delapan'],a:0},
+ {q:'Poligon dengan semua sisi sama panjang disebut poligon \u2026',o:['Tidak beraturan','Beraturan','Sama warna','Lengkung'],a:1},
+ {q:'Manakah yang BUKAN poligon?',o:['Persegi','Segitiga','Lingkaran','Pentagon'],a:2},
+ {q:'Lingkaran bukan poligon karena \u2026',o:['Tidak punya warna','Punya sisi lengkung','Terlalu kecil','Tidak punya nama'],a:1},
+ {q:'Dua garis yang tidak akan pernah bertemu disebut garis \u2026',o:['Tegak lurus','Berpotongan','Sejajar','Lengkung'],a:2},
+ {q:'Dua garis yang berpotongan membentuk sudut siku-siku disebut \u2026',o:['Sejajar','Tegak lurus','Berimpit','Bersilang acak'],a:1},
+ {q:'Ruas garis memiliki \u2026',o:['Titik ujung di kedua ujung','Panah di kedua ujung','Satu panah','Tidak ada ujung'],a:0},
+ {q:'Berapa pasang sisi sejajar pada persegi panjang?',o:['1','2','3','4'],a:1},
+ {q:'Trapesium memiliki \u2026 pasang sisi sejajar.',o:['0','1','2','3'],a:1},
+ {q:'Segi sepuluh disebut juga \u2026',o:['Nonagon','Oktagon','Dekagon','Heptagon'],a:2},
+ {q:'Berapa sisi oktagon?',o:['6','7','8','9'],a:2},
+ {q:'Semua sudut pada persegi besarnya \u2026',o:['45\u00B0','60\u00B0','90\u00B0','108\u00B0'],a:2},
+ {q:'Titik pertemuan dua sisi pada poligon disebut \u2026',o:['Titik tengah','Titik sudut','Titik akhir','Puncak gunung'],a:1},
+ {q:'Daerah di antara dua sisi yang bertemu di titik sudut disebut \u2026',o:['Sisi','Sudut','Garis','Bidang'],a:1},
+ {q:'Segitiga sama sisi termasuk poligon \u2026',o:['Beraturan','Tidak beraturan','Lengkung','Terbuka'],a:0},
+ {q:'Heptagon adalah segi \u2026',o:['Enam','Tujuh','Sembilan','Sepuluh'],a:1},
+ {q:'Pada poligon beraturan, semua sudutnya juga \u2026',o:['Sama besar','Berbeda semua','Tidak ada','Kecil semua'],a:0},
+ {q:'Berapa titik sudut pada segi enam?',o:['5','6','7','8'],a:1},
+ {q:'Bangun datar tertutup yang dibatasi garis lurus disebut \u2026',o:['Poligon','Lingkaran','Garis','Titik'],a:0},
+ {q:'Tanda sudut siku-siku digambar dengan bentuk \u2026',o:['Lingkaran kecil','Persegi kecil','Segitiga kecil','Garis lengkung'],a:1}];
+const QS=[null,null];
+function buildQuiz(side){
+  const items=shuffle(QUIZ).slice(0,20).map(x=>{
+    const ord=shuffle([0,1,2,3]);
+    return{q:x.q,o:ord.map(i=>x.o[i]),a:ord.indexOf(x.a)}});
+  QS[side]={items,ans:Array(20).fill(null),idx:0}}
+function quizBenar(s){const Q=QS[s];
+  return Q.ans.reduce((t,a,k)=>t+(a!==null&&a===Q.items[k].a?1:0),0)}
+function quizDone(s){return QS[s].ans.filter(a=>a!==null).length}
+function renderQuiz(s){const Q=QS[s],i=Q.idx,it=Q.items[i];
+  document.getElementById('qz'+s+'Idx').textContent=`Soal ${i+1} / 20`;
+  document.getElementById('qz'+s+'Fill').style.width=(quizDone(s)/20*100)+'%';
+  document.getElementById('qz'+s+'Score').textContent='Skor: '+quizBenar(s);
+  document.getElementById('qz'+s+'Q').textContent=it.q;
+  const box=document.getElementById('qz'+s+'Opts');box.innerHTML='';
+  it.o.forEach((o,oi)=>{const b=document.createElement('button');b.className='r-opt';b.textContent=o;
+    const ans=Q.ans[i];
+    if(ans!==null){b.disabled=true;
+      if(oi===it.a)b.classList.add('right');
+      else if(oi===ans)b.classList.add('wrong');
+      else b.style.opacity=.5}
+    else b.onclick=()=>{Q.ans[i]=oi;
+      if(oi===it.a)confetti(14);renderQuiz(s)};
+    box.appendChild(b)});
+  document.getElementById('qz'+s+'Prev').disabled=i===0;
+  document.getElementById('qz'+s+'Next').disabled=i===19;
+  document.getElementById('qz'+s+'Done').classList.toggle('show',quizDone(s)===20)}
+[0,1].forEach(s=>{
+  buildQuiz(s);renderQuiz(s);
+  document.getElementById('qz'+s+'Prev').onclick=()=>{QS[s].idx=Math.max(0,QS[s].idx-1);renderQuiz(s)};
+  document.getElementById('qz'+s+'Next').onclick=()=>{QS[s].idx=Math.min(19,QS[s].idx+1);renderQuiz(s)};
+  document.getElementById('qz'+s+'Done').onclick=()=>{const b=quizBenar(s);
+    document.getElementById('qz'+s+'Grade').textContent=b>=18?'Luar Biasa!':b>=14?'Hebat Sekali!':b>=8?'Kerja Bagus!':'Semangat Terus!';
+    document.getElementById('qz'+s+'Big').textContent=b+'/20';
+    document.getElementById('qz'+s+'Msg').textContent=b>=18?'Kamu bintang kelas hari ini!':b>=14?'Pemahamanmu tentang poligon sudah bagus!':'Ayo ulangi flashcard-nya, kamu pasti bisa!';
+    document.getElementById('qz'+s+'Over').classList.add('show');
+    if(b>=14)confetti(26)};
+  document.getElementById('qz'+s+'Review').onclick=()=>document.getElementById('qz'+s+'Over').classList.remove('show')});
+
+/* ================= FLASHCARD ================= */
+const FLASH=[
+ {q:'Poligon dibatasi oleh garis lengkung.',a:'Salah! Poligon dibatasi oleh garis-garis LURUS.'},
+ {q:'Sebutkan nama poligon yang memiliki 6 sisi!',a:'Segi enam \u2014 hexagon, seperti sarang lebah.'},
+ {q:'Semua poligon memiliki titik sudut.',a:'Benar! Jumlah titik sudutnya sama dengan jumlah sisinya.'},
+ {q:'Lingkaran termasuk poligon.',a:'Tidak. Lingkaran ber-sisi lengkung, jadi bukan poligon.'},
+ {q:'Garis sejajar akan bertemu jika diperpanjang terus.',a:'Tidak akan pernah! Garis sejajar jaraknya selalu sama.'},
+ {q:'Persegi panjang memiliki 2 pasang sisi sejajar.',a:'Benar! Sisi atas\u2013bawah dan sisi kiri\u2013kanan.'},
+ {q:'Poligon beraturan memiliki sisi yang sama panjang.',a:'Benar! Dan semua sudutnya juga sama besar.'},
+ {q:'Titik pertemuan dua sisi disebut titik sudut.',a:'Benar! Di situ juga terbentuk sudut.'},
+ {q:'Oktagon memiliki 8 sisi.',a:'Benar! Seperti rambu berhenti di jalan.'},
+ {q:'Garis tegak lurus membentuk sudut siku-siku.',a:'Benar! Sudutnya 90\u00B0, ditandai kotak kecil.'}];
+const fc={idx:0,flip:false,marks:FLASH.map(()=>[null,null])};
+function fcCounts(s){return{y:fc.marks.filter(m=>m[s]===true).length,n:fc.marks.filter(m=>m[s]===false).length}}
+function renderFlash(){const f=FLASH[fc.idx];
+  $('#fcQ').textContent=f.q;$('#fcA').textContent=f.a;
+  $('#fcCard').classList.toggle('flip',fc.flip);
+  $('#fcIdx').textContent=`Kartu ${fc.idx+1} / ${FLASH.length}`;
+  [0,1].forEach(s=>{const c=fcCounts(s);
+    $('#fcC'+s).textContent=`${c.y} paham \u2022 ${c.n} belum`;
+    const y=$('#fcY'+s),n=$('#fcN'+s),marked=fc.marks[fc.idx][s];
+    y.disabled=n.disabled=!fc.flip||marked!==null;
+    y.style.opacity=marked===true?1:(marked===false?.4:1);
+    n.style.opacity=marked===false?1:(marked===true?.4:1)});
+  $('#fcPrev').disabled=fc.idx===0;
+  const nx=$('#fcNext');nx.disabled=false;
+  nx.innerHTML=fc.idx===FLASH.length-1
+    ?'<span style="font:800 11px Nunito">SELESAI</span>'
+    :'<svg viewBox="0 0 24 24" width="18"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
+ $('#fcCard').onclick=()=>{fc.flip=!fc.flip;renderFlash()};
+[0,1].forEach(s=>{
+  $('#fcY'+s).onclick=e=>{e.stopPropagation();fc.marks[fc.idx][s]=true;renderFlash()};
+  $('#fcN'+s).onclick=e=>{e.stopPropagation();fc.marks[fc.idx][s]=false;renderFlash()}});
+ $('#fcPrev').onclick=()=>{if(fc.idx>0){fc.idx--;fc.flip=false;renderFlash()}};
+ $('#fcNext').onclick=()=>{
+  if(fc.idx<FLASH.length-1){fc.idx++;fc.flip=false;renderFlash()}
+  else{const s0=fcCounts(0),s1=fcCounts(1);
+    const tot=s0.y+s1.y;
+    $('#fcSum').innerHTML=`<b>${S.names[0]}</b>: ${s0.y} paham, ${s0.n} belum<br>
+      <b>${S.names[1]}</b>: ${s1.y} paham, ${s1.n} belum<br><br>
+      ${tot>=16?'Kalian sudah paham materi hari ini. Hebat!':'Ayo pelajari lagi kartu yang "belum" bersama-sama!'}`;
+    $('#fcOver').classList.add('show')}};
+ $('#fcClose').onclick=()=>$('#fcOver').classList.remove('show');
+renderFlash();
+
+/* ================= HASIL BELAJAR ================= */
+function starRow(n){let h='';
+  for(let i=0;i<3;i++)h+=`<svg viewBox="0 0 24 24" class="${i<n?'':'off'}"><path d="M12 2l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 17l-5.9 3.2 1.3-6.6L2.5 9l6.6-.8z" fill="#FFC93C" stroke="#33302A" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+  return h}
+function renderResults(){
+  const row=$('#resRow');let html='';
+  [0,1].forEach(s=>{
+    const b=quizBenar(s),d=quizDone(s),fl=fcCounts(s);
+    let stars=0,label='Belum Mulai',bg='#E8E2D5';
+    if(d>0){const sc=(b/20)*.7+Math.min(rid.score[s],90)/90*.3;
+      stars=sc>=.75?3:sc>=.45?2:1;
+      label=stars===3?'Bintang Emas':stars===2?'Bintang Perak':'Bintang Perunggu';
+      bg=stars===3?'#FFC93C':stars===2?'#E8E2D5':'#FFD1BA'}
+    html+=`<div class="res-card card">
+      <h3><span class="res-dot" style="background:${s===0?'var(--red)':'var(--blue)'}"></span><span data-name="${s}">${S.names[s]}</span></h3>
+      <div class="res-stars">${starRow(stars)}</div>
+      <div class="res-line"><span>Game Tebak-tebakan</span><b>${rid.score[s]} poin</b></div>
+      <div class="res-line"><span>Kuis Exit Ticket</span><b>${d>0?`${b} / 20 benar`:'\u2014'}</b></div>
+      <div class="res-line"><span>Flashcard</span><b>${fl.y} kartu "Paham"</b></div>
+      <span class="res-label" style="background:${bg}">${label}</span></div>`});
+  html+=`<div class="res-card card">
+    <h3><span class="res-dot" style="background:var(--green)"></span>Skor Tim</h3>
+    <div class="res-stars">${starRow(memState.found>=6?3:memState.found>=3?2:memState.found>0?1:0)}</div>
+    <div class="res-line"><span>Uji Memori Tim</span><b>${memState.found}/8 pasangan</b></div>
+    <div class="res-line"><span>Jumlah percobaan</span><b>${memState.steps} kali</b></div>
+    <div class="res-line"><span>Penyortir Bentuk</span><b>${sort.score}/8 benar</b></div>
+    <span class="res-label" style="background:#CDEFC3">${memState.found===8?'Tim Solid!':'Terus Berlatih'}</span></div>`;
+  row.innerHTML=html;applyNames()}
+ $('#btnResRefresh').onclick=()=>{renderResults();toast('Hasil diperbarui!')};
+
+/* ================= KESIMPULAN ================= */
+const CON=[
+ {t:'<b>Poligon</b> adalah bangun datar tertutup dari garis-garis lurus.',n:3,c:C.red},
+ {t:'Jumlah <b>sisi, titik sudut, dan sudut</b> pada poligon selalu sama.',n:4,c:C.blue},
+ {t:'<b>Beraturan</b>: sisi & sudut sama besar. <b>Tidak beraturan</b>: berbeda.',n:5,c:C.orange},
+ {t:'Nama poligon mengikuti jumlah sisi: <b>segitiga (3) sampai segi sepuluh (10)</b>.',n:6,c:C.green},
+ {t:'<b>Lingkaran bukan poligon</b> karena sisinya melengkung.',n:8,c:C.teal},
+ {t:'Garis <b>sejajar</b> tak pernah bertemu; <b>tegak lurus</b> membentuk sudut siku-siku.',n:7,c:C.pink}];
+CON.forEach(c=>{const d=document.createElement('div');d.className='con-item';
+  const p=pts2str(reg(c.n,17,17,14));
+  d.innerHTML=`<svg viewBox="0 0 34 34"><polygon points="${p}" fill="${c.c}" stroke="#33302A" stroke-width="2.5" stroke-linejoin="round"/></svg><p>${c.t}</p>`;
+  $('#conList').appendChild(d)});
+ $$('.ref-card').forEach(card=>{
+  card.querySelectorAll('.face').forEach(f=>f.onclick=()=>{
+    card.querySelectorAll('.face').forEach(x=>x.classList.remove('sel'));
+    f.classList.add('sel')})});
+ $('#btnRefSave').onclick=()=>{
+  if($$('.ref-card .face.sel').length<2){toast('Minta kedua siswa memilih perasaannya dulu ya!');return}
+  confetti(24);toast('Refleksi tersimpan. Kerja bagus hari ini!')};
+
+/* ================= THANK YOU ================= */
+ $('#btnAgain').onclick=()=>location.reload();
+
+/* init */
+goSlide(0);
+</script>
+</body>
+</html>
