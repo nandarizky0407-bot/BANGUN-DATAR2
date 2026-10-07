@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Bangun Datar - Kelas 3 SD</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF8F0;
+  --bg-2:#FFE5D9;
+  --bg-3:#FFD4C4;
+  --primary:#E76F51;
+  --primary-dark:#C75A3F;
+  --secondary:#2A9D8F;
+  --secondary-dark:#1F7A6E;
+  --accent:#F4A261;
+  --gold:#FFD93D;
+  --pink:#FFB4A2;
+  --mint:#B8E0D2;
+  --lavender:#D4C5F9;
+  --text:#2D3047;
+  --muted:#6C757D;
+  --white:#FFFFFF;
+  --shadow:0 6px 22px rgba(45,48,71,0.10);
+  --shadow-lg:0 12px 40px rgba(45,48,71,0.15);
+  --radius:18px;
+  --radius-sm:11px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;color:var(--text);background:var(--bg)}
+body{
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255,180,162,0.4) 0%, transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(184,224,210,0.4) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255,217,61,0.15) 0%, transparent 50%),
+    var(--bg);
+}
+
+/* Progress Bar */
+.progress-container{position:fixed;top:0;left:0;right:0;height:5px;background:rgba(231,111,81,0.15);z-index:1000}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent),var(--secondary));transition:width .5s ease;border-radius:0 5px 5px 0;box-shadow:0 0 10px rgba(231,111,81,0.5)}
+
+/* Top Bar */
+.top-bar{position:fixed;top:10px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center;z-index:999;pointer-events:none}
+.top-bar .logo{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--primary);font-size:13px;background:rgba(255,255,255,0.9);padding:6px 14px;border-radius:24px;box-shadow:var(--shadow);pointer-events:auto;backdrop-filter:blur(10px)}
+.top-bar .slide-counter{font-family:'Fredoka',sans-serif;font-weight:600;color:var(--text);font-size:12px;background:rgba(255,255,255,0.9);padding:6px 12px;border-radius:24px;box-shadow:var(--shadow);pointer-events:auto;backdrop-filter:blur(10px)}
+
+/* Slide Container */
+.slides-wrapper{position:relative;width:100vw;height:100vh;overflow:hidden}
+.slide{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  padding:46px 36px 60px;
+  opacity:0;transform:translateX(40px);
+  transition:opacity .5s ease, transform .5s ease;
+  pointer-events:none;
+}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:auto}
+.slide.prev{transform:translateX(-40px)}
+
+/* Floating Background Shapes */
+.floating-shapes{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.floating-shapes .shape{position:absolute;opacity:0.07;animation:float 20s infinite ease-in-out}
+.floating-shapes .shape:nth-child(1){top:10%;left:5%;width:60px;height:60px;background:var(--primary);border-radius:50%;animation-delay:0s}
+.floating-shapes .shape:nth-child(2){top:20%;right:10%;width:50px;height:50px;background:var(--secondary);animation:float 25s infinite ease-in-out;animation-delay:-3s}
+.floating-shapes .shape:nth-child(3){bottom:15%;left:15%;width:60px;height:60px;background:var(--accent);clip-path:polygon(50% 0,100% 100%,0 100%);animation-delay:-7s}
+.floating-shapes .shape:nth-child(4){bottom:25%;right:5%;width:70px;height:70px;background:var(--pink);border-radius:30% 70% 70% 30%;animation-delay:-12s}
+@keyframes float{0%,100%{transform:translate(0,0) rotate(0deg)}33%{transform:translate(25px,-25px) rotate(120deg)}66%{transform:translate(-15px,15px) rotate(240deg)}}
+
+/* Navigation */
+.nav-btn{
+  position:fixed;top:50%;transform:translateY(-50%);
+  width:42px;height:42px;border-radius:50%;
+  background:var(--white);color:var(--primary);
+  border:none;cursor:pointer;z-index:998;
+  box-shadow:var(--shadow);font-size:14px;
+  transition:all .3s ease;
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-btn:hover{background:var(--primary);color:var(--white);transform:translateY(-50%) scale(1.1)}
+.nav-btn.prev{left:12px}
+.nav-btn.next{right:12px}
+.nav-btn:disabled{opacity:0.3;cursor:not-allowed;transform:translateY(-50%) scale(1)}
+
+/* Slide Indicators */
+.indicators{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:998;background:rgba(255,255,255,0.8);padding:6px 12px;border-radius:24px;box-shadow:var(--shadow);backdrop-filter:blur(10px);max-width:90vw;overflow-x:auto}
+.indicator{width:7px;height:7px;border-radius:50%;background:rgba(231,111,81,0.3);cursor:pointer;transition:all .3s ease;flex-shrink:0}
+.indicator.active{background:var(--primary);width:20px;border-radius:4px}
+.indicator:hover{background:var(--accent)}
+
+/* Common Slide Elements */
+.slide-content{width:100%;max-width:980px;position:relative;z-index:1}
+.slide-title{font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.7rem;color:var(--text);margin-bottom:8px;line-height:1.15}
+.slide-subtitle{font-size:.92rem;color:var(--muted);margin-bottom:20px;font-weight:600}
+.tag-pill{display:inline-block;background:linear-gradient(135deg,var(--primary),var(--accent));color:white;padding:4px 14px;border-radius:16px;font-size:.72rem;font-weight:700;margin-bottom:10px;letter-spacing:.4px;text-transform:uppercase}
+
+/* ========== SLIDE 1: COVER ========== */
+.cover-slide{text-align:center}
+.cover-shapes{display:flex;justify-content:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.cover-shape{width:48px;height:48px;display:flex;align-items:center;justify-content:center;animation:bounce-in 1s ease both}
+.cover-shape:nth-child(1){animation-delay:.1s}
+.cover-shape:nth-child(2){animation-delay:.15s}
+.cover-shape:nth-child(3){animation-delay:.2s}
+.cover-shape:nth-child(4){animation-delay:.25s}
+.cover-shape:nth-child(5){animation-delay:.3s}
+.cover-shape:nth-child(6){animation-delay:.35s}
+.cover-shape:nth-child(7){animation-delay:.4s}
+.cover-shape:nth-child(8){animation-delay:.45s}
+@keyframes bounce-in{0%{opacity:0;transform:translateY(30px) scale(.5)}60%{transform:translateY(-8px) scale(1.1)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.cover-title{font-family:'Fredoka',sans-serif;font-weight:700;font-size:2.8rem;background:linear-gradient(135deg,var(--primary),var(--accent),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:10px;animation:fadeInUp 1s ease both;animation-delay:.3s}
+.cover-subtitle{font-size:1.05rem;color:var(--muted);font-weight:600;margin-bottom:20px;animation:fadeInUp 1s ease both;animation-delay:.5s}
+.cover-meta{display:inline-flex;align-items:center;gap:14px;background:white;padding:10px 22px;border-radius:24px;box-shadow:var(--shadow);animation:fadeInUp 1s ease both;animation-delay:.7s}
+.cover-meta span{font-weight:700;color:var(--text);font-size:.82rem}
+.cover-meta i{color:var(--primary)}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ========== SLIDE 2: KEHIDUPAN SEHARI-HARI ========== */
+.life-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.life-card{background:white;border-radius:var(--radius);padding:14px;text-align:center;box-shadow:var(--shadow);transition:all .3s ease;border:2px solid transparent;cursor:pointer}
+.life-card:hover{transform:translateY(-4px);border-color:var(--primary)}
+.life-card .icon-box{width:54px;height:54px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:var(--bg-2);border-radius:50%;font-size:1.5rem;color:var(--primary)}
+.life-card h4{font-family:'Fredoka',sans-serif;font-size:.9rem;margin-bottom:3px;color:var(--text)}
+.life-card p{font-size:.75rem;color:var(--muted);font-weight:600}
+.trigger-questions{background:linear-gradient(135deg,var(--mint),var(--lavender));border-radius:var(--radius);padding:14px 18px;border-left:6px solid var(--secondary)}
+.trigger-questions h3{font-family:'Fredoka',sans-serif;color:var(--secondary-dark);font-size:1rem;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.trigger-questions ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.trigger-questions li{font-weight:600;color:var(--text);font-size:.82rem;padding:4px 0 4px 22px;position:relative}
+.trigger-questions li::before{content:'?';position:absolute;left:0;top:5px;width:16px;height:16px;background:var(--secondary);color:white;border-radius:50%;font-size:.7rem;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+/* ========== SLIDE 3: TUJUAN PEMBELAJARAN ========== */
+.goals-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.goal-card{background:white;border-radius:var(--radius);padding:16px;display:flex;gap:12px;align-items:flex-start;box-shadow:var(--shadow);border-left:5px solid var(--primary);transition:all .3s ease}
+.goal-card:nth-child(2){border-color:var(--secondary)}
+.goal-card:nth-child(3){border-color:var(--accent)}
+.goal-card:nth-child(4){border-color:var(--pink)}
+.goal-card:hover{transform:translateX(4px)}
+.goal-number{flex-shrink:0;width:38px;height:38px;border-radius:50%;background:var(--bg-2);color:var(--primary);font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
+.goal-card:nth-child(2) .goal-number{background:var(--mint);color:var(--secondary-dark)}
+.goal-card:nth-child(3) .goal-number{background:#FFE5C4;color:var(--accent)}
+.goal-card:nth-child(4) .goal-number{background:#FFE0E0;color:#D45D5D}
+.goal-content h4{font-family:'Fredoka',sans-serif;font-size:.95rem;margin-bottom:3px;color:var(--text)}
+.goal-content p{font-size:.78rem;color:var(--muted);font-weight:600;line-height:1.4}
+
+/* ========== SLIDE 4: KONSEP DASAR INTERAKTIF ========== */
+.concept-container{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:center}
+.concept-visual{background:white;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-lg);text-align:center}
+.concept-visual svg{max-width:100%;height:auto;max-height:240px}
+.concept-toggles{display:flex;flex-direction:column;gap:8px}
+.toggle-btn{display:flex;align-items:center;gap:12px;background:white;border:2px solid var(--bg-2);border-radius:var(--radius-sm);padding:12px 14px;cursor:pointer;transition:all .3s ease;text-align:left;font-family:inherit;color:var(--text)}
+.toggle-btn:hover{border-color:var(--primary);transform:translateX(3px)}
+.toggle-btn.active{border-color:var(--primary);background:linear-gradient(135deg,#FFF5F0,#FFE5D9)}
+.toggle-btn .icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.toggle-btn[data-type="titik"] .icon{background:#FFE0E0;color:#D45D5D}
+.toggle-btn[data-type="sisi"] .icon{background:#FFE5C4;color:var(--accent)}
+.toggle-btn[data-type="sudut"] .icon{background:var(--mint);color:var(--secondary-dark)}
+.toggle-btn[data-type="diagonal"] .icon{background:#E5E0FF;color:#6C5CE7}
+.toggle-btn .info h4{font-family:'Fredoka',sans-serif;font-size:.88rem;margin-bottom:1px}
+.toggle-btn .info p{font-size:.72rem;color:var(--muted);font-weight:600}
+
+/* ========== SLIDE 5-12: BANGUN DATAR ========== */
+.shape-slide-content{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;width:100%;max-width:980px}
+.shape-visual-card{background:white;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-lg);text-align:center;position:relative;overflow:hidden}
+.shape-visual-card::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:var(--bg-2);border-radius:50%;opacity:.5}
+.shape-svg{position:relative;z-index:1;max-width:100%;height:auto;max-height:260px}
+.shape-info-card{padding:4px}
+.shape-name{font-family:'Fredoka',sans-serif;font-weight:700;font-size:2rem;color:var(--primary);margin-bottom:4px;line-height:1}
+.shape-name-en{font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px}
+.shape-features{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.feature-item{background:white;border-radius:var(--radius-sm);padding:10px 6px;box-shadow:var(--shadow);text-align:center;border-bottom:3px solid var(--primary);cursor:pointer;transition:all .3s ease;user-select:none}
+.feature-item:nth-child(2){border-color:var(--secondary)}
+.feature-item:nth-child(3){border-color:var(--accent)}
+.feature-item:nth-child(4){border-color:var(--pink)}
+.feature-item:hover{transform:translateY(-3px)}
+.feature-item.active{transform:translateY(-3px) scale(1.03)}
+.feature-item .value{font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;color:var(--text);line-height:1}
+.feature-item .label{font-size:.66rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+.shape-desc{background:linear-gradient(135deg,var(--mint),var(--lavender));border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:10px}
+.shape-desc p{font-weight:600;color:var(--text);font-size:.8rem;line-height:1.4}
+.shape-examples{display:flex;align-items:center;gap:8px;background:#FFF5E5;border-radius:var(--radius-sm);padding:8px 12px}
+.shape-examples .label{font-weight:700;color:var(--accent);font-size:.76rem;white-space:nowrap}
+.shape-examples .items{font-weight:600;color:var(--text);font-size:.76rem}
+.shape-hint{font-size:.72rem;color:var(--muted);font-style:italic;margin-top:6px;text-align:center}
+
+/* SVG styles - PERBAIKAN ANIMASI */
+.shape-svg .fill-shape{fill:rgba(244,162,97,0.25);stroke:var(--primary);stroke-width:3.5;stroke-linejoin:round}
+.shape-svg .el-titik{fill:#D45D5D;stroke:white;stroke-width:2.5;cursor:pointer;transition:opacity .4s ease, transform .4s ease;transform-origin:center;transform-box:fill-box}
+.shape-svg .el-titik.hidden{opacity:0;pointer-events:none}
+.shape-svg .el-titik.show{opacity:1;animation:popIn .4s ease both}
+.shape-svg .el-sisi{font-family:'Fredoka',sans-serif;font-size:13px;font-weight:700;fill:var(--accent);transition:opacity .4s ease}
+.shape-svg .el-sisi.hidden{opacity:0}
+.shape-svg .el-sisi.show{opacity:1;animation:fadeIn .4s ease both}
+.shape-svg .el-sudut{fill:none;stroke:var(--secondary);stroke-width:3;transition:opacity .4s ease}
+.shape-svg .el-sudut.hidden{opacity:0}
+.shape-svg .el-sudut.show{opacity:1;animation:fadeIn .4s ease both}
+.shape-svg .el-diagonal{stroke:#6C5CE7;stroke-width:3;stroke-dasharray:7,4;fill:none;transition:opacity .4s ease}
+.shape-svg .el-diagonal.hidden{opacity:0}
+.shape-svg .el-diagonal.show{opacity:1;animation:drawLine .6s ease both}
+@keyframes popIn{0%{opacity:0;transform:scale(0)}70%{transform:scale(1.3)}100%{opacity:1;transform:scale(1)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes drawLine{from{opacity:0;stroke-dashoffset:300}to{opacity:1;stroke-dashoffset:0}}
+
+/* ========== SLIDE 13: TEBAK-TEBAKAN SIAPA AKU ========== */
+.riddle-container{background:white;border-radius:var(--radius);padding:28px 32px 22px;box-shadow:var(--shadow-lg);max-width:680px;margin:0 auto;text-align:center;position:relative}
+.riddle-bg{position:absolute;top:-16px;left:50%;transform:translateX(-50%);width:60px;height:60px;background:linear-gradient(135deg,var(--gold),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;box-shadow:var(--shadow-lg);z-index:2}
+.riddle-round{display:inline-block;background:var(--bg-2);color:var(--primary);padding:4px 14px;border-radius:16px;font-family:'Fredoka',sans-serif;font-weight:700;font-size:.76rem;margin-bottom:14px;margin-top:18px}
+.riddle-question{font-size:1.1rem;font-weight:700;color:var(--text);line-height:1.5;margin-bottom:18px;min-height:80px;display:flex;align-items:center;justify-content:center;padding:0 10px}
+.riddle-answer-box{background:linear-gradient(135deg,var(--mint),var(--lavender));border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;opacity:0;transform:scale(.8);transition:all .5s ease}
+.riddle-answer-box.show{opacity:1;transform:scale(1)}
+.riddle-answer-box .label{font-size:.72rem;font-weight:700;color:var(--secondary-dark);text-transform:uppercase;letter-spacing:1px}
+.riddle-answer-box .answer{font-family:'Fredoka',sans-serif;font-size:1.6rem;color:var(--primary);font-weight:700;margin-top:4px}
+.riddle-answer-box .answer-icon{font-size:2.2rem;margin-bottom:6px}
+.riddle-buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{padding:10px 22px;border-radius:24px;border:none;font-family:'Fredoka',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .3s ease;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--primary);color:white;box-shadow:0 4px 12px rgba(231,111,81,0.4)}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 6px 16px rgba(231,111,81,0.5)}
+.btn-secondary{background:white;color:var(--text);border:2px solid var(--bg-2)}
+.btn-secondary:hover{border-color:var(--secondary);color:var(--secondary)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.riddle-progress{display:flex;justify-content:center;gap:3px;margin-top:14px;flex-wrap:wrap;max-width:500px;margin-left:auto;margin-right:auto}
+.riddle-dot{width:8px;height:8px;border-radius:50%;background:var(--bg-2);transition:all .3s ease}
+.riddle-dot.current{background:var(--primary);width:20px;border-radius:4px}
+.riddle-dot.done{background:var(--secondary)}
+
+/* ========== SLIDE 14: GAME KOMIK ========== */
+.comic-container{max-width:980px;width:100%}
+.comic-header{text-align:center;margin-bottom:14px}
+.comic-header h2{font-family:'Fredoka',sans-serif;font-size:1.5rem;color:var(--primary);margin-bottom:2px}
+.comic-header p{color:var(--muted);font-weight:600;font-size:.85rem}
+.comic-panel{background:white;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-lg);display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:center}
+.comic-scene{background:linear-gradient(135deg,var(--mint),var(--lavender));border-radius:var(--radius);padding:14px;text-align:center;height:100%;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.comic-scene::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,rgba(255,217,61,0.3),transparent 60%)}
+.comic-character{font-size:3.5rem;margin-bottom:6px;position:relative;z-index:1;animation:bounce 2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.comic-scene .scene-text{position:relative;z-index:1;font-family:'Fredoka',sans-serif;font-weight:600;color:var(--text);font-size:.82rem;line-height:1.3;background:rgba(255,255,255,0.85);padding:8px 10px;border-radius:10px;margin-top:4px}
+.comic-scene .scene-deco{position:absolute;font-size:1.4rem;opacity:.4}
+.comic-scene .deco-1{top:6px;left:6px}
+.comic-scene .deco-2{bottom:6px;right:6px}
+.comic-content{position:relative}
+.comic-question{font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--text);margin-bottom:4px;line-height:1.35}
+.comic-hint{color:var(--muted);font-weight:600;font-size:.8rem;margin-bottom:14px}
+.comic-options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.comic-option{background:var(--bg);border:2px solid transparent;border-radius:var(--radius-sm);padding:10px;cursor:pointer;transition:all .3s ease;display:flex;flex-direction:column;align-items:center;gap:5px;font-family:inherit}
+.comic-option:hover{border-color:var(--primary);transform:translateY(-2px)}
+.comic-option .option-shape{width:48px;height:48px}
+.comic-option .option-name{font-family:'Fredoka',sans-serif;font-weight:600;font-size:.8rem;color:var(--text)}
+.comic-option.correct{background:var(--mint);border-color:var(--secondary);animation:pulse-correct .6s ease}
+.comic-option.wrong{background:#FFE0E0;border-color:#D45D5D;animation:shake .4s ease}
+@keyframes pulse-correct{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.comic-feedback{margin-top:10px;padding:10px;border-radius:var(--radius-sm);font-weight:700;display:none;font-size:.82rem}
+.comic-feedback.show{display:block;animation:fadeIn .3s ease}
+.comic-feedback.correct{background:var(--mint);color:var(--secondary-dark)}
+.comic-feedback.wrong{background:#FFE0E0;color:#D45D5D}
+.comic-nav{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.comic-stars{display:flex;gap:4px}
+.comic-star{font-size:1.1rem;color:var(--bg-2);transition:all .3s ease}
+.comic-star.earned{color:var(--gold);animation:starPop .5s ease}
+@keyframes starPop{0%{transform:scale(0) rotate(-180deg)}100%{transform:scale(1) rotate(0)}}
+
+/* ========== SLIDE 15: KUIS ========== */
+.quiz-container{max-width:760px;width:100%}
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.quiz-progress-text{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--primary);font-size:.92rem}
+.quiz-score{background:white;padding:6px 14px;border-radius:18px;font-weight:700;color:var(--secondary-dark);box-shadow:var(--shadow);font-size:.82rem}
+.quiz-card{background:white;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-lg)}
+.quiz-question-num{display:inline-block;background:linear-gradient(135deg,var(--primary),var(--accent));color:white;padding:4px 12px;border-radius:16px;font-family:'Fredoka',sans-serif;font-weight:600;font-size:.72rem;margin-bottom:10px}
+.quiz-question{font-size:1.05rem;font-weight:700;color:var(--text);line-height:1.45;margin-bottom:16px}
+.quiz-options{display:grid;gap:8px;margin-bottom:14px}
+.quiz-option{background:var(--bg);border:2px solid var(--bg-2);border-radius:var(--radius-sm);padding:11px 14px;cursor:pointer;transition:all .3s ease;display:flex;align-items:center;gap:12px;font-family:inherit;font-weight:600;color:var(--text);font-size:.88rem}
+.quiz-option:hover{border-color:var(--primary);transform:translateX(3px)}
+.quiz-option .option-letter{width:28px;height:28px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-weight:700;color:var(--primary);flex-shrink:0;font-size:.82rem}
+.quiz-option.selected{border-color:var(--primary);background:#FFF5F0}
+.quiz-option.selected .option-letter{background:var(--primary);color:white}
+.quiz-option.correct{border-color:var(--secondary);background:var(--mint)}
+.quiz-option.correct .option-letter{background:var(--secondary);color:white}
+.quiz-option.wrong{border-color:#D45D5D;background:#FFE0E0}
+.quiz-option.wrong .option-letter{background:#D45D5D;color:white}
+.quiz-explanation{background:linear-gradient(135deg,var(--mint),var(--lavender));border-radius:var(--radius-sm);padding:12px 16px;margin-top:10px;display:none;animation:fadeIn .4s ease}
+.quiz-explanation.show{display:block}
+.quiz-explanation h4{font-family:'Fredoka',sans-serif;color:var(--secondary-dark);margin-bottom:4px;display:flex;align-items:center;gap:6px;font-size:.88rem}
+.quiz-explanation p{color:var(--text);font-weight:600;line-height:1.4;font-size:.82rem}
+.quiz-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+
+/* ========== SLIDE 16: HASIL KUIS ========== */
+.result-container{max-width:680px;width:100%;text-align:center}
+.result-card{background:white;border-radius:var(--radius);padding:28px;box-shadow:var(--shadow-lg)}
+.result-emoji{font-size:3.5rem;margin-bottom:8px;animation:bounce-in 1s ease}
+.result-title{font-family:'Fredoka',sans-serif;font-size:1.5rem;color:var(--text);margin-bottom:6px}
+.result-score-box{display:inline-block;background:linear-gradient(135deg,var(--primary),var(--accent));color:white;padding:14px 36px;border-radius:var(--radius);margin:14px 0;box-shadow:var(--shadow-lg)}
+.result-score-box .score{font-family:'Fredoka',sans-serif;font-size:2.6rem;font-weight:700;line-height:1}
+.result-score-box .total{font-size:.95rem;opacity:.9}
+.result-message{font-size:.95rem;color:var(--muted);font-weight:700;margin-bottom:16px}
+.result-breakdown{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:16px 0;text-align:left}
+.result-item{background:var(--bg);padding:8px 12px;border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:.78rem}
+.result-item .q-num{color:var(--muted)}
+.result-item .status{padding:3px 10px;border-radius:10px;font-size:.7rem;font-weight:700}
+.result-item.correct .status{background:var(--mint);color:var(--secondary-dark)}
+.result-item.wrong .status{background:#FFE0E0;color:#D45D5D}
+
+/* ========== SLIDE 17: REFLEKSI ========== */
+.reflection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+.reflection-card{background:white;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);text-align:center}
+.reflection-card .icon{width:46px;height:46px;background:var(--bg-2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--primary);margin:0 auto 10px}
+.reflection-card:nth-child(2) .icon{background:var(--mint);color:var(--secondary-dark)}
+.reflection-card:nth-child(3) .icon{background:#FFE5C4;color:var(--accent)}
+.reflection-card h4{font-family:'Fredoka',sans-serif;font-size:.92rem;margin-bottom:6px;color:var(--text)}
+.reflection-card p{font-size:.76rem;color:var(--muted);font-weight:600;line-height:1.4}
+.reflection-input{background:white;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);margin-top:6px}
+.reflection-input h4{font-family:'Fredoka',sans-serif;color:var(--primary);margin-bottom:8px;font-size:.88rem;display:flex;align-items:center;gap:6px}
+.reflection-input textarea{width:100%;border:2px solid var(--bg-2);border-radius:var(--radius-sm);padding:10px;font-family:inherit;font-size:.82rem;resize:none;color:var(--text);transition:border-color .3s}
+.reflection-input textarea:focus{outline:none;border-color:var(--primary)}
+
+/* ========== SLIDE 18: KESIMPULAN ========== */
+.conclusion-content{background:white;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-lg)}
+.conclusion-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.conclusion-item{background:var(--bg);padding:12px;border-radius:var(--radius-sm);text-align:center;border-bottom:3px solid var(--primary)}
+.conclusion-item:nth-child(2){border-color:var(--secondary)}
+.conclusion-item:nth-child(3){border-color:var(--accent)}
+.conclusion-item:nth-child(4){border-color:var(--pink)}
+.conclusion-item .num{font-family:'Fredoka',sans-serif;font-size:1.6rem;font-weight:700;color:var(--primary);line-height:1}
+.conclusion-item:nth-child(2) .num{color:var(--secondary)}
+.conclusion-item:nth-child(3) .num{color:var(--accent)}
+.conclusion-item:nth-child(4) .num{color:#D45D5D}
+.conclusion-item .label{font-size:.72rem;color:var(--muted);font-weight:700;margin-top:3px}
+.conclusion-text{background:linear-gradient(135deg,var(--mint),var(--lavender));border-radius:var(--radius-sm);padding:14px;margin-bottom:10px}
+.conclusion-text h4{font-family:'Fredoka',sans-serif;color:var(--secondary-dark);margin-bottom:6px;font-size:.95rem}
+.conclusion-text p{font-weight:600;line-height:1.5;color:var(--text);font-size:.82rem}
+.conclusion-quote{text-align:center;font-family:'Fredoka',sans-serif;font-size:1.05rem;color:var(--primary);font-weight:600;padding:10px}
+
+/* ========== SLIDE 19: THANK YOU ========== */
+.thankyou-slide{text-align:center}
+.thankyou-emoji{font-size:3.5rem;margin-bottom:14px;animation:bounce 2s ease-in-out infinite}
+.thankyou-title{font-family:'Fredoka',sans-serif;font-weight:700;font-size:2.6rem;background:linear-gradient(135deg,var(--primary),var(--accent),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px}
+.thankyou-message{font-size:1rem;color:var(--muted);font-weight:600;margin-bottom:20px;max-width:560px;margin-left:auto;margin-right:auto;line-height:1.55}
+.thankyou-shapes{display:flex;justify-content:center;gap:10px;margin-bottom:20px}
+.thankyou-shape{width:36px;height:36px;display:flex;align-items:center;justify-content:center;animation:wave 2s ease-in-out infinite}
+.thankyou-shape:nth-child(1){animation-delay:0s}
+.thankyou-shape:nth-child(2){animation-delay:.12s}
+.thankyou-shape:nth-child(3){animation-delay:.24s}
+.thankyou-shape:nth-child(4){animation-delay:.36s}
+.thankyou-shape:nth-child(5){animation-delay:.48s}
+.thankyou-shape:nth-child(6){animation-delay:.60s}
+.thankyou-shape:nth-child(7){animation-delay:.72s}
+.thankyou-shape:nth-child(8){animation-delay:.84s}
+@keyframes wave{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.thankyou-signature{font-family:'Fredoka',sans-serif;color:var(--primary);font-size:.92rem;font-weight:600;background:white;padding:10px 22px;border-radius:24px;box-shadow:var(--shadow);display:inline-flex;align-items:center;gap:8px}
+
+/* Confetti */
+.confetti{position:fixed;width:8px;height:8px;pointer-events:none;z-index:9999;animation:confetti-fall 3s linear forwards}
+@keyframes confetti-fall{0%{transform:translateY(-100vh) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* Responsive */
+@media(max-width:900px){
+  .slide{padding:40px 16px 60px}
+  .cover-title{font-size:2rem}
+  .slide-title{font-size:1.4rem}
+  .life-grid{grid-template-columns:repeat(2,1fr)}
+  .goals-grid,.shape-slide-content,.concept-container,.comic-panel{grid-template-columns:1fr;gap:16px}
+  .comic-panel{grid-template-columns:1fr}
+  .reflection-grid,.conclusion-grid{grid-template-columns:1fr 1fr}
+  .result-breakdown{grid-template-columns:1fr}
+  .trigger-questions ul{grid-template-columns:1fr}
+  .shape-features{grid-template-columns:repeat(4,1fr);gap:6px}
+  .thankyou-title{font-size:1.8rem}
+  .quiz-card{padding:16px}
+  .quiz-question{font-size:.92rem}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+<div class="top-bar">
+  <div class="logo"><i class="fas fa-shapes"></i> Petualangan Bangun Datar</div>
+  <div class="slide-counter" id="slideCounter">1 / 19</div>
+</div>
+
+<div class="floating-shapes">
+  <div class="shape"></div>
+  <div class="shape"></div>
+  <div class="shape"></div>
+  <div class="shape"></div>
+</div>
+
+<button class="nav-btn prev" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+<button class="nav-btn next" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+
+<div class="indicators" id="indicators"></div>
+
+<div class="slides-wrapper" id="slidesWrapper">
+
+  <!-- SLIDE 1: COVER -->
+  <div class="slide active" data-slide="1">
+    <div class="slide-content cover-slide">
+      <div class="cover-shapes">
+        <div class="cover-shape"><svg width="48" height="48" viewBox="0 0 70 70"><polygon points="35,8 65,60 5,60" fill="#E76F51"/></svg></div>
+        <div class="cover-shape"><svg width="48" height="48" viewBox="0 0 70 70"><rect x="8" y="8" width="54" height="54" fill="#2A9D8F" rx="4"/></svg></div>
+        <div class="cover-shape"><svg width="48" height="48" viewBox="0 0 70 70"><rect x="5" y="15" width="60" height="40" fill="#F4A261" rx="4"/></svg></div>
+        <div class="cover-shape"><svg width="48" height="48" viewBox="0 0 70 70"><polygon points="10,55 35,8 60,55" fill="#FFB4A2"/></svg></div>
+        <div class="cover-shape"><svg width="48" height="48" viewBox="0 0 70 70"><polygon points="35,5 65,35 35,65 5,35" fill="#FFD93D"/></svg></div>
+        <div class="cover-shape"><svg width="48" height="48" viewBox="0 0 70 70"><polygon points="35,5 60,40 35,65 10,40" fill="#D4C5F9"/></svg></div>
+        <div class="cover-shape"><svg width="48" height="48" viewBox="0 0 70 70"><polygon points="15,15 55,15 65,55 5,55" fill="#B8E0D2"/></svg></div>
+        <div class="cover-shape"><svg width="48" height="48" viewBox="0 0 70 70"><circle cx="35" cy="35" r="28" fill="#E76F51"/></svg></div>
+      </div>
+      <h1 class="cover-title">Petualangan<br>Bangun Datar</h1>
+      <p class="cover-subtitle">Mengenal Bentuk-Bentuk Geometri di Sekitar Kita</p>
+      <div class="cover-meta">
+        <span><i class="fas fa-user-graduate"></i> Kelas 3 SD</span>
+        <span style="opacity:.4">|</span>
+        <span><i class="fas fa-book"></i> Matematika</span>
+        <span style="opacity:.4">|</span>
+        <span><i class="fas fa-clock"></i> 60 Menit</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: KEHIDUPAN SEHARI-HARI -->
+  <div class="slide" data-slide="2">
+    <div class="slide-content">
+      <span class="tag-pill">Ayo Mengamati!</span>
+      <h2 class="slide-title">Bangun Datar di Sekitar Kita</h2>
+      <p class="slide-subtitle">Coba lihat benda-benda ini! Bentuk apa yang kamu lihat?</p>
+      <div class="life-grid">
+        <div class="life-card">
+          <div class="icon-box"><i class="fas fa-pizza-slice"></i></div>
+          <h4>Irisan Pizza</h4>
+          <p>Bentuk segitiga</p>
+        </div>
+        <div class="life-card">
+          <div class="icon-box"><i class="fas fa-window-maximize"></i></div>
+          <h4>Jendela</h4>
+          <p>Bentuk persegi</p>
+        </div>
+        <div class="life-card">
+          <div class="icon-box"><i class="fas fa-book"></i></div>
+          <h4>Buku Tulis</h4>
+          <p>Bentuk persegi panjang</p>
+        </div>
+        <div class="life-card">
+          <div class="icon-box"><i class="fas fa-clock"></i></div>
+          <h4>Jam Dinding</h4>
+          <p>Bentuk lingkaran</p>
+        </div>
+        <div class="life-card">
+          <div class="icon-box"><i class="fas fa-kite"></i></div>
+          <h4>Layangan</h4>
+          <p>Bentuk belah ketupat</p>
+        </div>
+        <div class="life-card">
+          <div class="icon-box"><i class="fas fa-table"></i></div>
+          <h4>Meja Belajar</h4>
+          <p>Bentuk persegi panjang</p>
+        </div>
+        <div class="life-card">
+          <div class="icon-box"><i class="fas fa-umbrella"></i></div>
+          <h4>Payung Terbuka</h4>
+          <p>Bentuk segitiga</p>
+        </div>
+        <div class="life-card">
+          <div class="icon-box"><i class="fas fa-cookie"></i></div>
+          <h4>Kue Bulat</h4>
+          <p>Bentuk lingkaran</p>
+        </div>
+      </div>
+      <div class="trigger-questions">
+        <h3><i class="fas fa-question-circle"></i> Pertanyaan Pemantik</h3>
+        <ul>
+          <li>Benda apa saja di rumahmu yang berbentuk segitiga?</li>
+          <li>Mengapa jendela rumah berbentuk persegi, bukan lingkaran?</li>
+          <li>Apakah semua benda berbentuk segitiga sama?</li>
+          <li>Bentuk apa yang paling sering kamu temui?</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: TUJUAN PEMBELAJARAN -->
+  <div class="slide" data-slide="3">
+    <div class="slide-content">
+      <span class="tag-pill">Tujuan Pembelajaran</span>
+      <h2 class="slide-title">Yang Akan Kita Pelajari Hari Ini</h2>
+      <p class="slide-subtitle">Setelah mengikuti pembelajaran ini, kamu akan mampu:</p>
+      <div class="goals-grid">
+        <div class="goal-card">
+          <div class="goal-number">1</div>
+          <div class="goal-content">
+            <h4>Mengenal Bangun Datar</h4>
+            <p>Mengidentifikasi 8 bentuk bangun datar beserta ciri-cirinya dengan tepat.</p>
+          </div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-number">2</div>
+          <div class="goal-content">
+            <h4>Mengetahui Unsur Bangun Datar</h4>
+            <p>Menyebutkan titik sudut, sisi, sudut, dan diagonal pada setiap bangun datar.</p>
+          </div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-number">3</div>
+          <div class="goal-content">
+            <h4>Bermain Sambil Belajar</h4>
+            <p>Menyelesaikan permainan "Siapa Aku?" dan komik interaktif dengan tepat.</p>
+          </div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-number">4</div>
+          <div class="goal-content">
+            <h4>Menerapkan dalam Kehidupan</h4>
+            <p>Menghubungkan bentuk bangun datar dengan benda-benda di sekitar kita.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: KONSEP DASAR INTERAKTIF -->
+  <div class="slide" data-slide="4">
+    <div class="slide-content">
+      <span class="tag-pill">Konsep Dasar</span>
+      <h2 class="slide-title">Unsur-Unsur Bangun Datar</h2>
+      <p class="slide-subtitle">Klik tombol di bawah untuk melihat setiap unsur pada bangun datar!</p>
+      <div class="concept-container">
+        <div class="concept-visual">
+          <svg class="shape-svg" id="conceptSVG" viewBox="0 0 360 280" width="100%">
+            <rect class="fill-shape" x="70" y="40" width="220" height="200" rx="4"/>
+            <line class="el-diagonal hidden" data-concept="diagonal" x1="70" y1="40" x2="290" y2="240"/>
+            <line class="el-diagonal hidden" data-concept="diagonal" x1="290" y1="40" x2="70" y2="240"/>
+            <path class="el-sudut hidden" data-concept="sudut" d="M 90 40 A 20 20 0 0 0 70 60" fill="none"/>
+            <path class="el-sudut hidden" data-concept="sudut" d="M 270 40 A 20 20 0 0 1 290 60" fill="none"/>
+            <path class="el-sudut hidden" data-concept="sudut" d="M 70 220 A 20 20 0 0 0 90 240" fill="none"/>
+            <path class="el-sudut hidden" data-concept="sudut" d="M 290 220 A 20 20 0 0 1 270 240" fill="none"/>
+            <text class="el-sisi hidden" data-concept="sisi" x="180" y="32" text-anchor="middle">Sisi</text>
+            <text class="el-sisi hidden" data-concept="sisi" x="305" y="145" text-anchor="middle">Sisi</text>
+            <text class="el-sisi hidden" data-concept="sisi" x="180" y="258" text-anchor="middle">Sisi</text>
+            <text class="el-sisi hidden" data-concept="sisi" x="55" y="145" text-anchor="middle">Sisi</text>
+            <circle class="el-titik hidden" data-concept="titik" cx="70" cy="40" r="7"/>
+            <circle class="el-titik hidden" data-concept="titik" cx="290" cy="40" r="7"/>
+            <circle class="el-titik hidden" data-concept="titik" cx="70" cy="240" r="7"/>
+            <circle class="el-titik hidden" data-concept="titik" cx="290" cy="240" r="7"/>
+          </svg>
+        </div>
+        <div class="concept-toggles">
+          <button class="toggle-btn" data-type="titik">
+            <div class="icon"><i class="fas fa-circle"></i></div>
+            <div class="info">
+              <h4>Titik Sudut</h4>
+              <p>Tempat bertemunya dua sisi</p>
+            </div>
+          </button>
+          <button class="toggle-btn" data-type="sisi">
+            <div class="icon"><i class="fas fa-grip-lines"></i></div>
+            <div class="info">
+              <h4>Sisi</h4>
+              <p>Garis pembatas bangun datar</p>
+            </div>
+          </button>
+          <button class="toggle-btn" data-type="sudut">
+            <div class="icon"><i class="fas fa-angle-right"></i></div>
+            <div class="info">
+              <h4>Sudut</h4>
+              <p>Hasil pertemuan dua sisi</p>
+            </div>
+          </button>
+          <button class="toggle-btn" data-type="diagonal">
+            <div class="icon"><i class="fas fa-slash"></i></div>
+            <div class="info">
+              <h4>Diagonal</h4>
+              <p>Garis penghubung dua titik sudut</p>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: SEGITIGA -->
+  <div class="slide" data-slide="5">
+    <div class="shape-slide-content">
+      <div class="shape-visual-card">
+        <svg class="shape-svg" data-shape="segitiga" viewBox="0 0 360 280" width="100%">
+          <polygon class="fill-shape" points="180,40 310,240 50,240"/>
+          <path class="el-sudut hidden" d="M 165 40 A 15 15 0 0 0 165 40" fill="none"/>
+          <path class="el-sudut hidden" d="M 295 226 A 18 18 0 0 1 295 226 L 310 240" fill="none" transform="rotate(-30 310 240)"/>
+          <path class="el-sudut hidden" d="M 65 226 A 18 18 0 0 0 65 226 L 50 240" fill="none" transform="rotate(30 50 240)"/>
+          <line class="el-diagonal hidden" x1="180" y1="40" x2="180" y2="240" style="opacity:.3"/>
+          <text class="el-sisi hidden" x="250" y="150" text-anchor="middle">Sisi</text>
+          <text class="el-sisi hidden" x="180" y="262" text-anchor="middle">Sisi</text>
+          <text class="el-sisi hidden" x="105" y="150" text-anchor="middle">Sisi</text>
+          <circle class="el-titik hidden" cx="180" cy="40" r="7"/>
+          <circle class="el-titik hidden" cx="310" cy="240" r="7"/>
+          <circle class="el-titik hidden" cx="50" cy="240" r="7"/>
+        </svg>
+      </div>
+      <div class="shape-info-card">
+        <span class="tag-pill">Bangun Datar 1</span>
+        <h2 class="shape-name">Segitiga</h2>
+        <p class="shape-name-en">Triangle</p>
+        <div class="shape-features">
+          <div class="feature-item" data-type="titik"><div class="value">3</div><div class="label">Titik Sudut</div></div>
+          <div class="feature-item" data-type="sisi"><div class="value">3</div><div class="label">Sisi</div></div>
+          <div class="feature-item" data-type="sudut"><div class="value">3</div><div class="label">Sudut</div></div>
+          <div class="feature-item" data-type="diagonal"><div class="value">0</div><div class="label">Diagonal</div></div>
+        </div>
+        <div class="shape-desc">
+          <p>Bangun datar yang dibentuk oleh 3 garis lurus yang saling berhubungan. Jumlah ketiga sudutnya selalu 180°.</p>
+        </div>
+        <div class="shape-examples">
+          <span class="label"><i class="fas fa-lightbulb"></i> Contoh:</span>
+          <span class="items">Atap rumah, papan segitiga, irisan pizza, payung</span>
+        </div>
+        <p class="shape-hint">Klik kartu di atas untuk melihat unsur pada gambar!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: PERSEGI -->
+  <div class="slide" data-slide="6">
+    <div class="shape-slide-content">
+      <div class="shape-visual-card">
+        <svg class="shape-svg" data-shape="persegi" viewBox="0 0 360 280" width="100%">
+          <rect class="fill-shape" x="80" y="30" width="200" height="200" rx="4"/>
+          <path class="el-sudut hidden" d="M 100 30 A 20 20 0 0 0 80 50" fill="none"/>
+          <path class="el-sudut hidden" d="M 260 30 A 20 20 0 0 1 280 50" fill="none"/>
+          <path class="el-sudut hidden" d="M 80 210 A 20 20 0 0 0 100 230" fill="none"/>
+          <path class="el-sudut hidden" d="M 280 210 A 20 20 0 0 1 260 230" fill="none"/>
+          <line class="el-diagonal hidden" x1="80" y1="30" x2="280" y2="230"/>
+          <line class="el-diagonal hidden" x1="280" y1="30" x2="80" y2="230"/>
+          <text class="el-sisi hidden" x="180" y="22" text-anchor="middle">Sisi</text>
+          <text class="el-sisi hidden" x="300" y="135" text-anchor="middle">Sisi</text>
+          <text class="el-sisi hidden" x="180" y="250" text-anchor="middle">Sisi</text>
+          <text class="el-sisi hidden" x="60" y="135" text-anchor="middle">Sisi</text>
+          <circle class="el-titik hidden" cx="80" cy="30" r="7"/>
+          <circle class="el-titik hidden" cx="280" cy="30" r="7"/>
+          <circle class="el-titik hidden" cx="80" cy="230" r="7"/>
+          <circle class="el-titik hidden" cx="280" cy="230" r="7"/>
+        </svg>
+      </div>
+      <div class="shape-info-card">
+        <span class="tag-pill">Bangun Datar 2</span>
+        <h2 class="shape-name">Persegi</h2>
+        <p class="shape-name-en">Square</p>
+        <div class="shape-features">
+          <div class="feature-item" data-type="titik"><div class="value">4</div><div class="label">Titik Sudut</div></div>
+          <div class="feature-item" data-type="sisi"><div class="value">4</div><div class="label">Sisi</div></div>
+          <div class="feature-item" data-type="sudut"><div class="value">4</div><div class="label">Sudut</div></div>
+          <div class="feature-item" data-type="diagonal"><div class="value">2</div><div class="label">Diagonal</div></div>
+        </div>
+        <div class="shape-desc">
+          <p>Bangun datar dengan 4 sisi sama panjang dan 4 sudut siku-siku (90°). Kedua diagonalnya sama panjang.</p>
+        </div>
+        <div class="shape-examples">
+          <span class="label"><i class="fas fa-lightbulb"></i> Contoh:</span>
+          <span class="items">Jendela, ubin lantai, kertas sticky note, kotak kado</span>
+        </div>
+        <p class="shape-hint">Klik kartu di atas untuk melihat unsur pada gambar!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: PERSEGI PANJANG -->
+  <div class="slide" data-slide="7">
+    <div class="shape-slide-content">
+      <div class="shape-visual-card">
+        <svg class="shape-svg" data-shape="persegipanjang" viewBox="0 0 360 280" width="100%">
+          <rect class="fill-shape" x="45" y="60" width="270" height="160" rx="4"/>
+          <path class="el-sudut hidden" d="M 65 60 A 20 20 0 0 0 45 80" fill="none"/>
+          <path class="el-sudut hidden" d="M 295 60 A 20 20 0 0 1 315 80" fill="none"/>
+          <path class="el-sudut hidden" d="M 45 200 A 20 20 0 0 0 65 220" fill="none"/>
+          <path class="el-sudut hidden" d="M 315 200 A 20 20 0 0 1 295 220" fill="none"/>
+          <line class="el-diagonal hidden" x1="45" y1="60" x2="315" y2="220"/>
+          <line class="el-diagonal hidden" x1="315" y1="60" x2="45" y2="220"/>
+          <text class="el-sisi hidden" x="180" y="50" text-anchor="middle">Sisi Panjang</text>
+          <text class="el-sisi hidden" x="335" y="145" text-anchor="middle">Sisi Pendek</text>
+          <text class="el-sisi hidden" x="180" y="240" text-anchor="middle">Sisi Panjang</text>
+          <text class="el-sisi hidden" x="25" y="145" text-anchor="middle">Sisi Pendek</text>
+          <circle class="el-titik hidden" cx="45" cy="60" r="7"/>
+          <circle class="el-titik hidden" cx="315" cy="60" r="7"/>
+          <circle class="el-titik hidden" cx="45" cy="220" r="7"/>
+          <circle class="el-titik hidden" cx="315" cy="220" r="7"/>
+        </svg>
+      </div>
+      <div class="shape-info-card">
+        <span class="tag-pill">Bangun Datar 3</span>
+        <h2 class="shape-name">Persegi Panjang</h2>
+        <p class="shape-name-en">Rectangle</p>
+        <div class="shape-features">
+          <div class="feature-item" data-type="titik"><div class="value">4</div><div class="label">Titik Sudut</div></div>
+          <div class="feature-item" data-type="sisi"><div class="value">4</div><div class="label">Sisi</div></div>
+          <div class="feature-item" data-type="sudut"><div class="value">4</div><div class="label">Sudut</div></div>
+          <div class="feature-item" data-type="diagonal"><div class="value">2</div><div class="label">Diagonal</div></div>
+        </div>
+        <div class="shape-desc">
+          <p>Bangun datar dengan 2 pasang sisi sejajar yang sama panjang dan 4 sudut siku-siku. Sisi yang berhadapan sama panjang.</p>
+        </div>
+        <div class="shape-examples">
+          <span class="label"><i class="fas fa-lightbulb"></i> Contoh:</span>
+          <span class="items">Buku tulis, pintu, meja, layar TV, papan tulis</span>
+        </div>
+        <p class="shape-hint">Klik kartu di atas untuk melihat unsur pada gambar!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: JAJAR GENJANG -->
+  <div class="slide" data-slide="8">
+    <div class="shape-slide-content">
+      <div class="shape-visual-card">
+        <svg class="shape-svg" data-shape="jajargenjang" viewBox="0 0 360 280" width="100%">
+          <polygon class="fill-shape" points="100,55 310,55 260,225 50,225"/>
+          <path class="el-sudut hidden" d="M 118 55 A 18 18 0 0 0 100 73" fill="none"/>
+          <path class="el-sudut hidden" d="M 292 55 A 18 18 0 0 1 310 73" fill="none"/>
+          <path class="el-sudut hidden" d="M 50 207 A 18 18 0 0 0 68 225" fill="none"/>
+          <path class="el-sudut hidden" d="M 260 207 A 18 18 0 0 1 278 225" fill="none"/>
+          <line class="el-diagonal hidden" x1="100" y1="55" x2="260" y2="225"/>
+          <line class="el-diagonal hidden" x1="310" y1="55" x2="50" y2="225"/>
+          <text class="el-sisi hidden" x="205" y="46" text-anchor="middle">Sisi</text>
+          <text class="el-sisi hidden" x="298" y="148" text-anchor="middle">Sisi</text>
+          <text class="el-sisi hidden" x="155" y="242" text-anchor="middle">Sisi</text>
+          <text class="el-sisi hidden" x="62" y="148" text-anchor="middle">Sisi</text>
+          <circle class="el-titik hidden" cx="100" cy="55" r="7"/>
+          <circle class="el-titik hidden" cx="310" cy="55" r="7"/>
+          <circle class="el-titik hidden" cx="50" cy="225" r="7"/>
+          <circle class="el-titik hidden" cx="260" cy="225" r="7"/>
+        </svg>
+      </div>
+      <div class="shape-info-card">
+        <span class="tag-pill">Bangun Datar 4</span>
+        <h2 class="shape-name">Jajar Genjang</h2>
+        <p class="shape-name-en">Parallelogram</p>
+        <div class="shape-features">
+          <div class="feature-item" data-type="titik"><div class="value">4</div><div class="label">Titik Sudut</div></div>
+          <div class="feature-item" data-type="sisi"><div class="value">4</div><div class="label">Sisi</div></div>
+          <div class="feature-item" data-type="sudut"><div class="value">4</div><div class="label">Sudut</div></div>
+          <div class="feature-item" data-type="diagonal"><div class="value">2</div><div class="label">Diagonal</div></div>
+        </div>
+        <div class="shape-desc">
+          <p>Bangun datar dengan 2 pasang sisi sejajar yang sama panjang. Sudut yang berhadapan sama besar, tetapi tidak siku-siku.</p>
+        </div>
+        <div class="shape-examples">
+          <span class="label"><i class="fas fa-lightbulb"></i> Contoh:</span>
+          <span class="items">Rangka kursi, pagar, hiasan dinding, pola batik</span>
+        </div>
+        <p class="shape-hint">Klik kartu di atas untuk melihat unsur pada gambar!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: BELAH KETUPAT -->
+  <div class="slide" data-slide="9">
+    <div class="shape-slide-content">
+      <div class="shape-visual-card">
+        <svg class="shape-svg" data-shape="belahketupat" viewBox="0 0 360 280" width="100%">
+          <polygon class="fill-shape" points="180,30 310,140 180,250 50,140"/>
+          <path class="el-sudut hidden" d="M 165 40 A 18 18 0 0 0 195 40" fill="none" transform="rotate(0 180 30)"/>
+          <path class="el-sudut hidden" d="M 295 130 A 18 18 0 0 1 295 150" fill="none"/>
+          <path class="el-sudut hidden" d="M 165 240 A 18 18 0 0 1 195 240" fill="none"/>
+          <path class="el-sudut hidden" d="M 65 130 A 18 18 0 0 0 65 150" fill="none"/>
+          <line class="el-diagonal hidden" x1="180" y1="30" x2="180" y2="250"/>
+          <line class="el-diagonal hidden" x1="50" y1="140" x2="310" y2="140"/>
+          <text class="el-sisi hidden" x="255" y="80" text-anchor="middle">Sisi</text>
+          <text class="el-sisi hidden" x="255" y="208" text-anchor="middle">Sisi</text>
+          <text class="el-sisi hidden" x="105" y="208" text-anchor="middle">Sisi</text>
+          <text class="el-sisi hidden" x="105" y="80" text-anchor="middle">Sisi</text>
+          <circle class="el-titik hidden" cx="180" cy="30" r="7"/>
+          <circle class="el-titik hidden" cx="310" cy="140" r="7"/>
+          <circle class="el-titik hidden" cx="180" cy="250" r="7"/>
+          <circle class="el-titik hidden" cx="50" cy="140" r="7"/>
+        </svg>
+      </div>
+      <div class="shape-info-card">
+        <span class="tag-pill">Bangun Datar 5</span>
+        <h2 class="shape-name">Belah Ketupat</h2>
+        <p class="shape-name-en">Rhombus</p>
+        <div class="shape-features">
+          <div class="feature-item" data-type="titik"><div class="value">4</div><div class="label">Titik Sudut</div></div>
+          <div class="feature-item" data-type="sisi"><div class="value">4</div><div class="label">Sisi</div></div>
+          <div class="feature-item" data-type="sudut"><div class="value">4</div><div class="label">Sudut</div></div>
+          <div class="feature-item" data-type="diagonal"><div class="value">2</div><div class="label">Diagonal</div></div>
+        </div>
+        <div class="shape-desc">
+          <p>Bangun datar dengan 4 sisi sama panjang. Kedua diagonalnya saling tegak lurus dan membagi dua sama panjang.</p>
+        </div>
+        <div class="shape-examples">
+          <span class="label"><i class="fas fa-lightbulb"></i> Contoh:</span>
+          <span class="items">Ketupat lebaran, layangan, hiasan kalung, motif batik</span>
+        </div>
+        <p class="shape-hint">Klik kartu di atas untuk melihat unsur pada gambar!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: LAYANG-LAYANG -->
+  <div class="slide" data-slide="10">
+    <div class="shape-slide-content">
+      <div class="shape-visual-card">
+        <svg class="shape-svg" data-shape="layanglayang" viewBox="0 0 360 280" width="100%">
+          <polygon class="fill-shape" points="180,30 285,140 180,250 75,140"/>
+          <path class="el-sudut hidden" d="M 168 40 A 15 15 0 0 0 192 40" fill="none"/>
+          <path class="el-sudut hidden" d="M 273 132 A 15 15 0 0 1 273 148" fill="none"/>
+          <path class="el-sudut hidden" d="M 168 240 A 15 15 0 0 1 192 240" fill="none"/>
+          <path class="el-sudut hidden" d="M 87 132 A 15 15 0 0 0 87 148" fill="none"/>
+          <line class="el-diagonal hidden" x1="180" y1="30" x2="180" y2="250"/>
+          <line class="el-diagonal hidden" x1="75" y1="140" x2="285" y2="140"/>
+          <text class="el-sisi hidden" x="232" y="78" text-anchor="middle">Sisi Pendek</text>
+          <text class="el-sisi hidden" x="232" y="208" text-anchor="middle">Sisi Panjang</text>
+          <text class="el-sisi hidden" x="128" y="208" text-anchor="middle">Sisi Panjang</text>
+          <text class="el-sisi hidden" x="128" y="78" text-anchor="middle">Sisi Pendek</text>
+          <circle class="el-titik hidden" cx="180" cy="30" r="7"/>
+          <circle class="el-titik hidden" cx="285" cy="140" r="7"/>
+          <circle class="el-titik hidden" cx="180" cy="250" r="7"/>
+          <circle class="el-titik hidden" cx="75" cy="140" r="7"/>
+        </svg>
+      </div>
+      <div class="shape-info-card">
+        <span class="tag-pill">Bangun Datar 6</span>
+        <h2 class="shape-name">Layang-Layang</h2>
+        <p class="shape-name-en">Kite</p>
+        <div class="shape-features">
+          <div class="feature-item" data-type="titik"><div class="value">4</div><div class="label">Titik Sudut</div></div>
+          <div class="feature-item" data-type="sisi"><div class="value">4</div><div class="label">Sisi</div></div>
+          <div class="feature-item" data-type="sudut"><div class="value">4</div><div class="label">Sudut</div></div>
+          <div class="feature-item" data-type="diagonal"><div class="value">2</div><div class="label">Diagonal</div></div>
+        </div>
+        <div class="shape-desc">
+          <p>Bangun datar dengan 2 pasang sisi sama panjang yang berdekatan. Diagonalnya saling tegak lurus, satu diagonal membagi dua sama panjang.</p>
+        </div>
+        <div class="shape-examples">
+          <span class="label"><i class="fas fa-lightbulb"></i> Contoh:</span>
+          <span class="items">Layangan, hiasan dinding, bentuk atap, motif kain</span>
+        </div>
+        <p class="shape-hint">Klik kartu di atas untuk melihat unsur pada gambar!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: TRAPESIUM -->
+  <div class="slide" data-slide="11">
+    <div class="shape-slide-content">
+      <div class="shape-visual-card">
+        <svg class="shape-svg" data-shape="trapesium" viewBox="0 0 360 280" width="100%">
+          <polygon class="fill-shape" points="105,55 255,55 310,225 50,225"/>
+          <path class="el-sudut hidden" d="M 123 55 A 18 18 0 0 0 105 73" fill="none"/>
+          <path class="el-sudut hidden" d="M 237 55 A 18 18 0 0 1 255 73" fill="none"/>
+          <path class="el-sudut hidden" d="M 50 207 A 18 18 0 0 0 68 225" fill="none"/>
+          <path class="el-sudut hidden" d="M 310 207 A 18 18 0 0 1 292 225" fill="none"/>
+          <line class="el-diagonal hidden" x1="105" y1="55" x2="310" y2="225"/>
+          <line class="el-diagonal hidden" x1="255" y1="55" x2="50" y2="225"/>
+          <text class="el-sisi hidden" x="180" y="46" text-anchor="middle">Sisi Atas</text>
+          <text class="el-sisi hidden" x="328" y="148" text-anchor="middle">Sisi Miring</text>
+          <text class="el-sisi hidden" x="180" y="242" text-anchor="middle">Sisi Bawah</text>
+          <text class="el-sisi hidden" x="32" y="148" text-anchor="middle">Sisi Miring</text>
+          <circle class="el-titik hidden" cx="105" cy="55" r="7"/>
+          <circle class="el-titik hidden" cx="255" cy="55" r="7"/>
+          <circle class="el-titik hidden" cx="50" cy="225" r="7"/>
+          <circle class="el-titik hidden" cx="310" cy="225" r="7"/>
+        </svg>
+      </div>
+      <div class="shape-info-card">
+        <span class="tag-pill">Bangun Datar 7</span>
+        <h2 class="shape-name">Trapesium</h2>
+        <p class="shape-name-en">Trapezoid</p>
+        <div class="shape-features">
+          <div class="feature-item" data-type="titik"><div class="value">4</div><div class="label">Titik Sudut</div></div>
+          <div class="feature-item" data-type="sisi"><div class="value">4</div><div class="label">Sisi</div></div>
+          <div class="feature-item" data-type="sudut"><div class="value">4</div><div class="label">Sudut</div></div>
+          <div class="feature-item" data-type="diagonal"><div class="value">2</div><div class="label">Diagonal</div></div>
+        </div>
+        <div class="shape-desc">
+          <p>Bangun datar segi empat yang memiliki tepat satu pasang sisi yang sejajar. Sisi sejajar disebut sisi atas dan sisi bawah.</p>
+        </div>
+        <div class="shape-examples">
+          <span class="label"><i class="fas fa-lightbulb"></i> Contoh:</span>
+          <span class="items">Pramuka, gelas ukur, atap rumah, kursi</span>
+        </div>
+        <p class="shape-hint">Klik kartu di atas untuk melihat unsur pada gambar!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: LINGKARAN -->
+  <div class="slide" data-slide="12">
+    <div class="shape-slide-content">
+      <div class="shape-visual-card">
+        <svg class="shape-svg" data-shape="lingkaran" viewBox="0 0 360 280" width="100%">
+          <circle class="fill-shape" cx="180" cy="140" r="100"/>
+          <line class="el-diagonal hidden" x1="80" y1="140" x2="280" y2="140"/>
+          <line class="el-sisi hidden" x1="180" y1="140" x2="280" y2="140" style="stroke:var(--accent);stroke-width:3;stroke-dasharray:none"/>
+          <text class="el-sisi hidden" x="180" y="35" text-anchor="middle">Keliling</text>
+          <text class="el-sisi hidden" x="232" y="135" text-anchor="middle" style="font-size:11px">Jari-jari</text>
+          <text class="el-diagonal-label hidden" x="180" y="158" text-anchor="middle" style="font-size:11px;fill:#6C5CE7;font-weight:700">Diameter</text>
+          <circle class="el-titik hidden" cx="180" cy="140" r="7" style="fill:#6C5CE7"/>
+        </svg>
+      </div>
+      <div class="shape-info-card">
+        <span class="tag-pill">Bangun Datar 8</span>
+        <h2 class="shape-name">Lingkaran</h2>
+        <p class="shape-name-en">Circle</p>
+        <div class="shape-features">
+          <div class="feature-item" data-type="titik"><div class="value">1</div><div class="label">Pusat</div></div>
+          <div class="feature-item" data-type="sisi"><div class="value">1</div><div class="label">Sisi</div></div>
+          <div class="feature-item" data-type="sudut"><div class="value">0</div><div class="label">Sudut</div></div>
+          <div class="feature-item" data-type="diagonal"><div class="value">∞</div><div class="label">Diameter</div></div>
+        </div>
+        <div class="shape-desc">
+          <p>Bangun datar yang dibentuk oleh titik-titik yang berjarak sama dari titik pusat. Memiliki jari-jari, diameter, dan keliling.</p>
+        </div>
+        <div class="shape-examples">
+          <span class="label"><i class="fas fa-lightbulb"></i> Contoh:</span>
+          <span class="items">Jam dinding, koin, pizza, roda sepeda, piring</span>
+        </div>
+        <p class="shape-hint">Klik kartu di atas untuk melihat unsur pada gambar!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: TEBAK-TEBAKAN SIAPA AKU -->
+  <div class="slide" data-slide="13">
+    <div class="slide-content">
+      <span class="tag-pill" style="display:block;text-align:center;margin-bottom:8px">Game Interaktif</span>
+      <h2 class="slide-title" style="text-align:center">Siapa Aku? <i class="fas fa-question" style="color:var(--gold)"></i></h2>
+      <p class="slide-subtitle" style="text-align:center">20 ronde tebak-tebakan seru tentang bangun datar!</p>
+      <div class="riddle-container">
+        <div class="riddle-bg"><i class="fas fa-question"></i></div>
+        <div class="riddle-round" id="riddleRound">Ronde 1 dari 20</div>
+        <div class="riddle-question" id="riddleQuestion">Aku punya 3 sisi dan 3 sudut. Salah satu bentuk yang paling sering kamu temui di atap rumah. Siapa aku?</div>
+        <div class="riddle-answer-box" id="riddleAnswerBox">
+          <div class="answer-icon" id="riddleIcon">▲</div>
+          <div class="label">Jawabannya adalah</div>
+          <div class="answer" id="riddleAnswer">Segitiga</div>
+        </div>
+        <div class="riddle-buttons">
+          <button class="btn btn-primary" id="riddleShowBtn"><i class="fas fa-lightbulb"></i> Lihat Jawaban</button>
+          <button class="btn btn-secondary" id="riddleNextBtn" disabled><i class="fas fa-arrow-right"></i> Berikutnya</button>
+        </div>
+        <div class="riddle-progress" id="riddleProgress"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: GAME KOMIK -->
+  <div class="slide" data-slide="14">
+    <div class="comic-container">
+      <div class="comic-header">
+        <span class="tag-pill">Game Seru</span>
+        <h2>Petualangan Princess Lila</h2>
+        <p>Bantu Princess Lila membangun istananya dengan memilih bangun datar yang tepat!</p>
+      </div>
+      <div class="comic-panel">
+        <div class="comic-scene">
+          <div class="scene-deco deco-1">⭐</div>
+          <div class="scene-deco deco-2">🌸</div>
+          <div class="comic-character" id="comicCharacter">👸</div>
+          <div class="scene-text" id="comicSceneText">Hai! Aku Princess Lila. Aku mau membangun istana, tapi aku butuh bantuanmu!</div>
+        </div>
+        <div class="comic-content">
+          <div class="comic-question" id="comicQuestion">Aku mau membuat jendela istana. Jendela harus punya 4 sisi sama panjang dan 4 sudut siku-siku. Bentuk apakah yang tepat?</div>
+          <div class="comic-hint" id="comicHint">Klik salah satu bentuk di bawah ini!</div>
+          <div class="comic-options" id="comicOptions"></div>
+          <div class="comic-feedback" id="comicFeedback"></div>
+        </div>
+      </div>
+      <div class="comic-nav">
+        <div class="comic-stars" id="comicStars">
+          <span class="comic-star">★</span>
+          <span class="comic-star">★</span>
+          <span class="comic-star">★</span>
+          <span class="comic-star">★</span>
+          <span class="comic-star">★</span>
+          <span class="comic-star">★</span>
+          <span class="comic-star">★</span>
+          <span class="comic-star">★</span>
+        </div>
+        <button class="btn btn-primary" id="comicNextBtn" disabled><i class="fas fa-arrow-right"></i> Petualangan Selanjutnya</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: KUIS -->
+  <div class="slide" data-slide="15">
+    <div class="quiz-container">
+      <div class="quiz-header">
+        <span class="tag-pill">Kuis Akhir</span>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div class="quiz-progress-text" id="quizProgressText">Soal 1 dari 10</div>
+          <div class="quiz-score" id="quizScore">Skor: 0</div>
+        </div>
+      </div>
+      <h2 class="slide-title" style="font-size:1.4rem;margin-bottom:14px">Yuk, Uji Kemampuanmu!</h2>
+      <div class="quiz-card">
+        <div class="quiz-question-num" id="quizNum">Soal 1</div>
+        <div class="quiz-question" id="quizQuestion">Berapa jumlah sisi pada bangun datar segitiga?</div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="quiz-explanation" id="quizExplanation">
+          <h4><i class="fas fa-info-circle"></i> Pembahasan</h4>
+          <p id="quizExplanationText"></p>
+        </div>
+        <div class="quiz-actions">
+          <button class="btn btn-primary" id="quizCheckBtn"><i class="fas fa-check"></i> Cek Jawaban</button>
+          <button class="btn btn-secondary" id="quizNextBtn" disabled><i class="fas fa-arrow-right"></i> Soal Berikutnya</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: HASIL KUIS -->
+  <div class="slide" data-slide="16">
+    <div class="result-container">
+      <span class="tag-pill">Hasil Kuis</span>
+      <h2 class="slide-title" style="text-align:center;margin-bottom:14px">Horray! Kamu Hebat!</h2>
+      <div class="result-card">
+        <div class="result-emoji" id="resultEmoji">🎉</div>
+        <div class="result-title" id="resultTitle">Kerja Bagus!</div>
+        <div class="result-score-box">
+          <div class="score" id="resultScore">0</div>
+          <div class="total">dari 10</div>
+        </div>
+        <div class="result-message" id="resultMessage">Kamu sudah belajar dengan sangat baik!</div>
+        <div class="result-breakdown" id="resultBreakdown"></div>
+        <button class="btn btn-primary" onclick="restartQuiz()"><i class="fas fa-redo"></i> Ulangi Kuis</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: REFLEKSI -->
+  <div class="slide" data-slide="17">
+    <div class="slide-content">
+      <span class="tag-pill">Refleksi</span>
+      <h2 class="slide-title">Mari Berefleksi</h2>
+      <p class="slide-subtitle">Apa yang sudah kamu pelajari hari ini?</p>
+      <div class="reflection-grid">
+        <div class="reflection-card">
+          <div class="icon"><i class="fas fa-smile"></i></div>
+          <h4>Yang Sudah Kukenal</h4>
+          <p>Tuliskan 2 bangun datar yang sudah kamu kenal hari ini!</p>
+        </div>
+        <div class="reflection-card">
+          <div class="icon"><i class="fas fa-lightbulb"></i></div>
+          <h4>Yang Baru Kutahu</h4>
+          <p>Adakah hal baru yang kamu pelajari? Apa itu?</p>
+        </div>
+        <div class="reflection-card">
+          <div class="icon"><i class="fas fa-question"></i></div>
+          <h4>Yang Masih Bingung</h4>
+          <p>Adakah yang masih membuatmu bingung? Tuliskan ya!</p>
+        </div>
+      </div>
+      <div class="reflection-input">
+        <h4><i class="fas fa-pen"></i> Catatan Refleksiku</h4>
+        <textarea rows="3" placeholder="Tulis refleksimu di sini... Hari ini aku belajar tentang..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: KESIMPULAN -->
+  <div class="slide" data-slide="18">
+    <div class="slide-content">
+      <span class="tag-pill">Kesimpulan</span>
+      <h2 class="slide-title">Yang Sudah Kita Pelajari</h2>
+      <p class="slide-subtitle">Hari ini kita telah mengenal 8 bangun datar</p>
+      <div class="conclusion-content">
+        <div class="conclusion-grid">
+          <div class="conclusion-item">
+            <div class="num">8</div>
+            <div class="label">Bentuk Bangun Datar</div>
+          </div>
+          <div class="conclusion-item">
+            <div class="num">4</div>
+            <div class="label">Unsur yang Dipelajari</div>
+          </div>
+          <div class="conclusion-item">
+            <div class="num">20</div>
+            <div class="label">Tebakan "Siapa Aku"</div>
+          </div>
+          <div class="conclusion-item">
+            <div class="num">10</div>
+            <div class="label">Soal Kuis Akhir</div>
+          </div>
+        </div>
+        <div class="conclusion-text">
+          <h4><i class="fas fa-star"></i> Yang Perlu Diingat</h4>
+          <p>Bangun datar adalah bentuk dua dimensi yang memiliki unsur-unsur seperti sisi, sudut, titik sudut, dan diagonal (kecuali lingkaran). Setiap bangun datar memiliki ciri khasnya sendiri yang membedakannya satu sama lain. Kita dapat menemukan bangun datar di mana saja di sekitar kita!</p>
+        </div>
+        <div class="conclusion-quote">
+          "Belajar matematika itu seru! Teruslah mengamati benda di sekitarmu dan temukan bentuk-bentuk bangun datar di dalamnya."
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: THANK YOU -->
+  <div class="slide" data-slide="19">
+    <div class="slide-content thankyou-slide">
+      <div class="thankyou-emoji">🌈</div>
+      <h1 class="thankyou-title">Thank You for Today!</h1>
+      <p class="thankyou-message">Terima kasih sudah ikut petualangan bangun datar bersama kami. Sampai jumpa di petualangan matematika berikutnya! Jangan lupa terus berlatih dan mengamati benda-benda di sekitarmu ya!</p>
+      <div class="thankyou-shapes">
+        <div class="thankyou-shape"><svg width="36" height="36" viewBox="0 0 50 50"><polygon points="25,5 45,45 5,45" fill="#E76F51"/></svg></div>
+        <div class="thankyou-shape"><svg width="36" height="36" viewBox="0 0 50 50"><rect x="5" y="5" width="40" height="40" fill="#2A9D8F" rx="3"/></svg></div>
+        <div class="thankyou-shape"><svg width="36" height="36" viewBox="0 0 50 50"><rect x="3" y="10" width="44" height="30" fill="#F4A261" rx="3"/></svg></div>
+        <div class="thankyou-shape"><svg width="36" height="36" viewBox="0 0 50 50"><polygon points="25,5 45,25 25,45 5,25" fill="#FFD93D"/></svg></div>
+        <div class="thankyou-shape"><svg width="36" height="36" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="#FFB4A2"/></svg></div>
+        <div class="thankyou-shape"><svg width="36" height="36" viewBox="0 0 50 50"><polygon points="25,5 40,25 25,45 10,25" fill="#D4C5F9"/></svg></div>
+        <div class="thankyou-shape"><svg width="36" height="36" viewBox="0 0 50 50"><polygon points="12,8 38,8 45,42 5,42" fill="#B8E0D2"/></svg></div>
+        <div class="thankyou-shape"><svg width="36" height="36" viewBox="0 0 50 50"><polygon points="25,5 38,25 25,45 12,25" fill="#E76F51"/></svg></div>
+      </div>
+      <div class="thankyou-signature">
+        <i class="fas fa-heart" style="color:var(--pink)"></i>
+        Dibuat dengan cinta untuk siswa-siswi kelas 3 SD
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =========================================
+   DATA & STATE
+========================================= */
+const totalSlides = 19;
+let currentSlide = 1;
+
+const riddles = [
+  {q:"Aku punya 3 sisi dan 3 sudut. Salah satu bentuk yang paling sering kamu temui di atap rumah. Siapa aku?", a:"Segitiga", icon:"▲"},
+  {q:"Aku punya 4 sisi sama panjang dan 4 sudut siku-siku. Bentukku seperti jendela. Siapa aku?", a:"Persegi", icon:"■"},
+  {q:"Aku punya 2 pasang sisi sejajar yang sama panjang, tetapi tidak semua sisiku sama. Bentukku seperti buku tulis. Siapa aku?", a:"Persegi Panjang", icon:"▬"},
+  {q:"Aku punya 4 sisi sama panjang, tetapi sudutku tidak siku-siku. Bentukku miring. Siapa aku?", a:"Belah Ketupat", icon:"◆"},
+  {q:"Aku punya 2 pasang sisi sejajar yang sama panjang dan sudutku tidak siku-siku. Bentukku seperti pagar miring. Siapa aku?", a:"Jajar Genjang", icon:"▱"},
+  {q:"Aku punya 2 pasang sisi sama panjang yang berdekatan. Namaku sama dengan mainan yang bisa terbang di langit. Siapa aku?", a:"Layang-Layang", icon:"◇"},
+  {q:"Aku punya 4 sisi, tetapi hanya 1 pasang sisi yang sejajar. Siapa aku?", a:"Trapesium", icon:"⏢"},
+  {q:"Aku bangun datar yang tidak punya sudut sama sekali. Bentukku seperti roda sepeda. Siapa aku?", a:"Lingkaran", icon:"●"},
+  {q:"Aku punya 3 sisi dan jumlah sudutku selalu 180°. Siapa aku?", a:"Segitiga", icon:"▲"},
+  {q:"Aku punya 4 sisi sama panjang dan 2 diagonal yang sama panjang serta saling tegak lurus. Siapa aku?", a:"Persegi", icon:"■"},
+  {q:"Aku punya 4 sudut siku-siku dan 2 pasang sisi sama panjang. Siapa aku?", a:"Persegi Panjang", icon:"▬"},
+  {q:"Bentukku seperti ketupat lebaran. Aku punya 4 sisi sama panjang. Siapa aku?", a:"Belah Ketupat", icon:"◆"},
+  {q:"Aku bentuk atap rumah sederhana dengan tepat 1 pasang sisi sejajar. Siapa aku?", a:"Trapesium", icon:"⏢"},
+  {q:"Aku tidak punya sisi lurus sama sekali. Semua bagian ku adalah lengkungan. Siapa aku?", a:"Lingkaran", icon:"●"},
+  {q:"Aku punya 4 sisi, 2 pasang sisi yang berdekatan sama panjang, dan satu diagonal membagi dua sama panjang. Siapa aku?", a:"Layang-Layang", icon:"◇"},
+  {q:"Bentukku seperti buku yang dibuka. Aku punya 2 pasang sisi sejajar tapi miring. Siapa aku?", a:"Jajar Genjang", icon:"▱"},
+  {q:"Aku punya 3 titik sudut dan 3 sisi. Irisan pizza berbentuk sepertiku. Siapa aku?", a:"Segitiga", icon:"▲"},
+  {q:"Bentukku seperti ubin lantai. Aku punya 4 sisi sama panjang dan sudut siku-siku. Siapa aku?", a:"Persegi", icon:"■"},
+  {q:"Jam dinding berbentuk seperti aku. Aku punya keliling tetapi tidak punya sudut. Siapa aku?", a:"Lingkaran", icon:"●"},
+  {q:"Aku punya 4 sisi dengan tepat satu pasang sisi sejajar. Bentukku seperti gelas ukur. Siapa aku?", a:"Trapesium", icon:"⏢"}
+];
+
+const comicPanels = [
+  {character:"👸", scene:"Hai! Aku Princess Lila. Aku mau membuat jendela istana. Jendela harus punya 4 sisi sama panjang dan 4 sudut siku-siku.", question:"Bentuk apakah yang tepat untuk jendela istana?", options:[{n:"Segitiga",c:false,s:"triangle"},{n:"Persegi",c:true,s:"square"},{n:"Lingkaran",c:false,s:"circle"},{n:"Trapesium",c:false,s:"trapezoid"}]},
+  {character:"🏰", scene:"Wow! Jendelanya bagus! Sekarang aku mau membuat atap istana yang tinggi. Atap punya 3 sisi.", question:"Bentuk apakah yang tepat untuk atap istana?", options:[{n:"Segitiga",c:true,s:"triangle"},{n:"Persegi",c:false,s:"square"},{n:"Persegi Panjang",c:false,s:"rectangle"},{n:"Layang-Layang",c:false,s:"kite"}]},
+  {character:"🚪", scene:"Atapnya indah! Sekarang aku butuh pintu istana. Pintu punya 2 pasang sisi sejajar dan 4 sudut siku-siku, tapi sisi yang berhadapan tidak sama panjang.", question:"Bentuk apakah yang tepat untuk pintu istana?", options:[{n:"Persegi",c:false,s:"square"},{n:"Persegi Panjang",c:true,s:"rectangle"},{n:"Belah Ketupat",c:false,s:"rhombus"},{n:"Segitiga",c:false,s:"triangle"}]},
+  {character:"⛲", scene:"Pintunya kokoh! Sekarang aku mau membuat kolam taman. Kolam tidak punya sudut sama sekali.", question:"Bentuk apakah yang tepat untuk kolam taman?", options:[{n:"Lingkaran",c:true,s:"circle"},{n:"Persegi",c:false,s:"square"},{n:"Trapesium",c:false,s:"trapezoid"},{n:"Belah Ketupat",c:false,s:"rhombus"}]},
+  {character:"💎", scene:"Kolamnya cantik! Aku mau hiasan dinding berbentuk berlian. Hiasan ini punya 4 sisi sama panjang tapi tidak siku-siku.", question:"Bentuk apakah yang tepat untuk hiasan dinding?", options:[{n:"Persegi",c:false,s:"square"},{n:"Belah Ketupat",c:true,s:"rhombus"},{n:"Jajar Genjang",c:false,s:"parallelogram"},{n:"Layang-Layang",c:false,s:"kite"}]},
+  {character:"🎪", scene:"Hiasannya berkilau! Sekarang aku mau tenda pesta di taman. Tenda punya 4 sisi dengan 1 pasang sisi sejajar.", question:"Bentuk apakah yang tepat untuk tenda pesta?", options:[{n:"Trapesium",c:true,s:"trapezoid"},{n:"Persegi",c:false,s:"square"},{n:"Segitiga",c:false,s:"triangle"},{n:"Lingkaran",c:false,s:"circle"}]},
+  {character:"🎏", scene:"Tendanya luas! Aku mau spanduk pesta. Spanduk punya 2 pasang sisi sejajar tapi miring, tidak siku-siku.", question:"Bentuk apakah yang tepat untuk spanduk pesta?", options:[{n:"Persegi Panjang",c:false,s:"rectangle"},{n:"Jajar Genjang",c:true,s:"parallelogram"},{n:"Belah Ketupat",c:false,s:"rhombus"},{n:"Trapesium",c:false,s:"trapezoid"}]},
+  {character:"🪁", scene:"Spanduknya keren! Terakhir, aku mau mainan yang bisa terbang di langit. Mainan ini punya 2 pasang sisi berdekatan yang sama panjang.", question:"Bentuk apakah yang tepat untuk mainan terbang ini?", options:[{n:"Layang-Layang",c:true,s:"kite"},{n:"Belah Ketupat",c:false,s:"rhombus"},{n:"Persegi",c:false,s:"square"},{n:"Trapesium",c:false,s:"trapezoid"}]}
+];
+
+const quizQuestions = [
+  {q:"Berapa jumlah sisi pada bangun datar segitiga?", options:["2 sisi","3 sisi","4 sisi","5 sisi"], answer:1, explanation:"Segitiga memiliki 3 sisi, 3 sudut, dan 3 titik sudut. Ketiga sisinya saling berhubungan membentuk segitiga."},
+  {q:"Bangun datar yang memiliki 4 sisi sama panjang dan 4 sudut siku-siku adalah...", options:["Persegi panjang","Jajar genjang","Persegi","Trapesium"], answer:2, explanation:"Persegi memiliki ciri khas 4 sisi sama panjang dan 4 sudut siku-siku (90°). Kedua diagonalnya juga sama panjang dan saling tegak lurus."},
+  {q:"Berapa jumlah diagonal pada persegi panjang?", options:["1 diagonal","2 diagonal","3 diagonal","4 diagonal"], answer:1, explanation:"Persegi panjang memiliki 2 diagonal yang sama panjang. Diagonal adalah garis yang menghubungkan dua titik sudut yang berhadapan."},
+  {q:"Bangun datar yang TIDAK memiliki sudut adalah...", options:["Segitiga","Persegi","Trapesium","Lingkaran"], answer:3, explanation:"Lingkaran tidak memiliki sudut maupun titik sudut. Lingkaran hanya memiliki satu sisi berupa lengkungan (keliling), jari-jari, dan diameter."},
+  {q:"Pada belah ketupat, kedua diagonalnya saling...", options:["Sejajar","Tegak lurus","Sama panjang","Berhimpit"], answer:1, explanation:"Pada belah ketupat, kedua diagonalnya saling tegak lurus dan saling membagi dua sama panjang. Keempat sisinya juga sama panjang."},
+  {q:"Bangun datar yang memiliki tepat satu pasang sisi sejajar adalah...", options:["Persegi","Jajar genjang","Trapesium","Belah ketupat"], answer:2, explanation:"Trapesium adalah bangun datar segi empat yang memiliki tepat satu pasang sisi yang sejajar. Sisi sejajar ini disebut sisi atas dan sisi bawah."},
+  {q:"Benda berikut ini yang berbentuk lingkaran adalah...", options:["Buku tulis","Jam dinding","Pintu","Ubin lantai"], answer:1, explanation:"Jam dinding umumnya berbentuk lingkaran. Buku, pintu, dan ubin lantai biasanya berbentuk persegi panjang atau persegi."},
+  {q:"Berapa jumlah titik sudut pada persegi?", options:["2 titik sudut","3 titik sudut","4 titik sudut","5 titik sudut"], answer:2, explanation:"Persegi memiliki 4 titik sudut, yaitu tempat bertemunya dua sisi yang membentuk sudut siku-siku (90°)."},
+  {q:"Pada layang-layang, sisi-sisi yang sama panjang adalah...", options:["Semua sisi sama panjang","Sisi yang berhadapan","Dua pasang sisi yang berdekatan","Tidak ada sisi yang sama"], answer:2, explanation:"Layang-layang memiliki 2 pasang sisi yang berdekatan dan sama panjang. Pasangan sisi pendek di atas dan pasangan sisi panjang di bawah."},
+  {q:"Jajar genjang memiliki ciri khas...", options:["4 sisi sama panjang","4 sudut siku-siku","2 pasang sisi sejajar sama panjang","Tidak punya diagonal"], answer:2, explanation:"Jajar genjang memiliki 2 pasang sisi sejajar yang sama panjang. Sudut yang berhadapan sama besar, tetapi tidak siku-siku."}
+];
+
+/* =========================================
+   NAVIGATION
+========================================= */
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const slides = document.querySelectorAll('.slide');
+const indicators = document.getElementById('indicators');
+const progressBar = document.getElementById('progressBar');
+const slideCounter = document.getElementById('slideCounter');
+
+// Create indicators
+for(let i=1;i<=totalSlides;i++){
+  const dot = document.createElement('div');
+  dot.className = 'indicator' + (i===1 ? ' active' : '');
+  dot.addEventListener('click', () => goToSlide(i));
+  indicators.appendChild(dot);
+}
+
+function goToSlide(n){
+  if(n<1 || n>totalSlides) return;
+  slides[currentSlide-1].classList.remove('active');
+  if(n<currentSlide) slides[currentSlide-1].classList.add('prev');
+  setTimeout(()=>{slides[currentSlide-1].classList.remove('prev')},500);
+  
+  currentSlide = n;
+  slides[currentSlide-1].classList.add('active');
+  
+  updateNav();
+  updateIndicators();
+  handleSlideEnter(currentSlide);
+}
+
+function updateNav(){
+  prevBtn.disabled = currentSlide === 1;
+  nextBtn.disabled = currentSlide === totalSlides;
+  const progress = (currentSlide / totalSlides) * 100;
+  progressBar.style.width = progress + '%';
+  slideCounter.textContent = `${currentSlide} / ${totalSlides}`;
+}
+
+function updateIndicators(){
+  document.querySelectorAll('.indicator').forEach((dot,i)=>{
+    dot.classList.toggle('active', i+1 === currentSlide);
+  });
+}
+
+prevBtn.addEventListener('click', () => goToSlide(currentSlide-1));
+nextBtn.addEventListener('click', () => goToSlide(currentSlide+1));
+
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='ArrowRight' || e.key===' ') goToSlide(currentSlide+1);
+  if(e.key==='ArrowLeft') goToSlide(currentSlide-1);
+});
+
+// Touch swipe
+let touchStartX = 0;
+document.addEventListener('touchstart',(e)=>{touchStartX = e.touches[0].clientX});
+document.addEventListener('touchend',(e)=>{
+  const diff = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(diff)>50){
+    if(diff<0) goToSlide(currentSlide+1);
+    else goToSlide(currentSlide-1);
+  }
+});
+
+/* =========================================
+   SLIDE 4: CONCEPT INTERACTIVE - PERBAIKAN
+========================================= */
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+toggleBtns.forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const type = btn.dataset.type;
+    btn.classList.toggle('active');
+    
+    const elements = document.querySelectorAll(`#conceptSVG [data-concept="${type}"]`);
+    elements.forEach(el=>{
+      if(el.classList.contains('hidden')){
+        el.classList.remove('hidden');
+        el.classList.add('show');
+      } else {
+        el.classList.remove('show');
+        el.classList.add('hidden');
+      }
+    });
+  });
+});
+
+/* =========================================
+   SLIDE 5-12: SHAPE SLIDES - PERBAIKAN ANIMASI
+========================================= */
+// Tambahkan event listener untuk feature items di setiap slide bangun datar
+function setupShapeSlides(){
+  const shapeSlides = document.querySelectorAll('[data-slide="5"], [data-slide="6"], [data-slide="7"], [data-slide="8"], [data-slide="9"], [data-slide="10"], [data-slide="11"], [data-slide="12"]');
+  
+  shapeSlides.forEach(slide=>{
+    const features = slide.querySelectorAll('.feature-item');
+    const svg = slide.querySelector('.shape-svg');
+    if(!svg) return;
+    
+    features.forEach(feature=>{
+      feature.addEventListener('click',()=>{
+        const type = feature.dataset.type;
+        
+        // Cari elemen SVG berdasarkan class
+        let selector = '';
+        if(type === 'titik') selector = '.el-titik';
+        else if(type === 'sisi') selector = '.el-sisi';
+        else if(type === 'sudut') selector = '.el-sudut';
+        else if(type === 'diagonal') selector = '.el-diagonal, .el-diagonal-label';
+        
+        const elements = svg.querySelectorAll(selector);
+        const isActive = feature.classList.contains('active');
+        
+        if(isActive){
+          // Sembunyikan
+          feature.classList.remove('active');
+          elements.forEach(el=>{
+            el.classList.remove('show');
+            el.classList.add('hidden');
+          });
+        } else {
+          // Tampilkan dengan animasi
+          feature.classList.add('active');
+          elements.forEach((el, idx)=>{
+            setTimeout(()=>{
+              el.classList.remove('hidden');
+              el.classList.add('show');
+            }, idx * 100);
+          });
+        }
+      });
+    });
+  });
+}
+
+// Reset shape slide saat masuk
+function resetShapeSlide(slide){
+  const svg = slide.querySelector('.shape-svg');
+  if(!svg) return;
+  
+  // Sembunyikan semua elemen dulu
+  svg.querySelectorAll('.el-titik, .el-sisi, .el-sudut, .el-diagonal, .el-diagonal-label').forEach(el=>{
+    el.classList.remove('show');
+    el.classList.add('hidden');
+  });
+  
+  // Reset feature active state
+  slide.querySelectorAll('.feature-item').forEach(f=>f.classList.remove('active'));
+}
+
+// Auto show animation saat masuk slide bangun datar (opsional - tampilkan semua dengan delay)
+function autoShowShape(slide){
+  resetShapeSlide(slide);
+  const svg = slide.querySelector('.shape-svg');
+  if(!svg) return;
+  
+  const types = ['titik', 'sisi', 'sudut', 'diagonal'];
+  types.forEach((type, typeIdx)=>{
+    let selector = '';
+    if(type === 'titik') selector = '.el-titik';
+    else if(type === 'sisi') selector = '.el-sisi';
+    else if(type === 'sudut') selector = '.el-sudut';
+    else if(type === 'diagonal') selector = '.el-diagonal';
+    
+    const elements = svg.querySelectorAll(selector);
+    elements.forEach((el, idx)=>{
+      setTimeout(()=>{
+        el.classList.remove('hidden');
+        el.classList.add('show');
+        // Aktifkan feature item juga
+        const feature = slide.querySelector(`.feature-item[data-type="${type}"]`);
+        if(feature) feature.classList.add('active');
+      }, typeIdx * 400 + idx * 100);
+    });
+  });
+}
+
+setupShapeSlides();
+
+/* =========================================
+   HANDLE SLIDE ENTER
+========================================= */
+function handleSlideEnter(slideNum){
+  if(slideNum >= 5 && slideNum <= 12){
+    const slide = document.querySelector(`[data-slide="${slideNum}"]`);
+    // Auto show dengan delay kecil agar terlihat animasinya
+    setTimeout(()=>{
+      autoShowShape(slide);
+    }, 300);
+  }
+  if(slideNum === 15 && quizAnswers.length === 0){
+    loadQuizQuestion(0);
+  }
+}
+
+/* =========================================
+   SLIDE 13: RIDDLE GAME
+========================================= */
+let currentRiddle = 0;
+const riddleRound = document.getElementById('riddleRound');
+const riddleQuestion = document.getElementById('riddleQuestion');
+const riddleAnswerBox = document.getElementById('riddleAnswerBox');
+const riddleIcon = document.getElementById('riddleIcon');
+const riddleAnswer = document.getElementById('riddleAnswer');
+const riddleShowBtn = document.getElementById('riddleShowBtn');
+const riddleNextBtn = document.getElementById('riddleNextBtn');
+const riddleProgress = document.getElementById('riddleProgress');
+
+// Create progress dots
+for(let i=0;i<20;i++){
+  const dot = document.createElement('div');
+  dot.className = 'riddle-dot' + (i===0 ? ' current' : '');
+  riddleProgress.appendChild(dot);
+}
+
+function loadRiddle(n){
+  currentRiddle = n;
+  const r = riddles[n];
+  riddleRound.textContent = `Ronde ${n+1} dari 20`;
+  riddleQuestion.textContent = r.q;
+  riddleIcon.textContent = r.icon;
+  riddleAnswer.textContent = r.a;
+  riddleAnswerBox.classList.remove('show');
+  riddleShowBtn.disabled = false;
+  riddleNextBtn.disabled = true;
+  
+  // Update dots
+  document.querySelectorAll('.riddle-dot').forEach((dot,i)=>{
+    dot.classList.remove('current','done');
+    if(i<n) dot.classList.add('done');
+    else if(i===n) dot.classList.add('current');
+  });
+  
+  if(n === 19){
+    riddleNextBtn.innerHTML = '<i class="fas fa-check"></i> Selesai!';
+  } else {
+    riddleNextBtn.innerHTML = 'Berikutnya <i class="fas fa-arrow-right"></i>';
+  }
+}
+
+riddleShowBtn.addEventListener('click',()=>{
+  riddleAnswerBox.classList.add('show');
+  riddleShowBtn.disabled = true;
+  if(currentRiddle < 19) riddleNextBtn.disabled = false;
+  launchConfetti(8);
+});
+
+riddleNextBtn.addEventListener('click',()=>{
+  if(currentRiddle < 19){
+    loadRiddle(currentRiddle + 1);
+  }
+});
+
+/* =========================================
+   SLIDE 14: COMIC GAME
+========================================= */
+let currentPanel = 0;
+let comicScore = 0;
+const comicCharacter = document.getElementById('comicCharacter');
+const comicSceneText = document.getElementById('comicSceneText');
+const comicQuestion = document.getElementById('comicQuestion');
+const comicHint = document.getElementById('comicHint');
+const comicOptionsContainer = document.getElementById('comicOptions');
+const comicFeedback = document.getElementById('comicFeedback');
+const comicStars = document.querySelectorAll('.comic-star');
+const comicNextBtn = document.getElementById('comicNextBtn');
+
+const shapeSVGs = {
+  triangle: '<svg viewBox="0 0 60 60" width="48" height="48"><polygon points="30,8 55,52 5,52" fill="#E76F51" stroke="#C75A3F" stroke-width="2"/></svg>',
+  square: '<svg viewBox="0 0 60 60" width="48" height="48"><rect x="8" y="8" width="44" height="44" fill="#2A9D8F" stroke="#1F7A6E" stroke-width="2" rx="3"/></svg>',
+  rectangle: '<svg viewBox="0 0 60 60" width="48" height="48"><rect x="4" y="14" width="52" height="32" fill="#F4A261" stroke="#D88841" stroke-width="2" rx="3"/></svg>',
+  rhombus: '<svg viewBox="0 0 60 60" width="48" height="48"><polygon points="30,5 55,30 30,55 5,30" fill="#FFD93D" stroke="#D4B520" stroke-width="2"/></svg>',
+  parallelogram: '<svg viewBox="0 0 60 60" width="48" height="48"><polygon points="15,12 55,12 45,48 5,48" fill="#B8E0D2" stroke="#7FB8A8" stroke-width="2"/></svg>',
+  kite: '<svg viewBox="0 0 60 60" width="48" height="48"><polygon points="30,5 50,30 30,55 10,30" fill="#D4C5F9" stroke="#9B85D9" stroke-width="2"/></svg>',
+  trapezoid: '<svg viewBox="0 0 60 60" width="48" height="48"><polygon points="15,12 45,12 55,48 5,48" fill="#FFB4A2" stroke="#D88841" stroke-width="2"/></svg>',
+  circle: '<svg viewBox="0 0 60 60" width="48" height="48"><circle cx="30" cy="30" r="24" fill="#E76F51" stroke="#C75A3F" stroke-width="2"/></svg>'
+};
+
+function loadComicPanel(n){
+  currentPanel = n;
+  const p = comicPanels[n];
+  comicCharacter.textContent = p.character;
+  comicSceneText.textContent = p.scene;
+  comicQuestion.textContent = p.question;
+  comicHint.style.display = 'block';
+  comicFeedback.classList.remove('show','correct','wrong');
+  comicNextBtn.disabled = true;
+  
+  comicOptionsContainer.innerHTML = '';
+  p.options.forEach(opt=>{
+    const div = document.createElement('div');
+    div.className = 'comic-option';
+    div.innerHTML = `${shapeSVGs[opt.s]}<div class="option-name">${opt.n}</div>`;
+    div.addEventListener('click',()=>{
+      if(comicFeedback.classList.contains('show')) return;
+      handleComicAnswer(div, opt.c);
+    });
+    comicOptionsContainer.appendChild(div);
+  });
+}
+
+function handleComicAnswer(optionEl, isCorrect){
+  if(isCorrect){
+    optionEl.classList.add('correct');
+    comicFeedback.classList.add('show','correct');
+    comicFeedback.innerHTML = '<i class="fas fa-star"></i> Hebat! Jawabanmu benar! Kamu membantu Princess Lila!';
+    comicScore++;
+    comicStars[comicScore-1].classList.add('earned');
+    comicHint.style.display = 'none';
+    comicNextBtn.disabled = false;
+    launchConfetti(15);
+    if(currentPanel === comicPanels.length-1){
+      comicNextBtn.innerHTML = '<i class="fas fa-flag-checkered"></i> Selesaikan Petualangan!';
+    }
+  } else {
+    optionEl.classList.add('wrong');
+    comicFeedback.classList.add('show','wrong');
+    comicFeedback.innerHTML = '<i class="fas fa-times-circle"></i> Belum tepat. Coba lihat lagi petunjuknya ya!';
+    setTimeout(()=>{
+      optionEl.classList.remove('wrong');
+      comicFeedback.classList.remove('show','wrong');
+    }, 1500);
+  }
+}
+
+comicNextBtn.addEventListener('click',()=>{
+  if(currentPanel < comicPanels.length-1){
+    loadComicPanel(currentPanel+1);
+    comicNextBtn.disabled = true;
+  } else {
+    goToSlide(15);
+  }
+});
+
+/* =========================================
+   SLIDE 15: KUIS
+========================================= */
+let currentQuiz = 0;
+let quizScore = 0;
+let quizAnswers = [];
+let selectedOption = null;
+
+const quizProgressText = document.getElementById('quizProgressText');
+const quizScoreEl = document.getElementById('quizScore');
+const quizNum = document.getElementById('quizNum');
+const quizQuestion = document.getElementById('quizQuestion');
+const quizOptionsContainer = document.getElementById('quizOptions');
+const quizExplanation = document.getElementById('quizExplanation');
+const quizExplanationText = document.getElementById('quizExplanationText');
+const quizCheckBtn = document.getElementById('quizCheckBtn');
+const quizNextBtn = document.getElementById('quizNextBtn');
+
+function loadQuizQuestion(n){
+  currentQuiz = n;
+  const q = quizQuestions[n];
+  selectedOption = null;
+  
+  quizProgressText.textContent = `Soal ${n+1} dari 10`;
+  quizNum.textContent = `Soal ${n+1}`;
+  quizQuestion.textContent = q.q;
+  quizExplanation.classList.remove('show');
+  quizCheckBtn.disabled = false;
+  quizCheckBtn.innerHTML = '<i class="fas fa-check"></i> Cek Jawaban';
+  quizNextBtn.disabled = true;
+  
+  if(n === 9){
+    quizNextBtn.innerHTML = '<i class="fas fa-flag-checkered"></i> Lihat Hasil';
+  } else {
+    quizNextBtn.innerHTML = 'Soal Berikutnya <i class="fas fa-arrow-right"></i>';
+  }
+  
+  quizOptionsContainer.innerHTML = '';
+  q.options.forEach((opt, i)=>{
+    const div = document.createElement('div');
+    div.className = 'quiz-option';
+    div.innerHTML = `<div class="option-letter">${String.fromCharCode(65+i)}</div><span>${opt}</span>`;
+    div.addEventListener('click',()=>{
+      if(quizExplanation.classList.contains('show')) return;
+      document.querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));
+      div.classList.add('selected');
+      selectedOption = i;
+    });
+    quizOptionsContainer.appendChild(div);
+  });
+}
+
+quizCheckBtn.addEventListener('click',()=>{
+  if(selectedOption === null){
+    quizCheckBtn.innerHTML = '<i class="fas fa-exclamation"></i> Pilih dulu!';
+    setTimeout(()=>{
+      quizCheckBtn.innerHTML = '<i class="fas fa-check"></i> Cek Jawaban';
+    }, 1500);
+    return;
+  }
+  
+  const q = quizQuestions[currentQuiz];
+  const options = document.querySelectorAll('.quiz-option');
+  const isCorrect = selectedOption === q.answer;
+  
+  options.forEach((opt, i)=>{
+    opt.style.pointerEvents = 'none';
+    if(i === q.answer) opt.classList.add('correct');
+    else if(i === selectedOption && !isCorrect) opt.classList.add('wrong');
+  });
+  
+  if(isCorrect){
+    quizScore++;
+    quizScoreEl.textContent = `Skor: ${quizScore}`;
+    launchConfetti(10);
+  }
+  
+  quizAnswers.push({question: currentQuiz, selected: selectedOption, correct: q.answer, isCorrect});
+  quizExplanationText.textContent = q.explanation;
+  quizExplanation.classList.add('show');
+  quizCheckBtn.disabled = true;
+  quizNextBtn.disabled = false;
+});
+
+quizNextBtn.addEventListener('click',()=>{
+  if(currentQuiz < 9){
+    loadQuizQuestion(currentQuiz+1);
+  } else {
+    showResults();
+  }
+});
+
+function showResults(){
+  document.getElementById('resultScore').textContent = quizScore;
+  const emoji = document.getElementById('resultEmoji');
+  const title = document.getElementById('resultTitle');
+  const msg = document.getElementById('resultMessage');
+  
+  if(quizScore === 10){
+    emoji.textContent = '🏆';
+    title.textContent = 'Sempurna! Kamu Juara!';
+    msg.textContent = 'Kamu menguasai semua materi bangun datar. Luar biasa!';
+  } else if(quizScore >= 8){
+    emoji.textContent = '🌟';
+    title.textContent = 'Hebat Sekali!';
+    msg.textContent = 'Kamu sudah sangat memahami bangun datar. Sedikit lagi menuju sempurna!';
+  } else if(quizScore >= 6){
+    emoji.textContent = '😊';
+    title.textContent = 'Kerja Bagus!';
+    msg.textContent = 'Kamu sudah memahami sebagian besar materi. Tetap semangat belajar!';
+  } else if(quizScore >= 4){
+    emoji.textContent = '💪';
+    title.textContent = 'Tetap Semangat!';
+    msg.textContent = 'Kamu sudah mulai memahami. Yuk belajar lagi biar makin jago!';
+  } else {
+    emoji.textContent = '🌱';
+    title.textContent = 'Yuk Belajar Lagi!';
+    msg.textContent = 'Jangan menyerah ya! Ulangi lagi materi bangun datar dan coba sekali lagi.';
+  }
+  
+  // Show breakdown
+  const breakdown = document.getElementById('resultBreakdown');
+  breakdown.innerHTML = '';
+  quizAnswers.forEach((a, i)=>{
+    const item = document.createElement('div');
+    item.className = 'result-item ' + (a.isCorrect ? 'correct' : 'wrong');
+    item.innerHTML = `<span class="q-num">Soal ${i+1}</span><span class="status">${a.isCorrect ? 'Benar' : 'Salah'}</span>`;
+    breakdown.appendChild(item);
+  });
+  
+  goToSlide(16);
+  if(quizScore >= 8) launchConfetti(30);
+}
+
+function restartQuiz(){
+  currentQuiz = 0;
+  quizScore = 0;
+  quizAnswers = [];
+  quizScoreEl.textContent = 'Skor: 0';
+  loadQuizQuestion(0);
+  goToSlide(15);
+}
+
+/* =========================================
+   CONFETTI
+========================================= */
+function launchConfetti(count){
+  const colors = ['#E76F51','#2A9D8F','#F4A261','#FFD93D','#FFB4A2','#B8E0D2','#D4C5F9'];
+  const shapes = ['square','circle','triangle'];
+  for(let i=0;i<count;i++){
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random()*100 + 'vw';
+    confetti.style.background = colors[Math.floor(Math.random()*colors.length)];
+    confetti.style.animationDuration = (Math.random()*2 + 2) + 's';
+    confetti.style.animationDelay = Math.random()*0.5 + 's';
+    const shape = shapes[Math.floor(Math.random()*shapes.length)];
+    if(shape === 'circle') confetti.style.borderRadius = '50%';
+    else if(shape === 'triangle'){
+      confetti.style.background = 'transparent';
+      confetti.style.borderLeft = '4px solid transparent';
+      confetti.style.borderRight = '4px solid transparent';
+      confetti.style.borderBottom = '8px solid ' + colors[Math.floor(Math.random()*colors.length)];
+      confetti.style.width = '0';
+      confetti.style.height = '0';
+    }
+    document.body.appendChild(confetti);
+    setTimeout(()=>confetti.remove(), 4000);
+  }
+}
+
+/* =========================================
+   INITIAL LOAD
+========================================= */
+updateNav();
+loadRiddle(0);
+loadComicPanel(0);
+loadQuizQuestion(0);
+</script>
+</body>
+</html>
