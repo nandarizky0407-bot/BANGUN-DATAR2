@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symmetry — Interactive Lesson | Grade 5 Cambridge Mathematics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#2d3142; --muted:#697089; --bg:#fdf8ef; --line:#e9e2d4;
+  --blue:#4361ee; --purple:#7b2cbf; --coral:#ef476f; --teal:#0aa88f;
+  --gold:#ffb703; --green:#2ec27e; --orange:#f3722c;
+  --shadow:0 12px 30px rgba(45,49,66,.10); --r:22px;
+  --fh:'Fredoka','Baloo 2','Comic Sans MS','Chalkboard SE',sans-serif;
+  --fb:'Nunito','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--fb);color:var(--ink);background:var(--bg);overflow:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:
+ radial-gradient(circle at 10% 14%,rgba(123,44,191,.07),transparent 26%),
+ radial-gradient(circle at 88% 10%,rgba(67,97,238,.08),transparent 24%),
+ radial-gradient(circle at 86% 88%,rgba(239,71,111,.07),transparent 26%),
+ radial-gradient(circle at 10% 90%,rgba(10,168,143,.08),transparent 24%)}
+#app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+#progress{position:fixed;top:0;left:0;right:0;height:6px;background:rgba(45,49,66,.08);z-index:70}
+#progress-fill{height:100%;width:0;border-radius:0 6px 6px 0;background:linear-gradient(90deg,var(--blue),var(--purple),var(--coral));transition:width .45s ease}
+#top-controls{position:fixed;top:14px;right:16px;z-index:70;display:flex;gap:10px}
+.icon-btn{width:44px;height:44px;border-radius:50%;background:#fff;border:2px solid var(--line);box-shadow:var(--shadow);cursor:pointer;display:grid;place-items:center;color:var(--ink);transition:transform .15s}
+.icon-btn:hover{transform:translateY(-2px)}
+.icon-btn svg{width:22px;height:22px}
+#deck{position:relative;flex:1;min-height:0}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;gap:clamp(8px,1.6vh,16px);padding:clamp(14px,2.4vh,26px) clamp(18px,3.6vw,60px) 104px;opacity:0;visibility:hidden;transform:translateY(16px);transition:opacity .45s,transform .45s,visibility .45s;overflow-y:auto}
+.slide.active{opacity:1;visibility:visible;transform:none;z-index:2}
+.slide::-webkit-scrollbar{width:9px}
+.slide::-webkit-scrollbar-thumb{background:#e4ddcc;border-radius:8px}
+.head-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.kicker{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--purple);color:var(--purple);font-weight:800;padding:6px 16px;border-radius:999px;font-size:clamp(10px,1.3vw,13px);letter-spacing:.09em;text-transform:uppercase}
+.kicker::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--coral)}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:800;font-size:clamp(11px,1.4vw,14px)}
+.chip.soft{background:#f4f0e6;border-color:transparent;color:var(--muted)}
+.chip.pur{background:#f3e9fb;border-color:transparent;color:var(--purple)}
+.slide-title{font-family:var(--fh);font-weight:700;font-size:clamp(26px,4.2vw,46px);line-height:1.05}
+.slide-title em{font-style:normal;color:var(--coral)}
+.slide-sub{color:var(--muted);font-weight:700;font-size:clamp(13px,1.6vw,17px);max-width:960px;line-height:1.5}
+.grid-2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(12px,2vw,24px);align-items:start}
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:clamp(14px,1.9vw,24px)}
+.card h3{font-family:var(--fh);font-size:clamp(17px,2vw,23px);margin-bottom:8px}
+.card p{font-size:clamp(13px,1.55vw,16.5px);line-height:1.55;margin-bottom:8px;font-weight:600}
+.tip{background:#fff8e8;border-left:5px solid var(--gold);border-radius:12px;padding:10px 14px;font-size:clamp(12px,1.4vw,15px);font-weight:700;margin-top:10px;line-height:1.5}
+.tip.purp{background:#f6edfd;border-left-color:var(--purple)}
+.tip.blue{background:#ecf1ff;border-left-color:var(--blue)}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.btn{font-family:var(--fh);font-weight:600;border:none;cursor:pointer;border-radius:999px;padding:12px 26px;font-size:clamp(14px,1.7vw,17px);color:#fff;background:var(--blue);box-shadow:0 5px 0 rgba(45,49,66,.18);transition:transform .15s,box-shadow .15s,filter .2s;user-select:none}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(45,49,66,.18)}
+.btn.purple{background:var(--purple)}.btn.coral{background:var(--coral)}.btn.teal{background:var(--teal)}
+.btn.ghost{background:#f1ede2;color:var(--ink);box-shadow:none;border:2px solid var(--line)}
+.btn.small{padding:9px 18px;font-size:clamp(12px,1.4vw,15px)}
+.btn.big{padding:16px 42px;font-size:clamp(17px,2.2vw,23px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.hidden{display:none!important}
+.center{text-align:center}
+/* ---------- cover ---------- */
+.s-cover{justify-content:center;align-items:center;text-align:center}
+#fx{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.float-shape{position:absolute;animation:floaty ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-7deg)}50%{transform:translateY(-16px) rotate(7deg)}}
+.cover-wrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2.2vh,20px)}
+.cover-badge{display:inline-flex;background:#fff;border:2px solid var(--line);border-radius:999px;padding:8px 22px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:clamp(10px,1.4vw,14px);color:var(--purple);box-shadow:var(--shadow)}
+.cover-title{font-family:var(--fh);font-weight:700;font-size:clamp(60px,12vw,142px);line-height:.95;background:linear-gradient(92deg,var(--blue) 10%,var(--purple) 45%,var(--coral) 85%);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.02em}
+.cover-sub{font-size:clamp(15px,2.1vw,22px);color:var(--muted);font-weight:700;max-width:660px;line-height:1.5}
+.cover-hint{color:#a9a290;font-weight:700;font-size:clamp(11px,1.3vw,13px)}
+/* ---------- gallery / activity ---------- */
+.poly-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.poly-item{background:#fbfaf6;border:3px solid var(--line);border-radius:14px;padding:8px 4px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .15s;font-family:var(--fb)}
+.poly-item:hover{transform:translateY(-3px);border-color:var(--blue)}
+.poly-item.sel{border-color:var(--purple);background:#f6edfd}
+.poly-item svg{width:100%;max-width:74px}
+.poly-item b{font-size:12px}.poly-item span{font-size:10.5px;color:var(--muted);font-weight:800}
+.info-box{background:#ecf1ff;border-radius:14px;padding:12px 16px;font-weight:700;font-size:clamp(12.5px,1.5vw,15.5px);min-height:64px;line-height:1.5}
+.shp{fill:#eef3ff;stroke:var(--blue);stroke-width:4;stroke-linejoin:round}
+.shp.heart{fill:#ffe9ee;stroke:var(--coral)}
+.shape-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.6vw,18px)}
+.shape-btn{position:relative;background:#fff;border:3px solid var(--line);border-radius:18px;padding:10px 8px 8px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow);font-family:var(--fb)}
+.shape-btn svg{width:100%;display:block}
+.shape-btn b{font-size:clamp(10.5px,1.2vw,13px);display:block;text-align:center;margin-top:4px}
+.shape-btn:hover{transform:translateY(-3px)}
+.shape-btn.sel{border-color:var(--blue);background:#eef3ff}
+.shape-btn.done{cursor:default}
+.shape-btn.good{border-color:var(--green);background:#e9fbef}
+.shape-btn.bad{border-color:#ef476f;background:#ffecee}
+.shape-btn.missed{border-color:var(--gold);border-style:dashed;background:#fff8e8}
+.badge{position:absolute;top:-11px;right:-9px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;font-size:15px;box-shadow:0 3px 8px rgba(0,0,0,.2)}
+.badge.ok{background:var(--green)}.badge.no{background:#ef476f}.badge.mis{background:var(--gold)}
+#act-score{font-size:15px}
+/* ---------- circle ---------- */
+#circle-svg{width:100%;max-width:380px;display:block;margin:0 auto}
+#circle-svg text{font:800 15px var(--fb);fill:#565b73}
+.reveal{opacity:0;transition:opacity .5s}
+.reveal.show{opacity:1}
+#c-spin-g{transform-origin:160px 125px}
+#circle-svg.spin-on #c-spin-g{animation:cspin 4.5s linear infinite}
+@keyframes cspin{to{transform:rotate(360deg)}}
+.facts{display:grid;gap:8px;margin-top:6px}
+.facts li{list-style:none;background:#f6f4ec;border-radius:10px;padding:9px 12px;font-weight:700;font-size:clamp(12px,1.4vw,14.5px);line-height:1.45}
+.champ{background:linear-gradient(135deg,#fff8e2,#ffe9f0);border:2px solid var(--gold)}
+/* ---------- fold demo ---------- */
+.fold-stage{position:relative;height:min(270px,34vh);aspect-ratio:4/3;margin:12px auto 24px;perspective:900px}
+.fold-half{position:absolute;top:0;bottom:0}
+.fold-half svg{width:100%;height:100%;display:block}
+.fold-left{left:0;width:50%}
+.fold-right{left:50%;width:50%;transform-origin:left center;z-index:3;will-change:transform}
+.mirror-v{position:absolute;left:50%;top:-6px;bottom:-6px;width:0;border-left:3px dashed var(--purple);transform:translateX(-1.5px);z-index:4}
+.mirror-tag{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:900;color:var(--purple);white-space:nowrap;z-index:4}
+.demo-caption{text-align:center;font-weight:800;color:var(--purple);font-size:clamp(12px,1.5vw,15px);min-height:40px;line-height:1.4}
+input[type=range]{width:100%;accent-color:var(--purple);height:30px;cursor:pointer}
+/* ---------- lines of symmetry explorer ---------- */
+.pick-chip{font-family:var(--fh);background:#fbfaf6;border:2px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;font-weight:600;transition:all .15s;color:var(--ink)}
+.pick-chip:hover{border-color:var(--blue)}
+.pick-chip.sel{background:var(--purple);border-color:var(--purple);color:#fff}
+.los-list,.rot-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.los-stage,.rot-stage{position:relative;background:#fbfaf6;border-radius:14px;padding:4px;display:grid;place-items:center;min-height:180px}
+#los-svg{width:100%;max-width:330px}
+.los-line{stroke:var(--coral);stroke-width:3.5;stroke-linecap:round;opacity:0;transition:opacity .45s}
+.los-line.show{opacity:1}
+#los-count{margin-top:10px}
+/* ---------- rotational ---------- */
+#rot-svg{width:100%;max-width:350px}
+#rot-ghost{fill:none;stroke:#b9bfd4;stroke-width:3;stroke-dasharray:7 6}
+#rot-shape{fill:rgba(67,97,238,.16);stroke:var(--blue);stroke-width:4;stroke-linejoin:round;transition:filter .3s}
+#rot-shape.glow{filter:drop-shadow(0 0 10px rgba(255,183,3,.95))}
+.match-bubble{position:absolute;top:8px;right:12px;background:var(--gold);color:#5b3d00;font-family:var(--fh);font-weight:700;padding:6px 14px;border-radius:999px;box-shadow:0 4px 10px rgba(0,0,0,.15);z-index:3;animation:pop .4s ease}
+@keyframes pop{50%{transform:scale(1.18)}}
+.rot-banner{margin-top:10px;background:#e9fbef;border:2px solid var(--green);color:#177a4a;border-radius:14px;padding:12px 16px;font-weight:900;text-align:center;font-size:clamp(14px,1.8vw,18px);animation:pop .45s ease}
+.angle-chip{min-width:130px;justify-content:center}
+/* ---------- quiz ---------- */
+.quiz-card{max-width:860px;margin:0 auto;width:100%}
+.q-progress{font-weight:900;color:var(--muted);font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+.q-bar{height:8px;border-radius:6px;background:#efe9dc;margin-bottom:14px;overflow:hidden}
+.q-bar div{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--blue));transition:width .3s}
+.q-text{font-family:var(--fh);font-size:clamp(18px,2.4vw,26px);margin-bottom:14px;line-height:1.25}
+.q-fig{display:flex;justify-content:center;margin-bottom:10px}
+.q-fig svg{width:150px}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.opt{font-family:var(--fb);font-weight:800;font-size:clamp(14px,1.8vw,18px);padding:14px 16px;border-radius:16px;border:3px solid var(--line);background:#fbfaf6;cursor:pointer;transition:all .15s;text-align:center;color:var(--ink)}
+.opt:hover{border-color:var(--blue);transform:translateY(-2px)}
+.opt.correct{background:#e9fbef;border-color:var(--green);color:#177a4a}
+.opt.wrong{background:#ffecee;border-color:#ef476f;color:#b3123c}
+.opt.dim{opacity:.55}
+.opt svg{max-width:110px;margin:0 auto 4px;display:block}
+.opts.big .opt{font-family:var(--fh);font-size:clamp(24px,3.4vw,40px)}
+.why{background:#ecf1ff;border-left:5px solid var(--blue);border-radius:12px;padding:12px 16px;font-weight:700;margin-top:14px;line-height:1.5}
+.q-score{font-family:var(--fh);font-size:clamp(44px,7vw,84px);color:var(--purple);text-align:center;line-height:1.1}
+.q-msg{text-align:center;font-weight:800;font-size:clamp(15px,2vw,20px);margin:8px 0 14px}
+/* ---------- game ---------- */
+#g-gridwrap{position:relative;margin:4px auto;padding:12px;background:#fff;border-radius:18px;box-shadow:var(--shadow);width:max-content}
+#g-grid{display:grid;gap:4px;user-select:none}
+.gcell{width:100%;height:100%;border-radius:6px;background:#f4f5fa;border:2px dashed #d5d9e6;transition:transform .1s}
+.gcell.given{border:2px solid rgba(45,49,66,.14);cursor:default}
+.gcell.gempty{background:#efece2}
+.gcell.stu{cursor:pointer;border-color:#c9cfdf}
+.gcell.stu:hover{transform:scale(1.12);border-color:var(--blue);position:relative;z-index:2}
+.gcell.miss{animation:shake .5s ease;border-color:#ef476f;box-shadow:0 0 0 3px rgba(239,71,111,.35)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.gcell.win{animation:pop .5s ease}
+.mirror-line{position:absolute;z-index:5;pointer-events:none}
+.mirror-line.v{left:50%;top:12px;bottom:12px;border-left:3px dashed var(--purple);transform:translateX(-1.5px)}
+.mirror-line.h{top:50%;left:12px;right:12px;border-top:3px dashed var(--purple);transform:translateY(-1.5px)}
+.g-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.stars{display:flex;gap:3px;align-items:center}
+.star{width:20px;height:20px;fill:#e7e2d4}
+.star.gold{fill:#ffc43d}.star.silver{fill:#b9c2d0}
+.stars.big .star{width:34px;height:34px}
+.chip-col{width:42px;height:42px;border-radius:12px;border:3px solid #fff;box-shadow:0 0 0 2px #d8d3c8;cursor:pointer;transition:transform .12s,box-shadow .12s;padding:0}
+.chip-col.active{box-shadow:0 0 0 3px var(--ink);transform:scale(1.14)}
+.g-msg{text-align:center;font-weight:800;font-size:clamp(13px,1.6vw,16px);min-height:24px;color:var(--purple)}
+.rules{margin:8px 0 10px 20px;display:grid;gap:7px;font-weight:700;font-size:clamp(12.5px,1.5vw,15.5px);line-height:1.45}
+#g-sample{display:flex;justify-content:center;margin:6px 0 12px}
+#g-sample svg{max-width:340px;width:100%}
+#game-play{display:flex;flex-direction:column;gap:10px;align-items:center}
+/* ---------- summary / reflection / thanks ---------- */
+.sum-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.sum-card{display:flex;gap:14px;align-items:flex-start}
+.sum-ic{flex:0 0 54px;width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:#f4f0e6}
+.sum-ic svg{width:36px;height:36px}
+.sum-card h4{font-family:var(--fh);font-size:clamp(15px,1.8vw,19px);margin-bottom:4px}
+.sum-card p{font-size:clamp(12px,1.45vw,15px);line-height:1.5;margin:0;font-weight:600}
+.ref-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
+.ref-card{position:relative;padding-top:20px}
+.ref-num{position:absolute;top:-14px;left:18px;width:34px;height:34px;border-radius:50%;background:var(--coral);color:#fff;font-family:var(--fh);display:grid;place-items:center;font-size:17px;box-shadow:0 4px 0 rgba(45,49,66,.15)}
+.ref-card h4{font-family:var(--fh);font-size:clamp(14px,1.7vw,18px);margin-bottom:6px}
+.ref-card p{margin:0;font-size:clamp(12px,1.45vw,15px)}
+.mood-row{display:flex;gap:16px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.mood{background:#fbfaf6;border:3px solid var(--line);border-radius:18px;padding:12px 18px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:800;font-family:var(--fb);font-size:13px;color:var(--ink);transition:all .15s;min-width:140px}
+.mood svg{width:56px;height:56px}
+.mood:hover{transform:translateY(-3px)}
+.mood.sel{border-color:var(--teal);background:#e2f7f2;box-shadow:0 8px 18px rgba(10,168,143,.18)}
+.s-thanks{justify-content:center;align-items:center;text-align:center}
+.thanks-title{font-family:var(--fh);font-size:clamp(42px,9vw,108px);line-height:1;background:linear-gradient(92deg,var(--teal),var(--blue),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.thanks-sub{max-width:760px;font-size:clamp(15px,2vw,20px);color:var(--muted);font-weight:700;line-height:1.55}
+/* ---------- navbar ---------- */
+#navbar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px clamp(16px,3vw,40px) 14px;background:linear-gradient(to top,rgba(253,248,239,.97) 60%,rgba(253,248,239,0))}
+#dots{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.dot{width:12px;height:12px;border-radius:50%;background:#ddd6c4;border:none;cursor:pointer;transition:all .2s;padding:0}
+.dot.on{background:var(--coral);transform:scale(1.3)}
+.dot:hover{background:var(--purple)}
+#slide-count{min-width:76px;justify-content:center}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:90}
+@media(max-width:900px){
+ .grid-2{grid-template-columns:1fr}
+ .sum-grid,.ref-grid{grid-template-columns:1fr}
+ .shape-grid{grid-template-columns:repeat(2,1fr)}
+ .poly-row{grid-template-columns:repeat(4,1fr)}
+ .opts{grid-template-columns:1fr}
+}
+</style>
+<body>
+<div id="app">
+<div id="progress"><div id="progress-fill"></div></div>
+<div id="top-controls">
+  <button class="icon-btn" id="btn-sound" title="Sound on/off" aria-label="Toggle sound"></button>
+  <button class="icon-btn" id="btn-full" title="Fullscreen" aria-label="Toggle fullscreen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+  </button>
+</div>
+<main id="deck">
+
+<!-- ============ SLIDE 1 : COVER ============ -->
+<section class="slide s-cover" id="s1">
+  <div id="fx"></div>
+  <div class="cover-wrap">
+    <span class="cover-badge">Cambridge Primary Mathematics &bull; Stage 5</span>
+    <h1 class="cover-title">SYMMETRY</h1>
+    <p class="cover-sub">Mirror images, folding shapes and turning patterns &mdash; a fun adventure for young mathematicians!</p>
+    <button class="btn big coral" data-goto="1">Let's Go!</button>
+    <div class="cover-hint">Use the arrows at the bottom, or the &larr; &rarr; keys on your keyboard</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2 : POLYGON REVIEW ============ -->
+<section class="slide" id="s2">
+  <div class="head-row"><span class="kicker">Let's remember</span><span class="chip pur">2D Shape &amp; Symmetry</span></div>
+  <h2 class="slide-title">Polygons everywhere!</h2>
+  <p class="slide-sub">Before we meet symmetry, let's warm up with the shapes we already know.</p>
+  <div class="grid-2">
+    <div class="card">
+      <h3>What is a polygon?</h3>
+      <p>A <b>polygon</b> is a closed 2D shape made of <b>straight sides</b>. No curves allowed &mdash; sorry, circles!</p>
+      <p>Polygons get their names from their <b>number of sides</b>: 3 sides make a triangle, 4 a quadrilateral, 5 a pentagon&hellip; all the way up!</p>
+      <div class="tip"><b>Regular polygon:</b> all sides are equal <i>and</i> all angles are equal. Regular polygons are the most symmetric shapes of all!</div>
+      <div class="tip purp"><b>Irregular polygon:</b> its sides or angles are different from each other.</div>
+    </div>
+    <div class="card">
+      <h3>Polygon gallery <span style="color:var(--muted);font-size:.75em">&mdash; click a shape!</span></h3>
+      <div class="poly-row" id="poly-row"></div>
+      <div class="info-box" id="poly-info">Click any polygon to meet it&hellip;</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3 : CIRCLE REVIEW ============ -->
+<section class="slide" id="s3">
+  <div class="head-row"><span class="kicker">Let's remember</span><span class="chip soft">Curves allowed here!</span></div>
+  <h2 class="slide-title">The amazing circle</h2>
+  <p class="slide-sub">Circles are not polygons, but they are the <b>superstars of symmetry</b>. Explore it yourself!</p>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Explore the circle</h3>
+      <svg id="circle-svg" viewBox="0 0 320 250" aria-hidden="true">
+        <circle cx="160" cy="125" r="92" fill="#e7f0ff" stroke="#4361ee" stroke-width="5"/>
+        <g id="c-spin-g"><line x1="160" y1="30" x2="160" y2="220" stroke="#7b2cbf" stroke-width="4" stroke-dasharray="10 8" stroke-linecap="round"/></g>
+        <g id="c-dia-g" class="reveal"><line x1="68" y1="125" x2="252" y2="125" stroke="#ef476f" stroke-width="5" stroke-linecap="round"/><text x="160" y="113" text-anchor="middle">diameter</text></g>
+        <g id="c-rad-g" class="reveal"><line x1="160" y1="125" x2="226" y2="60" stroke="#0aa88f" stroke-width="5" stroke-linecap="round"/><text x="204" y="84">radius</text></g>
+        <circle cx="160" cy="125" r="6" fill="#2d3142"/>
+      </svg>
+      <div class="row" style="justify-content:center;margin-top:8px">
+        <button class="btn ghost small" id="c-radius">Show radius</button>
+        <button class="btn ghost small" id="c-diam">Show diameter</button>
+        <button class="btn purple small" id="c-spin">Spin the mirror line!</button>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <h3>Circle facts</h3>
+        <ul class="facts">
+          <li>A circle is a round shape where every point is the <b>same distance</b> from the <b>centre</b>.</li>
+          <li>The <b>radius</b> goes from the centre to the edge. The <b>diameter</b> goes all the way across through the centre &mdash; it equals 2 radii!</li>
+          <li>A circle is <b>not a polygon</b>: it has one curved side and no straight edges or corners.</li>
+        </ul>
+      </div>
+      <div class="card champ">
+        <h3>The symmetry champion</h3>
+        <p>Every diameter of a circle is a <b>line of symmetry</b> &mdash; fold along any diameter and the halves always match. A circle has <b>infinitely many</b> lines of symmetry. No other shape comes close!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4 : ACTIVITY ============ -->
+<section class="slide" id="s4">
+  <div class="head-row"><span class="kicker">Your turn!</span><span class="chip pur">Activity</span></div>
+  <h2 class="slide-title">Spot the <em>symmetric</em> polygons</h2>
+  <p class="slide-sub">Click every polygon that you could <b>fold in half</b> so that both halves match exactly. We call these <b>symmetric polygons</b>. Careful &mdash; some are tricksters! Then press <b>Check</b>.</p>
+  <div class="shape-grid" id="shape-grid"></div>
+  <div class="row">
+    <button class="btn teal" id="act-check">Check my choices!</button>
+    <button class="btn ghost" id="act-reset">Try again</button>
+    <span class="chip pur hidden" id="act-score"></span>
+  </div>
+  <div class="tip purp hidden" id="act-tip"><b>Trickster alert!</b> The <b>parallelogram</b> looks like it should fold in half&hellip; but it has <b>no lines of symmetry</b> at all! It saves its magic for <b>rotational symmetry</b> &mdash; coming up in a moment&hellip;</div>
+</section>
+<!-- ============ SLIDE 5 : REFLECTIVE SYMMETRY ============ -->
+<section class="slide" id="s5">
+  <div class="head-row"><span class="kicker">New learning</span><span class="chip soft">Mirror, mirror on the wall&hellip;</span></div>
+  <h2 class="slide-title">Reflective symmetry</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Fold it to see it!</h3>
+      <p>A shape has <b>reflective symmetry</b> if you can <b>fold</b> it along a line so that both halves match <b>exactly</b>. That folding line is called the <b>line of symmetry</b> (or mirror line).</p>
+      <div class="fold-stage" id="fold-stage">
+        <div class="fold-half fold-left" id="fold-l"></div>
+        <div class="fold-half fold-right" id="fold-r"></div>
+        <div class="mirror-v"></div>
+        <span class="mirror-tag">mirror line</span>
+      </div>
+      <input type="range" id="fold" min="0" max="100" value="0" aria-label="Fold the butterfly">
+      <div class="demo-caption" id="fold-cap">Drag the slider to fold the butterfly along the mirror line&hellip;</div>
+    </div>
+    <div class="card">
+      <h3>How many lines of symmetry?</h3>
+      <p>Click a shape to reveal its <b>lines of symmetry</b> &mdash; count them as they appear!</p>
+      <div class="los-list" id="los-list"></div>
+      <div class="los-stage"><svg id="los-svg" viewBox="0 0 300 240" aria-hidden="true"></svg></div>
+      <div class="info-box" id="los-count">Pick a shape above!</div>
+    </div>
+  </div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <g id="bwing-g">
+      <path d="M190,130 C150,66 66,58 76,124 C82,164 140,168 190,158 Z" fill="#ef476f"/>
+      <path d="M188,165 C130,168 92,196 110,232 C128,262 176,236 190,192 Z" fill="#f3722c"/>
+      <circle cx="122" cy="112" r="12" fill="#ffd166"/>
+      <circle cx="134" cy="206" r="9" fill="#ffd166"/>
+    </g>
+  </defs></svg>
+</section>
+
+<!-- ============ SLIDE 6 : ROTATIONAL SYMMETRY ============ -->
+<section class="slide" id="s6">
+  <div class="head-row"><span class="kicker">New learning</span><span class="chip soft">Let's get spinning!</span></div>
+  <h2 class="slide-title">Rotational symmetry</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>What does it mean?</h3>
+      <p>A shape has <b>rotational symmetry</b> if it looks <b>exactly the same</b> after a <b>turn</b> around its centre point.</p>
+      <p>The <b>order of rotational symmetry</b> tells you <b>how many times</b> the shape looks the same in <b>one full turn</b>.</p>
+      <div class="tip purp"><b>Remember the parallelogram?</b> It has <b>no</b> lines of symmetry&hellip; but it DOES have rotational symmetry of <b>order 2</b>! Try it on the spinner &rarr;</div>
+      <div class="tip"><b>Handy rule:</b> for a regular polygon, the order of rotational symmetry always equals its <b>number of sides</b>.</div>
+    </div>
+    <div class="card">
+      <h3>Spin the shape!</h3>
+      <div class="rot-chips" id="rot-chips"></div>
+      <div class="rot-stage">
+        <svg id="rot-svg" viewBox="0 0 300 240" aria-hidden="true">
+          <polygon id="rot-ghost" points=""/>
+          <g id="rot-mover"><polygon id="rot-shape" points=""/></g>
+          <circle cx="150" cy="120" r="5" fill="#2d3142"/>
+        </svg>
+        <div class="match-bubble hidden" id="match-bubble">MATCH!</div>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <button class="btn ghost small" id="rot-play" style="min-width:96px">Play</button>
+        <input type="range" id="rot-slider" min="0" max="360" value="0" style="flex:1" aria-label="Rotate the shape">
+      </div>
+      <div class="row" style="margin-top:6px">
+        <span class="chip angle-chip" id="rot-angle">Turned: 0&deg;</span>
+        <span class="chip" id="rot-count">Looks the same: 1 time</span>
+        <button class="btn ghost small" id="rot-reset">Reset</button>
+      </div>
+      <div class="rot-banner hidden" id="rot-banner"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 7 : QUIZ ============ -->
+<section class="slide" id="s7">
+  <div class="head-row"><span class="kicker">Show what you know</span><span class="chip soft">6 questions</span></div>
+  <h2 class="slide-title">Symmetry quiz</h2>
+  <p class="slide-sub">Read each question carefully &mdash; you have got this! After every answer, we will explain why.</p>
+  <div class="card quiz-card" id="quiz-box"></div>
+</section>
+
+<!-- ============ SLIDE 8 : GAME ============ -->
+<section class="slide" id="s8">
+  <div class="head-row"><span class="kicker">Game time!</span><span class="chip pur">10 rounds</span></div>
+  <h2 class="slide-title">Symmetry Pattern Hunter</h2>
+  <div class="card" id="game-intro" style="max-width:780px;margin:0 auto;width:100%">
+    <h3>How to play</h3>
+    <ol class="rules">
+      <li>Look at the coloured pattern on <b>one side</b> of the <b>mirror line</b>.</li>
+      <li>Pick a colour, then <b>click the empty cells</b> to paint the missing half, so the whole pattern becomes symmetric.</li>
+      <li>Change your mind? Use the <b>eraser</b> or <b>Clear my side</b>.</li>
+      <li>Press <b>Check!</b> Flashing cells do not match yet. Solve it on the first try for a <b>GOLD star</b>!</li>
+    </ol>
+    <div id="g-sample"></div>
+    <div class="row" style="justify-content:center">
+      <button class="btn big coral" id="g-start">Start the hunt!</button>
+    </div>
+    <p class="center" style="margin-top:10px;color:var(--muted);font-weight:800;font-size:13px">10 rounds &mdash; the grids get bigger, the colours multiply, and the mirror line moves!</p>
+  </div>
+  <div id="game-play" class="hidden">
+    <div class="g-top">
+      <span class="chip pur" id="g-round">Round 1 / 10</span>
+      <span class="chip" id="g-axis">Mirror line: vertical</span>
+      <div id="g-stars" class="stars"></div>
+    </div>
+    <div id="g-gridwrap">
+      <div id="g-grid"></div>
+      <div id="g-mline" class="mirror-line v"></div>
+    </div>
+    <div class="row" style="justify-content:center">
+      <div id="g-pal" class="row" style="gap:8px"></div>
+      <button class="btn ghost small" id="g-clear">Clear my side</button>
+      <button class="btn teal" id="g-check">Check!</button>
+      <button class="btn purple hidden" id="g-next">Next round</button>
+    </div>
+    <div class="g-msg" id="g-msg">Paint the missing half, then press Check!</div>
+  </div>
+  <div class="card hidden" id="game-end" style="max-width:640px;margin:0 auto;width:100%"></div>
+</section>
+<!-- ============ SLIDE 9 : CONCLUSION ============ -->
+<section class="slide" id="s9">
+  <div class="head-row"><span class="kicker">Let's sum up</span><span class="chip soft">Key ideas</span></div>
+  <h2 class="slide-title">What we learned today</h2>
+  <div class="sum-grid">
+    <div class="card sum-card">
+      <div class="sum-ic"><svg viewBox="0 0 40 40"><path d="M20 8v24" stroke="#7b2cbf" stroke-width="3" stroke-linecap="round"/><path d="M18 14 C8 6 4 14 8 20 C4 26 10 32 18 26Z" fill="#ef476f"/><path d="M22 14 C32 6 36 14 32 20 C36 26 30 32 22 26Z" fill="#ef476f"/></svg></div>
+      <div><h4>Reflective symmetry</h4><p>A shape with reflective symmetry can be <b>folded</b> along its <b>line of symmetry</b> so both halves match exactly. A square has 4 lines, a rectangle has 2 &mdash; and a circle has infinitely many!</p></div>
+    </div>
+    <div class="card sum-card">
+      <div class="sum-ic"><svg viewBox="0 0 40 40"><polygon points="20,7 32,15.5 27.5,30 12.5,30 8,15.5" fill="none" stroke="#118ab2" stroke-width="3" stroke-linejoin="round"/><path d="M31.5,10.5 A13.5,13.5 0 0 1 33.5,20" fill="none" stroke="#f3722c" stroke-width="3" stroke-linecap="round"/><polygon points="27.5,4.5 35.5,9.5 28,13" fill="#f3722c"/></svg></div>
+      <div><h4>Rotational symmetry</h4><p>A shape with rotational symmetry <b>looks the same</b> after a turn around its centre. The <b>order</b> is how many times it matches in one full turn &mdash; a regular hexagon has order 6!</p></div>
+    </div>
+    <div class="card sum-card">
+      <div class="sum-ic"><svg viewBox="0 0 40 40"><polygon points="20,4 35.5,15.5 29.5,34 10.5,34 4.5,15.5" fill="#06d6a0"/></svg></div>
+      <div><h4>Regular polygons</h4><p>Regular polygons have equal sides and equal angles. A regular polygon with <b>n</b> sides has <b>n</b> lines of symmetry and rotational order <b>n</b>. A handy rule to remember!</p></div>
+    </div>
+    <div class="card sum-card">
+      <div class="sum-ic"><svg viewBox="0 0 40 40"><polygon points="8,12 30,12 34,28 12,28" fill="none" stroke="#ef476f" stroke-width="3.4" stroke-linejoin="round"/></svg></div>
+      <div><h4>Tricksters to remember</h4><p>A <b>parallelogram</b> has rotational symmetry (order 2) but <b>no</b> lines of symmetry. A <b>scalene triangle</b> has no symmetry at all. And the circle breaks every rule &mdash; infinitely many lines!</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10 : REFLECTION ============ -->
+<section class="slide" id="s10">
+  <div class="head-row"><span class="kicker">Think &amp; share</span><span class="chip soft">Talk with your partner</span></div>
+  <h2 class="slide-title">Reflection time</h2>
+  <div class="ref-grid">
+    <div class="card ref-card"><span class="ref-num">1</span>
+      <h4>Explain it</h4><p>What is the <b>difference</b> between reflective symmetry and rotational symmetry? Tell your partner in one sentence &mdash; try to use the words <b>fold</b> and <b>turn</b>.</p>
+    </div>
+    <div class="card ref-card"><span class="ref-num">2</span>
+      <h4>Think about your learning</h4><p>Which activity helped you the most today &mdash; folding the butterfly, spinning the shapes, the quiz, or the Pattern Hunter game? <b>Why</b> did it help you?</p>
+    </div>
+    <div class="card ref-card"><span class="ref-num">3</span>
+      <h4>Look around you</h4><p>Where do you see <b>symmetry in real life</b>? Think about butterflies, flowers, buildings, letters, logos&hellip; and even your own face!</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:6px">
+    <h3 class="center">How confident do you feel about symmetry now?</h3>
+    <div class="mood-row" id="mood-row"></div>
+    <div class="demo-caption" id="mood-msg">Choose a face to tell us how you feel.</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 11 : THANK YOU ============ -->
+<section class="slide s-thanks" id="s11">
+  <div class="cover-wrap">
+    <span class="cover-badge">The end&hellip; or just the beginning!</span>
+    <h2 class="thanks-title">Thank you for today!</h2>
+    <p class="thanks-sub">You are official <b>Symmetry Superstars</b>. Keep spotting reflective and rotational symmetry everywhere &mdash; in nature, in art, in letters, and in the mirror!</p>
+    <div class="row" style="justify-content:center">
+      <button class="btn big coral" id="celebrate">Celebrate!</button>
+      <button class="btn ghost big" id="restart">Start again</button>
+    </div>
+    <div class="cover-hint">Cambridge Primary Mathematics &bull; Stage 5 &bull; Symmetry</div>
+  </div>
+</section>
+
+</main>
+<nav id="navbar">
+  <span class="chip soft" id="slide-count">1 / 11</span>
+  <div id="dots"></div>
+  <div class="row" style="gap:8px">
+    <button class="btn ghost small" id="btn-prev">&larr; Back</button>
+    <button class="btn small" id="btn-next">Next &rarr;</button>
+  </div>
+</nav>
+</div>
+<canvas id="confetti"></canvas>
+<script>
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const rndi=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rndi(a.length)];
+const NS='http://www.w3.org/2000/svg';
+function svgAdd(parent,tag,attrs){const e=document.createElementNS(NS,tag);for(const k in (attrs||{}))e.setAttribute(k,attrs[k]);parent.appendChild(e);return e;}
+function polyPts(cx,cy,r,n,rot){rot=(rot===undefined?-90:rot);const p=[];for(let i=0;i<n;i++){const a=(rot+i*360/n)*Math.PI/180;p.push(+(cx+r*Math.cos(a)).toFixed(1)+','+ +(cy+r*Math.sin(a)).toFixed(1));}return p.join(' ');}
+function star10(cx,cy,R,r,n,rot){n=n||5;rot=(rot===undefined?-90:rot);const p=[];for(let i=0;i<n*2;i++){const rad=(i%2===0?R:r);const a=(rot+i*180/n)*Math.PI/180;p.push(+(cx+rad*Math.cos(a)).toFixed(1)+','+ +(cy+rad*Math.sin(a)).toFixed(1));}return p.join(' ');}
+
+/* ================= sound (Web Audio, no files) ================= */
+const Sfx=(()=>{let ctx=null,muted=false;
+  function ensure(){if(!ctx){try{ctx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(ctx&&ctx.state==='suspended')ctx.resume();}
+  function tone(f,t,dur,type,vol){if(muted)return;ensure();if(!ctx)return;try{const o=ctx.createOscillator(),g=ctx.createGain();o.type=type||'sine';o.frequency.value=f;o.connect(g);g.connect(ctx.destination);const now=ctx.currentTime+(t||0);g.gain.setValueAtTime(0.0001,now);g.gain.exponentialRampToValueAtTime(vol||0.12,now+0.02);g.gain.exponentialRampToValueAtTime(0.0001,now+(dur||0.15));o.start(now);o.stop(now+(dur||0.15)+0.05);}catch(e){}}
+  return{
+    click:()=>tone(620,0,0.07,'triangle',0.06),
+    match:()=>tone(880,0,0.16,'sine',0.1),
+    correct:()=>{tone(523,0,0.12);tone(659,0.1,0.12);tone(784,0.2,0.24);},
+    wrong:()=>{tone(200,0,0.18,'square',0.06);tone(150,0.14,0.22,'square',0.06);},
+    win:()=>{[523,659,784,1046].forEach((f,i)=>tone(f,i*0.11,0.2,'triangle',0.11));},
+    toggle(){muted=!muted;return muted;}
+  };
+})();
+
+/* ================= navigation ================= */
+const slides=$$('.slide');
+let cur=0;
+const dotsBox=$('#dots');
+slides.forEach((s,i)=>{const d=document.createElement('button');d.className='dot';d.title='Slide '+(i+1);d.addEventListener('click',()=>{Sfx.click();goto(i);});dotsBox.appendChild(d);});
+const dots=$$('.dot');
+function goto(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,j)=>s.classList.toggle('active',j===cur));
+  dots.forEach((d,j)=>d.classList.toggle('on',j===cur));
+  $('#progress-fill').style.width=(cur/(slides.length-1)*100)+'%';
+  $('#slide-count').textContent=(cur+1)+' / '+slides.length;
+  $('#btn-prev').disabled=cur===0;
+  $('#btn-next').disabled=cur===slides.length-1;
+  $('#deck').scrollTop=0; const act=slides[cur]; if(act)act.scrollTop=0;
+}
+$('#btn-next').addEventListener('click',()=>{Sfx.click();goto(cur+1);});
+$('#btn-prev').addEventListener('click',()=>{Sfx.click();goto(cur-1);});
+addEventListener('keydown',e=>{
+  if(e.target&&e.target.tagName==='INPUT')return;
+  if(e.key==='ArrowRight'||e.key==='PageDown')goto(cur+1);
+  else if(e.key==='ArrowLeft'||e.key==='PageUp')goto(cur-1);
+  else if(e.key==='Home')goto(0);
+  else if(e.key==='End')goto(slides.length-1);
+});
+document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>{Sfx.click();goto(+b.dataset.goto);}));
+
+/* ================= top controls ================= */
+const IC_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+const IC_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor" stroke="none"/><path d="m16 9 6 6M22 9l-6 6"/></svg>';
+$('#btn-sound').innerHTML=IC_ON;
+$('#btn-sound').addEventListener('click',()=>{const m=Sfx.toggle();$('#btn-sound').innerHTML=m?IC_OFF:IC_ON;});
+$('#btn-full').addEventListener('click',()=>{try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen();}catch(e){}});
+
+/* ================= cover floating shapes ================= */
+(function buildFx(){
+  const DECOS=[
+    ()=>'<svg viewBox="0 0 100 100"><polygon points="'+star10(50,52,44,18)+'" fill="#ffd166"/></svg>',
+    ()=>'<svg viewBox="0 0 100 100"><path d="M50,88 C18,62 8,38 26,24 C40,14 50,30 50,40 C50,30 60,14 74,24 C92,38 82,62 50,88Z" fill="#ef476f"/></svg>',
+    ()=>'<svg viewBox="0 0 100 100"><polygon points="'+polyPts(50,50,42,6)+'" fill="#118ab2"/></svg>',
+    ()=>'<svg viewBox="0 0 100 100"><polygon points="'+polyPts(50,54,44,3)+'" fill="#06d6a0"/></svg>',
+    ()=>'<svg viewBox="0 0 100 100"><polygon points="50,6 94,50 50,94 6,50" fill="#7b2cbf"/></svg>',
+    ()=>'<svg viewBox="0 0 100 100"><polygon points="'+polyPts(50,50,42,4,-45)+'" fill="#f3722c"/></svg>'
+  ];
+  const fx=$('#fx');
+  for(let i=0;i<12;i++){
+    const d=document.createElement('div');d.className='float-shape';
+    d.style.left=(2+rndi(92))+'%';d.style.top=(4+rndi(86))+'%';
+    const sz=28+rndi(46);d.style.width=sz+'px';
+    d.style.animationDuration=(4+rndi(4))+'s';d.style.animationDelay=(-rndi(6))+'s';
+    d.style.opacity=(0.4+Math.random()*0.4).toFixed(2);
+    d.innerHTML=pick(DECOS)();
+    fx.appendChild(d);
+  }
+})();
+/* ================= slide 2 : polygon gallery ================= */
+(function buildGallery(){
+  const POLYS=[
+    {n:3,name:'Triangle',sides:'3 sides',txt:'Triangle &mdash; <b>3 straight sides</b>. This one is an equilateral triangle, so it is <b>regular</b>: all sides and angles are equal!'},
+    {n:4,rot:-45,name:'Quadrilateral',sides:'4 sides',txt:'Quadrilateral &mdash; <b>4 straight sides</b>. A square is a regular quadrilateral.'},
+    {n:5,name:'Pentagon',sides:'5 sides',txt:'Pentagon &mdash; <b>5 straight sides</b>. A regular pentagon has 5 equal sides and 5 equal angles.'},
+    {n:6,name:'Hexagon',sides:'6 sides',txt:'Hexagon &mdash; <b>6 straight sides</b>. Bees build their honeycombs with regular hexagons!'},
+    {n:7,name:'Heptagon',sides:'7 sides',txt:'Heptagon &mdash; <b>7 straight sides</b>. A tricky one to draw by hand!'},
+    {n:8,name:'Octagon',sides:'8 sides',txt:'Octagon &mdash; <b>8 straight sides</b>. Just like a STOP sign on the road!'},
+    {pts:'35,35 165,55 150,135 45,115',name:'Irregular quad',sides:'4 sides',txt:'This quadrilateral is <b>irregular</b>: its sides and angles are NOT all equal. It is still a polygon &mdash; straight, closed sides is all it takes!'}
+  ];
+  const row=$('#poly-row');
+  POLYS.forEach(p=>{
+    const b=document.createElement('button');b.className='poly-item';
+    const pts=p.pts||polyPts(100,80,58,p.n,p.rot);
+    b.innerHTML='<svg viewBox="0 0 200 160"><polygon points="'+pts+'" class="shp"/></svg><b>'+p.name+'</b><span>'+p.sides+'</span>';
+    b.addEventListener('click',()=>{
+      $$('.poly-item').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');$('#poly-info').innerHTML=p.txt;Sfx.click();
+    });
+    row.appendChild(b);
+  });
+})();
+
+/* ================= slide 3 : circle demo ================= */
+(function buildCircle(){
+  const tg=(id,btn)=>{$(id).classList.toggle('show');$(btn).classList.toggle('on');Sfx.click();};
+  $('#c-radius').addEventListener('click',()=>tg('#c-rad-g','#c-radius'));
+  $('#c-diam').addEventListener('click',()=>tg('#c-dia-g','#c-diam'));
+  $('#c-spin').addEventListener('click',()=>{
+    const svg=$('#circle-svg');svg.classList.toggle('spin-on');
+    $('#c-spin').textContent=svg.classList.contains('spin-on')?'Stop the line':'Spin the mirror line!';Sfx.click();
+  });
+})();
+
+/* ================= slide 4 : activity ================= */
+const ACT=[
+  {name:'Square',sym:true,n:4,rot:-45},
+  {name:'Scalene triangle',sym:false,pts:'40,130 90,25 168,115'},
+  {name:'Regular pentagon',sym:true,n:5},
+  {name:'Parallelogram',sym:false,pts:'25,50 145,50 175,110 55,110'},
+  {name:'Isosceles triangle',sym:true,pts:'100,22 168,138 32,138'},
+  {name:'Rectangle',sym:true,pts:'28,42 172,42 172,118 28,118'},
+  {name:'Irregular quadrilateral',sym:false,pts:'35,35 165,55 150,135 45,115'},
+  {name:'Regular hexagon',sym:true,n:6}
+];
+let actChecked=false;
+(function buildActivity(){
+  const g=$('#shape-grid');
+  ACT.forEach(s=>{
+    const b=document.createElement('button');b.className='shape-btn';
+    const pts=s.pts||polyPts(100,80,60,s.n,s.rot);
+    b.innerHTML='<svg viewBox="0 0 200 160"><polygon points="'+pts+'" class="shp"/></svg><b>'+s.name+'</b>';
+    b.addEventListener('click',()=>{if(actChecked)return;b.classList.toggle('sel');s.sel=b.classList.contains('sel');Sfx.click();});
+    g.appendChild(b);s.btn=b;s.sel=false;
+  });
+})();
+$('#act-check').addEventListener('click',()=>{
+  if(actChecked)return;actChecked=true;
+  let found=0;const total=ACT.filter(s=>s.sym).length;
+  ACT.forEach(s=>{
+    s.btn.classList.add('done');s.btn.classList.remove('sel');
+    if(s.sym){
+      s.btn.classList.add(s.sel?'good':'missed');
+      s.btn.insertAdjacentHTML('beforeend','<span class="badge '+(s.sel?'ok':'mis')+'">'+(s.sel?'\u2713':'!')+'</span>');
+      if(s.sel)found++;
+    }else if(s.sel){
+      s.btn.classList.add('bad');
+      s.btn.insertAdjacentHTML('beforeend','<span class="badge no">\u2717</span>');
+    }
+  });
+  const sc=$('#act-score');sc.classList.remove('hidden');
+  sc.textContent='You found '+found+' of '+total+' symmetric polygons';
+  $('#act-tip').classList.remove('hidden');
+  if(found===total){Sfx.win();Confetti.burst(innerWidth/2,innerHeight*0.4,110);}
+  else Sfx.wrong();
+});
+$('#act-reset').addEventListener('click',()=>{
+  actChecked=false;
+  ACT.forEach(s=>{s.sel=false;s.btn.className='shape-btn';s.btn.querySelectorAll('.badge').forEach(x=>x.remove());});
+  $('#act-score').classList.add('hidden');$('#act-tip').classList.add('hidden');Sfx.click();
+});
+
+/* ================= slide 5 : fold demo ================= */
+(function buildFold(){
+  const body='<ellipse cx="200" cy="165" rx="13" ry="58" fill="#8d5a3b"/>'+
+    '<circle cx="200" cy="84" r="15" fill="#8d5a3b"/>'+
+    '<path d="M193,72 C172,42 152,34 140,38" stroke="#8d5a3b" stroke-width="5" fill="none" stroke-linecap="round"/>'+
+    '<path d="M207,72 C228,42 248,34 260,38" stroke="#8d5a3b" stroke-width="5" fill="none" stroke-linecap="round"/>'+
+    '<circle cx="140" cy="38" r="5" fill="#8d5a3b"/><circle cx="260" cy="38" r="5" fill="#8d5a3b"/>';
+  /* left half shows the wing group as authored (x 66-190);
+     right half shows it mirrored across x=200 so it lands at x 210-334 */
+  $('#fold-l').innerHTML='<svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMid meet">'+body+'<use href="#bwing-g" xlink:href="#bwing-g"/></svg>';
+  $('#fold-r').innerHTML='<svg viewBox="200 0 200 300" preserveAspectRatio="xMidYMid meet">'+body+'<use href="#bwing-g" xlink:href="#bwing-g" transform="translate(400,0) scale(-1,1)"/></svg>';
+})();
+let foldDinged=false;
+$('#fold').addEventListener('input',e=>{
+  const v=+e.target.value;
+  $('#fold-r').style.transform='rotateY('+(-v*1.8)+'deg)';
+  const cap=$('#fold-cap');
+  if(v>=98){cap.textContent='Perfect match! Both halves are exact mirror images \u2014 that is reflective symmetry!';
+    if(!foldDinged){foldDinged=true;Sfx.correct();}}
+  else if(v>=70)cap.textContent='Almost there \u2014 keep folding!';
+  else if(v>=25)cap.textContent='Folding\u2026 watch the right half flip over the mirror line!';
+  else {cap.textContent='Drag the slider to fold the butterfly along the mirror line\u2026';if(v<50)foldDinged=false;}
+});
+
+/* ================= slide 5 : lines of symmetry explorer ================= */
+const LOS=[
+  {name:'Triangle',n:3,pts:polyPts(150,128,84,3),
+   lines:[[150,30,150,186],[67.7,80.5,232.3,175.5],[232.3,80.5,67.7,175.5]]},
+  {name:'Square',n:4,pts:polyPts(150,120,82,4,-45),
+   lines:[[150,48,150,192],[78,120,222,120],[92,62,208,178],[208,62,92,178]]},
+  {name:'Rectangle',n:2,pts:'42,54 258,54 258,186 42,186',
+   lines:[[150,40,150,200],[28,120,272,120]]},
+  {name:'Trapezium',n:1,pts:'80,50 220,50 250,190 50,190',
+   lines:[[150,36,150,204]]},
+  {name:'Heart',n:1,heart:true,
+   d:'M150,192 C86,142 62,102 98,74 C124,54 150,84 150,102 C150,84 176,54 202,74 C238,102 214,142 150,192 Z',
+   lines:[[150,34,150,210]]},
+  {name:'Circle',inf:true}
+];
+function showLOS(item,chip){
+  $$('#los-list .pick-chip').forEach(c=>c.classList.remove('sel'));
+  if(chip)chip.classList.add('sel');
+  const svg=$('#los-svg');svg.innerHTML='';
+  if(item.inf){
+    svgAdd(svg,'circle',{cx:150,cy:120,r:88,fill:'#eef3ff',stroke:'#4361ee','stroke-width':4});
+    for(let i=0;i<12;i++){
+      const a=(-90+i*15)*Math.PI/180;
+      const l=svgAdd(svg,'line',{x1:150-92*Math.cos(a),y1:120-92*Math.sin(a),x2:150+92*Math.cos(a),y2:120+92*Math.sin(a),'class':'los-line'});
+      l.style.transitionDelay=(i*100)+'ms';
+    }
+    $('#los-count').innerHTML='<b>Infinitely many!</b> Every single diameter is a line of symmetry &mdash; that is why the circle is the symmetry champion.';
+  }else{
+    if(item.heart)svgAdd(svg,'path',{d:item.d,'class':'shp heart'});
+    else svgAdd(svg,'polygon',{points:item.pts,'class':'shp'});
+    item.lines.forEach((ln,i)=>{
+      const l=svgAdd(svg,'line',{x1:ln[0],y1:ln[1],x2:ln[2],y2:ln[3],'class':'los-line'});
+      l.style.transitionDelay=(i*130)+'ms';
+    });
+    $('#los-count').innerHTML='<b>'+item.n+'</b> line'+(item.n>1?'s':'')+' of symmetry. Count them as they appear!';
+  }
+  setTimeout(()=>{$$('#los-svg .los-line').forEach(l=>l.classList.add('show'));},80);
+  Sfx.click();
+}
+(function buildLOS(){
+  const list=$('#los-list');
+  LOS.forEach(item=>{
+    const c=document.createElement('button');c.className='pick-chip';c.textContent=item.name;
+    c.addEventListener('click',()=>showLOS(item,c));
+    list.appendChild(c);
+  });
+  showLOS(LOS[1],list.children[1]);
+})();
+/* ================= slide 6 : rotational demo ================= */
+const ROT=[
+  {name:'Triangle',pts:polyPts(150,120,84,3),order:3},
+  {name:'Square',pts:polyPts(150,120,82,4,-45),order:4},
+  {name:'Pentagon',pts:polyPts(150,120,84,5),order:5},
+  {name:'Rectangle',pts:'45,70 255,70 255,170 45,170',order:2},
+  {name:'Parallelogram',pts:'75,70 215,70 225,170 85,170',order:2}
+];
+const R={i:1,angle:0,prev:0,visited:new Set(),raf:null,last:0};
+function crossed(prev,a,m){
+  m=((m%360)+360)%360;
+  if(a===prev)return false;
+  if(a>prev)return m>prev&&m<=a;
+  return m>prev||m<=a;
+}
+function rotCount(){$('#rot-count').textContent='Looks the same: '+R.visited.size+' time'+(R.visited.size>1?'s':'');}
+function rotBanner(){
+  const s=ROT[R.i];const b=$('#rot-banner');
+  b.innerHTML='In one full turn, the <b>'+s.name.toLowerCase()+'</b> looked the same <b>'+s.order+' times</b> &mdash; its order of rotational symmetry is <b>'+s.order+'</b>!';
+  b.classList.remove('hidden');
+}
+function flashMatch(){
+  const s=ROT[R.i];
+  const bub=$('#match-bubble');bub.classList.remove('hidden');
+  const sh=$('#rot-shape');sh.classList.add('glow');
+  Sfx.match();
+  setTimeout(()=>{bub.classList.add('hidden');sh.classList.remove('glow');},650);
+}
+function updateRot(a,detect){
+  const s=ROT[R.i];const step=360/s.order;
+  $('#rot-mover').setAttribute('transform','rotate('+a+' 150 120)');
+  $('#rot-angle').innerHTML='Turned: '+Math.round(a)+'&deg;';
+  if(detect){
+    for(let k=0;k<s.order;k++){
+      if(!R.visited.has(k)&&crossed(R.prev,a,k*step)){R.visited.add(k);flashMatch();}
+    }
+    rotCount();
+    if(R.visited.size===s.order)rotBanner();
+  }
+  R.prev=a;
+}
+function rotSelect(i){
+  R.i=i;R.angle=0;R.prev=0;R.visited=new Set([0]);rotStop();
+  const s=ROT[i];
+  $('#rot-ghost').setAttribute('points',s.pts);
+  $('#rot-shape').setAttribute('points',s.pts);
+  $('#rot-slider').value=0;
+  updateRot(0,false);rotCount();
+  $('#rot-banner').classList.add('hidden');
+  $$('#rot-chips .pick-chip').forEach((c,j)=>c.classList.toggle('sel',j===i));
+}
+function rotStop(){if(R.raf){cancelAnimationFrame(R.raf);R.raf=null;$('#rot-play').textContent='Play';}}
+(function buildRot(){
+  const box=$('#rot-chips');
+  ROT.forEach((s,i)=>{
+    const c=document.createElement('button');c.className='pick-chip';c.textContent=s.name;
+    c.addEventListener('click',()=>{Sfx.click();rotSelect(i);});
+    box.appendChild(c);
+  });
+  $('#rot-slider').addEventListener('input',e=>{rotStop();R.angle=+e.target.value;updateRot(R.angle,true);});
+  $('#rot-play').addEventListener('click',()=>{
+    Sfx.click();
+    if(R.raf){rotStop();return;}
+    $('#rot-play').textContent='Pause';R.last=performance.now();
+    const loop=t=>{
+      const dt=(t-R.last)/1000;R.last=t;
+      R.angle=(R.angle+42*dt)%360;
+      $('#rot-slider').value=R.angle;
+      updateRot(R.angle,true);
+      R.raf=requestAnimationFrame(loop);
+    };
+    R.raf=requestAnimationFrame(loop);
+  });
+  $('#rot-reset').addEventListener('click',()=>{Sfx.click();rotSelect(R.i);});
+  rotSelect(1);
+})();
+
+/* ================= slide 7 : quiz ================= */
+function miniShape(f){
+  const s={
+    rect:'30,18 170,18 170,102 30,102',
+    square:polyPts(100,60,46,4,-45),
+    eqtri:polyPts(100,66,52,3),
+    pgram:'35,28 145,28 170,92 60,92',
+    reghex:polyPts(100,60,50,6)
+  }[f];
+  return '<svg viewBox="0 0 200 120"><polygon points="'+s+'" class="shp"/></svg>';
+}
+const QUIZ=[
+  {q:'How many lines of symmetry does a square have?',opts:['1','2','4','8'],a:2,why:'A square folds onto itself in <b>4</b> ways: 2 middle lines and 2 diagonals.'},
+  {q:'How many lines of symmetry does a rectangle have?',fig:'rect',opts:['0','1','2','4'],a:2,why:'Only <b>2</b> \u2014 the vertical and horizontal middle lines. The diagonals are NOT lines of symmetry!'},
+  {q:'Which capital letter has a line of symmetry?',big:true,opts:['F','H','N','S'],a:1,why:'<b>H</b> has 2 lines of symmetry. F, N and S have none at all.'},
+  {q:'What is the order of rotational symmetry of a regular pentagon?',opts:['2','3','5','10'],a:2,why:'It matches itself <b>5</b> times in one full turn \u2014 once for every vertex. Order = number of sides!'},
+  {q:'Which shape has rotational symmetry but NO lines of symmetry?',shapeOpts:true,
+   opts:[{t:'Square',f:'square'},{t:'Equilateral triangle',f:'eqtri'},{t:'Parallelogram',f:'pgram'},{t:'Regular hexagon',f:'reghex'}],a:2,
+   why:'The <b>parallelogram</b> matches itself after a half turn (order 2) \u2014 but you cannot fold it anywhere!'},
+  {q:'How many lines of symmetry does a circle have?',opts:['1','4','100','Infinitely many'],a:3,why:'Every diameter is a line of symmetry \u2014 and a circle has <b>infinitely many</b> diameters!'}
+];
+let qi=0,qScore=0,qLock=false;
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=rndi(i+1);[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+function renderQ(){
+  qLock=false;
+  const q=QUIZ[qi];
+  const order=shuffle(q.opts.map((o,i)=>i));
+  const box=$('#quiz-box');
+  box.innerHTML='<div class="q-progress">Question '+(qi+1)+' of '+QUIZ.length+'</div>'+
+    '<div class="q-bar"><div style="width:'+(qi/QUIZ.length*100)+'%"></div></div>'+
+    '<div class="q-text">'+q.q+'</div>'+
+    (q.fig?'<div class="q-fig">'+miniShape(q.fig)+'</div>':'')+
+    '<div class="opts'+(q.big?' big':'')+'"></div>'+
+    '<div class="why hidden"></div>'+
+    '<div class="row" style="justify-content:flex-end"><button class="btn purple hidden" id="q-next">'+(qi===QUIZ.length-1?'See my score':'Next question')+'</button></div>';
+  const optBox=box.querySelector('.opts');
+  const btns={};
+  order.forEach(i=>{
+    const o=q.opts[i];
+    const b=document.createElement('button');b.className='opt';
+    b.innerHTML=(q.shapeOpts?miniShape(o.f)+'<span>'+o.t+'</span>':o);
+    b.addEventListener('click',()=>answerQ(i,b,btns,optBox));
+    optBox.appendChild(b);btns[i]=b;
+  });
+}
+function answerQ(i,btn,btns,optBox){
+  if(qLock)return;qLock=true;
+  const q=QUIZ[qi];const ok=i===q.a;
+  if(ok){qScore++;btn.classList.add('correct');Sfx.correct();}
+  else{btn.classList.add('wrong');Sfx.wrong();}
+  Object.keys(btns).forEach(k=>{
+    const b=btns[k];b.disabled=true;
+    if(+k===q.a)b.classList.add('correct');
+    else if(b!==btn)b.classList.add('dim');
+  });
+  const why=optBox.parentElement.querySelector('.why');why.innerHTML=(ok?'<b>Correct!</b> ':'<b>Not quite!</b> ')+q.why;
+  why.classList.remove('hidden');
+  $('#q-next').classList.remove('hidden');
+}
+$('#quiz-box').addEventListener('click',e=>{
+  if(e.target&&e.target.id==='q-next'){
+    Sfx.click();qi++;
+    if(qi<QUIZ.length)renderQ();else quizEnd();
+  }
+  if(e.target&&e.target.id==='q-retry'){Sfx.click();qi=0;qScore=0;renderQ();}
+});
+function quizEnd(){
+  const box=$('#quiz-box');
+  const msg=qScore===QUIZ.length?'Perfect score! You are a true Symmetry Master!':
+    qScore>=4?'Great job! Symmetry is definitely your friend.':
+    'Good try! Scroll back through the lesson, then come back and beat your score!';
+  box.innerHTML='<div class="q-progress center">Quiz complete</div>'+
+    '<div class="q-score">'+qScore+'/'+QUIZ.length+'</div>'+
+    '<div class="q-msg">'+msg+'</div>'+
+    '<div class="row" style="justify-content:center"><button class="btn teal" id="q-retry">Try the quiz again</button></div>';
+  if(qScore>=5){Sfx.win();Confetti.burst(innerWidth/2,innerHeight*0.4,140);}
+}
+renderQ();
+/* ================= confetti ================= */
+const Confetti=(()=>{
+  const cv=$('#confetti'),cx=cv.getContext('2d');
+  let P=[],raf=null;
+  function rs(){cv.width=innerWidth;cv.height=innerHeight;}
+  addEventListener('resize',rs);rs();
+  const COLS=['#ef476f','#ffd166','#06d6a0','#118ab2','#7b2cbf','#f3722c'];
+  function burst(x,y,n){
+    x=x||innerWidth/2;y=y||innerHeight*0.4;n=n||120;
+    for(let i=0;i<n;i++){
+      P.push({x:x,y:y,vx:(Math.random()-0.5)*11,vy:-4-Math.random()*7,g:0.22,s:5+Math.random()*6,c:COLS[rndi(COLS.length)],a:Math.random()*6.3,va:(Math.random()-0.5)*0.3,l:70+Math.random()*50});
+    }
+    if(!raf)tick();
+  }
+  function tick(){
+    raf=requestAnimationFrame(tick);
+    cx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.a+=p.va;p.l--;
+      cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);
+      cx.globalAlpha=Math.max(0,Math.min(1,p.l/40));
+      cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.62);
+      cx.restore();
+    });
+    P=P.filter(p=>p.l>0&&p.y<cv.height+30);
+    if(!P.length){cancelAnimationFrame(raf);raf=null;cx.clearRect(0,0,cv.width,cv.height);}
+  }
+  return{burst};
+})();
+
+/* ================= slide 8 : the game ================= */
+const ROUNDS=[
+  {rows:6,cols:6,axis:'v',k:1},{rows:6,cols:6,axis:'v',k:1},{rows:6,cols:6,axis:'v',k:2},
+  {rows:8,cols:8,axis:'v',k:2},{rows:8,cols:8,axis:'v',k:2},{rows:8,cols:8,axis:'h',k:2},
+  {rows:8,cols:8,axis:'h',k:2},{rows:8,cols:8,axis:'v',k:3},{rows:8,cols:8,axis:'h',k:3},{rows:8,cols:8,axis:'v',k:3}
+];
+const GPAL={1:['#ef476f'],2:['#ef476f','#118ab2'],3:['#ef476f','#118ab2','#ffd166']};
+const G={round:0,stars:[],attempts:0,lock:false,active:null,given:null,rows:0,cols:0,axis:'v'};
+function starSvg(cls){return '<svg viewBox="0 0 24 24" class="star '+(cls||'')+'"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>';}
+function renderStars(){$('#g-stars').innerHTML=G.stars.map(s=>starSvg(s||'')).join('');}
+function genPattern(rows,cols,axis,k){
+  const sr=axis==='v'?rows:rows/2, sc=axis==='v'?cols/2:cols;
+  const src=Array.from({length:rows},()=>Array(cols).fill(null));
+  const colors=GPAL[k];const target=Math.round(sr*sc*0.45);
+  let placed=0,guard=0;
+  while(placed<target&&guard++<400){
+    const r=rndi(sr),c=rndi(sc);
+    if(src[r][c])continue;
+    const col=colors[rndi(colors.length)];
+    let size=1+rndi(4),cnt=0;const st=[[r,c]];
+    while(st.length&&cnt<size){
+      const cell=st.splice(rndi(st.length),1)[0];
+      const x=cell[0],y=cell[1];
+      if(x<0||y<0||x>=sr||y>=sc||src[x][y])continue;
+      src[x][y]=col;cnt++;placed++;
+      st.push([x+1,y],[x-1,y],[x,y+1],[x,y-1]);
+    }
+  }
+  let n=0;for(let r=0;r<sr;r++)for(let c=0;c<sc;c++)if(src[r][c])n++;
+  return n>=Math.max(4,Math.round(sr*sc*0.25))?src:genPattern(rows,cols,axis,k);
+}
+function isGiven(r,c){return G.axis==='v'?c<G.cols/2:r<G.rows/2;}
+function expected(r,c){return G.axis==='v'?G.given[r][G.cols-1-c]:G.given[G.rows-1-r][c];}
+function buildRound(){
+  const cfg=ROUNDS[G.round];
+  G.rows=cfg.rows;G.cols=cfg.cols;G.axis=cfg.axis;G.attempts=0;G.lock=false;
+  G.given=genPattern(cfg.rows,cfg.cols,cfg.axis,cfg.k);
+  $('#g-round').textContent='Round '+(G.round+1)+' / 10';
+  $('#g-axis').textContent='Mirror line: '+(cfg.axis==='v'?'vertical':'horizontal');
+  const cell=Math.max(20,Math.floor(Math.min(Math.min(innerWidth*0.55,540)/cfg.cols,(innerHeight*0.40)/cfg.rows,50)));
+  const grid=$('#g-grid');
+  grid.style.gridTemplateColumns='repeat('+cfg.cols+','+cell+'px)';
+  grid.style.gridAutoRows=cell+'px';
+  grid.innerHTML='';
+  for(let r=0;r<cfg.rows;r++)for(let c=0;c<cfg.cols;c++){
+    const d=document.createElement('div');
+    d.className='gcell';d.dataset.r=r;d.dataset.c=c;
+    if(isGiven(r,c)){
+      d.classList.add('given');
+      const v=G.given[r][c];
+      if(v)d.style.background=v;else d.classList.add('gempty');
+    }else{
+      d.classList.add('stu');
+      d.addEventListener('click',onCell);
+    }
+    grid.appendChild(d);
+  }
+  $('#g-mline').className='mirror-line '+cfg.axis;
+  const pal=$('#g-pal');pal.innerHTML='';
+  GPAL[cfg.k].forEach((col,i)=>{
+    const b=document.createElement('button');
+    b.className='chip-col'+(i===0?' active':'');
+    b.style.background=col;b.title='Colour';
+    b.addEventListener('click',()=>{setActive(col);Sfx.click();});
+    pal.appendChild(b);
+  });
+  const er=document.createElement('button');
+  er.className='chip-col';er.title='Eraser';
+  er.style.background='linear-gradient(135deg,transparent 44%,#c0c5d5 44%,#c0c5d5 56%,transparent 56%),#fff';
+  er.addEventListener('click',()=>{setActive('erase');Sfx.click();});
+  pal.appendChild(er);
+  setActive(GPAL[cfg.k][0]);
+  $('#g-msg').textContent='Paint the missing half, then press Check!';
+  $('#g-check').classList.remove('hidden');
+  $('#g-clear').classList.remove('hidden');
+  $('#g-next').classList.add('hidden');
+}
+function setActive(col){
+  G.active=col;
+  $$('#g-pal .chip-col').forEach(b=>b.classList.remove('active'));
+  const pal=$$('#g-pal .chip-col');
+  const colors=GPAL[ROUNDS[G.round].k];
+  const idx=col==='erase'?colors.length:colors.indexOf(col);
+  if(pal[idx])pal[idx].classList.add('active');
+}
+function onCell(e){
+  if(G.lock)return;
+  const d=e.currentTarget;
+  if(G.active==='erase'){d.style.background='';d.dataset.col='';}
+  else{d.style.background=G.active;d.dataset.col=G.active;}
+  Sfx.click();
+}
+$('#g-check').addEventListener('click',()=>{
+  if(G.lock)return;
+  const wrong=[];
+  $$('.gcell.stu').forEach(d=>{
+    const exp=expected(+d.dataset.r,+d.dataset.c);
+    const got=d.dataset.col||null;
+    if(exp!==got)wrong.push(d);
+  });
+  if(wrong.length){
+    G.attempts++;Sfx.wrong();
+    wrong.forEach(d=>d.classList.add('miss'));
+    setTimeout(()=>wrong.forEach(d=>d.classList.remove('miss')),1300);
+    $('#g-msg').textContent='Not yet! The flashing cells do not match the mirror image. Look carefully and try again!';
+  }else{
+    G.lock=true;Sfx.win();
+    const gold=G.attempts===0;
+    G.stars[G.round]=gold?'gold':'silver';
+    renderStars();
+    $$('.gcell.stu').forEach(d=>d.classList.add('win'));
+    const gr=$('#g-grid').getBoundingClientRect();
+    Confetti.burst(gr.left+gr.width/2,gr.top+gr.height/2,120);
+    $('#g-msg').textContent=gold?'Perfect mirror on the first try \u2014 GOLD star!':'Pattern complete! You earned a star!';
+    $('#g-check').classList.add('hidden');
+    $('#g-clear').classList.add('hidden');
+    const nb=$('#g-next');
+    nb.textContent=G.round===9?'See my results':'Next round';
+    nb.classList.remove('hidden');
+  }
+});
+$('#g-clear').addEventListener('click',()=>{
+  if(G.lock)return;
+  $$('.gcell.stu').forEach(d=>{d.style.background='';d.dataset.col='';});
+  Sfx.click();
+});
+$('#g-next').addEventListener('click',()=>{
+  Sfx.click();G.round++;
+  if(G.round>=10)endGame();else buildRound();
+});
+$('#g-start').addEventListener('click',()=>{
+  Sfx.click();
+  G.round=0;G.stars=Array(10).fill(null);
+  renderStars();
+  $('#game-intro').classList.add('hidden');
+  $('#game-end').classList.add('hidden');
+  $('#game-play').classList.remove('hidden');
+  buildRound();
+});
+function endGame(){
+  $('#game-play').classList.add('hidden');
+  const gold=G.stars.filter(s=>s==='gold').length;
+  const title=gold===10?'FLAWLESS! 10 out of 10 on the first try!':
+    gold>=7?'Amazing hunting, Symmetry Champion!':'Well done, Pattern Hunter!';
+  $('#game-end').innerHTML=
+    '<h3 class="center" style="font-size:clamp(20px,2.6vw,30px)">'+title+'</h3>'+
+    '<div class="stars big" style="justify-content:center;margin:14px 0">'+G.stars.map(s=>starSvg(s||'')).join('')+'</div>'+
+    '<p class="center" style="font-weight:800">You completed all 10 rounds: <b style="color:#d99000">'+gold+' gold</b> and <b style="color:#8b96ab">'+(10-gold)+' silver</b> stars.</p>'+
+    '<div class="row" style="justify-content:center;margin-top:12px">'+
+    '<button class="btn coral" id="g-again">Play again</button>'+
+    '<button class="btn ghost" data-goto="8">Continue to the summary &rarr;</button></div>';
+  $('#game-end').classList.remove('hidden');
+  $('#game-end').querySelector('#g-again').addEventListener('click',()=>{
+    Sfx.click();
+    G.round=0;G.stars=Array(10).fill(null);
+    $('#game-end').classList.add('hidden');
+    $('#game-play').classList.remove('hidden');
+    renderStars();buildRound();
+  });
+  $('#game-end').querySelector('[data-goto]').addEventListener('click',e=>{Sfx.click();goto(+e.currentTarget.dataset.goto);});
+  Sfx.win();Confetti.burst(innerWidth/2,innerHeight*0.35,180);
+}
+/* sample illustration on the intro card */
+(function buildSample(){
+  const pat=[['#ef476f',null,'#118ab2'],[null,null,null],['#118ab2','#ef476f',null],[null,'#ef476f',null]];
+  const cs=24,g=3,w=6*cs+5*g,h=4*cs+3*g;
+  let s='<svg viewBox="0 0 '+(w+4)+' '+(h+4)+'">';
+  for(let r=0;r<4;r++)for(let c=0;c<6;c++){
+    const col=c<3?pat[r][c]:pat[r][5-c];
+    if(col)s+='<rect x="'+(2+c*(cs+g))+'" y="'+(2+r*(cs+g))+'" width="'+cs+'" height="'+cs+'" rx="4" fill="'+col+'"/>';
+    else s+='<rect x="'+(2+c*(cs+g))+'" y="'+(2+r*(cs+g))+'" width="'+cs+'" height="'+cs+'" rx="4" fill="#f4f5fa" stroke="#d5d9e6" stroke-dasharray="3 2"/>';
+  }
+  s+='<line x1="'+(2+3*(cs+g)-g/2)+'" y1="0" x2="'+(2+3*(cs+g)-g/2)+'" y2="'+(h+4)+'" stroke="#7b2cbf" stroke-width="2.5" stroke-dasharray="6 4"/></svg>';
+  $('#g-sample').innerHTML=s;
+})();
+
+/* ================= slide 10 : mood check ================= */
+const MOODS=[
+  {l:'Still learning',msg:'That is okay \u2014 every mathematician starts somewhere! Scroll back to the fold-the-butterfly demo and try it once more.',face:'meh'},
+  {l:'Feeling good',msg:'Fantastic! You understand lines of symmetry and rotation \u2014 and the Pattern Hunter game made you even sharper.',face:'smile'},
+  {l:'Symmetry superstar!',msg:'Wow! Tomorrow you can teach the class. Challenge: find three symmetric objects at home and count their lines of symmetry!',face:'star'}
+];
+function faceSvg(kind){
+  const base='<circle cx="32" cy="34" r="26" fill="#fff" stroke="#c9cfdf" stroke-width="3"/>'+
+    '<circle cx="23" cy="28" r="3.4" fill="#2d3142"/><circle cx="41" cy="28" r="3.4" fill="#2d3142"/>';
+  if(kind==='meh')return '<svg viewBox="0 0 64 64">'+base+'<line x1="22" y1="44" x2="42" y2="44" stroke="#2d3142" stroke-width="3.5" stroke-linecap="round"/></svg>';
+  if(kind==='smile')return '<svg viewBox="0 0 64 64">'+base+'<path d="M21,40 C26,49 38,49 43,40" stroke="#2d3142" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>';
+  return '<svg viewBox="0 0 64 64">'+base+'<path d="M20,39 C26,50 38,50 44,39 Z" fill="#2d3142"/>'+
+    '<polygon points="50,8 52,12.5 57,13 53.5,16.5 54.5,21.5 50,19 45.5,21.5 46.5,16.5 43,13 48,12.5" fill="#ffc43d"/>'+
+    '<polygon points="12,10 13.4,13.2 17,13.6 14.4,16 15.2,19.6 12,17.8 8.8,19.6 9.6,16 7,13.6 10.6,13.2" fill="#ffc43d"/></svg>';
+}
+(function buildMood(){
+  const row=$('#mood-row');
+  MOODS.forEach(m=>{
+    const b=document.createElement('button');b.className='mood';
+    b.innerHTML=faceSvg(m.face)+'<span>'+m.l+'</span>';
+    b.addEventListener('click',()=>{
+      $$('.mood').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+      $('#mood-msg').textContent=m.msg;Sfx.correct();
+    });
+    row.appendChild(b);
+  });
+})();
+
+/* ================= celebrate / restart ================= */
+$('#celebrate').addEventListener('click',()=>{
+  Sfx.win();
+  Confetti.burst(innerWidth/2,innerHeight*0.35,170);
+  setTimeout(()=>Confetti.burst(innerWidth*0.28,innerHeight*0.3,90),250);
+  setTimeout(()=>Confetti.burst(innerWidth*0.72,innerHeight*0.3,90),450);
+});
+$('#restart').addEventListener('click',()=>location.reload());
+
+/* ================= debug hooks (harmless) ================= */
+window.__sym={
+  goto:goto,
+  slides:slides.length,
+  fillCorrect(){
+    $$('.gcell.stu').forEach(d=>{
+      const exp=expected(+d.dataset.r,+d.dataset.c);
+      if(exp){d.dataset.col=exp;d.style.background=exp;}
+      else{d.dataset.col='';d.style.background='';}
+    });
+  }
+};
+goto(0);
+</script>
+</body>
+</html>
