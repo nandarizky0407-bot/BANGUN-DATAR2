@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luas Bangun Datar — Matematika Kelas 3 SD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --pink:#FF5C8A; --pink-d:#E8447A; --pink-l:#FFE1EC;
+  --purple:#8B5CF6; --purple-l:#EDE6FF;
+  --mint:#0BB07B; --mint-l:#DFF7EE; --mint-d:#0A7D5B;
+  --blue:#38BDF8; --blue-l:#E3F5FE;
+  --yellow:#FFB020; --yellow-l:#FFF3D6;
+  --red:#EF4444; --red-l:#FDE8E8;
+  --ink:#3D2C4E; --muted:#8A7A99;
+  --shadow:0 10px 30px rgba(139,92,246,.14),0 4px 10px rgba(255,92,138,.08);
+}
+html,body{height:100%}
+body{
+  font-family:'Nunito','Segoe UI',sans-serif; color:var(--ink);
+  background:linear-gradient(135deg,#FFF1F7 0%,#F5EEFF 45%,#EAF8FF 100%);
+  overflow:hidden; display:flex; flex-direction:column;
+}
+h1,h2,h3,.baloo{font-family:'Baloo 2','Nunito',cursive}
+button{font-family:inherit}
+
+/* ===== HEADER ===== */
+header{
+  height:56px; flex:none; display:flex; align-items:center; justify-content:space-between;
+  padding:0 18px; background:rgba(255,255,255,.78); backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--pink-l); z-index:60; position:relative;
+}
+.logo{font-family:'Baloo 2';font-weight:800;font-size:1.12rem;color:var(--pink-d);display:flex;gap:8px;align-items:center}
+#menuBtn{
+  border:2px solid var(--purple-l); background:#fff; color:var(--purple);
+  font-weight:900; padding:7px 16px; border-radius:999px; cursor:pointer; font-size:.9rem; transition:.2s;
+}
+#menuBtn:hover{background:var(--purple-l); transform:translateY(-1px)}
+#progressWrap{height:6px; background:#F3E8FF; flex:none}
+#progressFill{height:100%; width:0%; background:linear-gradient(90deg,var(--pink),var(--purple)); transition:width .45s ease; border-radius:0 4px 4px 0}
+
+/* ===== MENU PANEL ===== */
+#menuPanel{
+  position:fixed; top:66px; right:14px; width:280px; max-height:76vh; overflow:auto;
+  background:#fff; border-radius:20px; box-shadow:0 18px 50px rgba(61,44,78,.25);
+  padding:10px; z-index:90; display:none;
+}
+#menuPanel.open{display:block; animation:fadeUp .25s}
+.mi{
+  display:flex; gap:10px; align-items:center; width:100%; text-align:left; background:none;
+  border:none; padding:8px 12px; border-radius:12px; font-weight:700; cursor:pointer;
+  color:var(--ink); font-size:.92rem;
+}
+.mi:hover{background:var(--pink-l)}
+.mi.cur{background:var(--pink); color:#fff}
+.mi .n{
+  width:26px; height:26px; border-radius:50%; background:var(--purple-l); color:var(--purple);
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:900; flex:none;
+}
+.mi.cur .n{background:rgba(255,255,255,.3); color:#fff}
+
+/* ===== DECK & SLIDES ===== */
+#deck{flex:1; position:relative; overflow:hidden}
+.slide{
+  position:absolute; inset:0; overflow-y:auto; display:none; flex-direction:column; align-items:center;
+  padding:22px 16px 30px; scroll-behavior:smooth;
+}
+.slide.active{display:flex}
+.slide-inner{width:min(1060px,96%); margin:auto; animation:fadeUp .5s both}
+.slide-head{text-align:center; margin-bottom:14px}
+.slide-head h2{font-size:clamp(1.5rem,3.4vw,2.1rem); margin:10px 0 4px; line-height:1.15}
+.lead{color:var(--muted); font-weight:700; font-size:1rem}
+.chip{
+  display:inline-block; padding:6px 18px; border-radius:999px; font-weight:900;
+  font-size:.85rem; letter-spacing:.6px;
+}
+.chip.pink{background:var(--pink-l); color:var(--pink-d)}
+.chip.purple{background:var(--purple-l); color:var(--purple)}
+.chip.mint{background:var(--mint-l); color:var(--mint-d)}
+.chip.blue{background:var(--blue-l); color:#0284C7}
+.chip.yellow{background:var(--yellow-l); color:#92600A}
+
+/* ===== BUTTONS ===== */
+.btn{
+  border:none; cursor:pointer; font-weight:900; color:#fff;
+  background:linear-gradient(135deg,var(--pink),#FF8AB0);
+  padding:12px 26px; border-radius:999px; font-size:1rem;
+  box-shadow:0 8px 20px rgba(255,92,138,.35); transition:.2s;
+}
+.btn:hover{transform:translateY(-3px); box-shadow:0 12px 26px rgba(255,92,138,.42)}
+.btn:disabled{opacity:.45; cursor:not-allowed; transform:none}
+.btn.alt{background:linear-gradient(135deg,var(--purple),#B79CFF); box-shadow:0 8px 20px rgba(139,92,246,.35)}
+.btn.ghost{background:#fff; color:var(--pink-d); border:2px solid var(--pink-l); box-shadow:0 4px 12px rgba(255,92,138,.12)}
+.btn.mint{background:linear-gradient(135deg,var(--mint),#4ED9AC); box-shadow:0 8px 20px rgba(11,176,123,.35)}
+.btn.small{padding:9px 18px; font-size:.9rem}
+.btn.big{padding:15px 36px; font-size:1.15rem}
+
+/* ===== COVER ===== */
+.cover-wrap{position:relative; min-height:100%; width:100%; display:flex; align-items:center; justify-content:center}
+.cover-card{
+  text-align:center; background:rgba(255,255,255,.85); backdrop-filter:blur(6px);
+  border-radius:34px; padding:44px 38px; box-shadow:0 20px 60px rgba(139,92,246,.2); max-width:660px;
+  border:3px solid #fff;
+}
+.cover-emoji{font-size:2.6rem; letter-spacing:6px; margin-bottom:6px}
+.cover-card h1{font-size:clamp(2.1rem,5.5vw,3.5rem); line-height:1.05}
+.cover-card h1 span{color:var(--pink)}
+.cover-sub{display:inline-block; margin:14px 0 2px; background:var(--purple-l); color:var(--purple); font-weight:900; padding:6px 20px; border-radius:999px}
+.cover-tag{color:var(--muted); font-weight:700; margin:10px 0 22px; font-size:1.05rem}
+.float-e{position:absolute; font-size:2.1rem; opacity:.9; animation:float 5s ease-in-out infinite; pointer-events:none; filter:drop-shadow(0 6px 10px rgba(139,92,246,.25)); z-index:1}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-22px) rotate(7deg)}}
+
+/* ===== CARDS UMUM ===== */
+.m-card{background:#fff; border-radius:24px; box-shadow:var(--shadow); padding:22px; margin-top:16px; position:relative}
+.interact-lab{
+  display:inline-block; background:var(--yellow-l); color:#92600A; font-weight:900;
+  padding:5px 14px; border-radius:999px; font-size:.78rem; margin-bottom:10px;
+}
+.bubble{
+  background:#fff; border-radius:24px; padding:18px 22px; box-shadow:var(--shadow);
+  font-weight:700; display:flex; gap:12px; align-items:flex-start; margin-top:18px; line-height:1.55;
+}
+.bubble .em{font-size:1.8rem; flex:none}
+.answer-card{
+  background:linear-gradient(90deg,var(--pink-l),var(--purple-l)); border-radius:20px;
+  padding:16px 20px; margin-top:14px; font-weight:800; line-height:1.6; animation:fadeUp .5s both;
+}
+
+/* ===== APERSEPSI FLIP CARD ===== */
+.flip-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:16px; margin-top:14px}
+.flip{perspective:900px; cursor:pointer; min-height:195px}
+.flip-inner{transition:transform .65s; transform-style:preserve-3d; position:relative; height:195px}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-face{
+  position:absolute; inset:0; backface-visibility:hidden; border-radius:20px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:14px; text-align:center; box-shadow:var(--shadow);
+}
+.flip-face.front{background:#fff; border:2px solid var(--pink-l)}
+.flip-face.front .big{font-size:3rem; margin-bottom:8px}
+.flip-face.front .nm{font-family:'Baloo 2'; font-weight:800; font-size:1.15rem}
+.flip-face.front .hint{color:var(--muted); font-size:.78rem; font-weight:700; margin-top:6px}
+.flip-face.back{transform:rotateY(180deg); background:linear-gradient(160deg,var(--pink),#FF8AB0); color:#fff; font-weight:800; font-size:.95rem; line-height:1.5}
+.flip-face.back b{background:rgba(255,255,255,.25); padding:1px 7px; border-radius:8px}
+
+/* ===== TUJUAN ===== */
+.obj-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin-top:14px}
+.obj{background:#fff; border-radius:20px; padding:18px; box-shadow:var(--shadow); border-top:6px solid var(--pink); font-weight:700; line-height:1.5}
+.obj.c2{border-color:var(--purple)} .obj.c3{border-color:var(--mint)} .obj.c4{border-color:var(--yellow)}
+.obj .num{font-family:'Baloo 2'; font-size:1.7rem; color:var(--pink-d); display:block; margin-bottom:4px}
+.obj.c2 .num{color:var(--purple)} .obj.c3 .num{color:var(--mint-d)} .obj.c4 .num{color:#92600A}
+
+/* ===== MATERI: STEP CARDS ===== */
+.steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(195px,1fr)); gap:12px; margin-top:6px}
+.step{background:#fff; border-radius:18px; padding:16px 14px; box-shadow:var(--shadow); text-align:center}
+.step .ico{font-size:2rem; display:block; margin-bottom:6px}
+.step b{display:block; font-family:'Baloo 2'; color:var(--pink-d); margin-bottom:4px}
+.step p{font-size:.9rem; font-weight:700; color:var(--muted); line-height:1.45}
+
+/* ===== MATERI: INTERAKTIF ===== */
+.center{text-align:center}
+.walk-svg,.add-svg,.gab-svg{width:100%; max-width:430px; display:block; margin:auto}
+.eq{
+  font-family:'Baloo 2'; font-size:1.28rem; background:var(--yellow-l); border:2px dashed var(--yellow);
+  border-radius:14px; padding:10px 16px; text-align:center; margin-top:12px; min-height:56px;
+}
+.eq .tot{color:var(--pink-d); font-size:1.5rem}
+.sidehit{stroke:transparent; stroke-width:26; cursor:pointer; fill:none}
+.sidehit.done{cursor:default}
+.sidelit{stroke:var(--yellow); stroke-width:8; stroke-linecap:round; pointer-events:none; fill:none}
+#walkBubble{opacity:0; transform:translateY(8px); transition:.45s}
+#walkBubble.show{opacity:1; transform:none}
+.svg-lab{font:800 13px 'Nunito',sans-serif; fill:var(--ink)}
+.svg-lab.big{font-size:15px; font-weight:900}
+.warn-card{
+  background:var(--red-l); border-left:6px solid var(--red); border-radius:0 16px 16px 0;
+  padding:13px 16px; font-weight:800; margin-top:14px; line-height:1.5;
+}
+.tip-card{
+  background:var(--mint-l); border-left:6px solid var(--mint); border-radius:0 16px 16px 0;
+  padding:13px 16px; font-weight:800; margin-top:14px; line-height:1.5;
+}
+
+/* ===== MATERI 3: TABS & STEPPER ===== */
+.tabs{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:12px 0 4px}
+.tab{
+  padding:9px 15px; border-radius:999px; border:2px solid var(--pink-l); background:#fff;
+  font-weight:900; cursor:pointer; font-size:.92rem; color:var(--ink); transition:.2s;
+}
+.tab:hover{transform:translateY(-2px)}
+.tab.active{background:var(--pink); color:#fff; border-color:var(--pink)}
+.shape-panel{display:none}
+.shape-panel.active{display:block; animation:fadeUp .4s both}
+.sp-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:center}
+.msvg{width:100%; max-width:290px; margin:auto; display:block}
+.ctl{text-align:center}
+.formula{
+  font-family:'Baloo 2'; font-size:1.45rem; background:linear-gradient(90deg,var(--pink-l),var(--purple-l));
+  padding:10px 22px; border-radius:16px; color:var(--pink-d); display:inline-block; margin:6px 0;
+}
+.stepper{display:inline-flex; align-items:center; gap:10px; background:var(--pink-l); border-radius:999px; padding:6px 10px; margin:6px 4px}
+.stepper button{
+  width:36px; height:36px; border-radius:50%; border:none; background:var(--pink); color:#fff;
+  font-weight:900; font-size:1.25rem; cursor:pointer; transition:.15s; line-height:1;
+}
+.stepper button:hover{transform:scale(1.12)}
+.stepper .lbl{font-weight:900; color:var(--pink-d)}
+.stepper .val{min-width:30px; text-align:center; font-weight:900; font-size:1.3rem; color:var(--ink)}
+.kout{
+  font-family:'Baloo 2'; font-size:1.3rem; color:var(--purple); background:var(--purple-l);
+  border-radius:14px; padding:8px 18px; display:inline-block; margin-top:10px;
+}
+.fact{margin-top:10px; color:var(--muted); font-weight:800; font-size:.95rem}
+
+/* ===== STEP REVEAL (MATERI 4 & 5) ===== */
+.step-card{
+  background:#fff; border-radius:18px; padding:16px; box-shadow:var(--shadow); margin-top:12px;
+  opacity:0; transform:translateY(16px); transition:.55s; font-weight:700; line-height:1.55;
+}
+.step-card.show{opacity:1; transform:none}
+.step-card b{color:var(--pink-d); font-family:'Baloo 2'}
+
+/* ===== QUIZ ENGINE ===== */
+.quiz-box{max-width:780px; margin:0 auto; width:100%}
+.qtop{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:4px}
+.qchip{background:#fff; border:2px solid var(--pink-l); border-radius:999px; padding:5px 14px; font-weight:900; font-size:.85rem; color:var(--pink-d)}
+.qchip.score{border-color:var(--mint-l); color:var(--mint-d)}
+.qchip.type{border-color:var(--purple-l); color:var(--purple)}
+.qcard{
+  position:relative; background:#fff; border-radius:24px; padding:22px; box-shadow:var(--shadow);
+  margin-top:12px; overflow:hidden;
+}
+.qfig-wrap{display:flex; justify-content:center; margin-bottom:6px}
+.qfig{width:180px; height:auto}
+.big .qfig{width:250px}
+.qtext{font-size:1.13rem; font-weight:800; line-height:1.6; margin-bottom:14px}
+.hint{font-size:.88rem; color:var(--purple); font-weight:800; margin-bottom:10px}
+.opts{margin-top:4px}
+.opt{
+  display:flex; align-items:flex-start; gap:10px; width:100%; text-align:left; padding:12px 16px;
+  border-radius:16px; border:2px solid var(--purple-l); background:#fff; font-weight:800;
+  color:var(--ink); cursor:pointer; transition:.2s; margin-bottom:10px; font-size:1rem; line-height:1.5;
+}
+.opt:hover:not(:disabled){border-color:var(--pink); transform:translateX(5px)}
+.opt.sel{border-color:var(--pink); background:var(--pink-l); box-shadow:0 4px 12px rgba(255,92,138,.18)}
+.opt.correct{border-color:var(--mint); background:var(--mint-l); animation:pop .4s}
+.opt.wrong{border-color:var(--red); background:var(--red-l); animation:shake .4s}
+.opt:disabled{cursor:default}
+.opt .ol{color:var(--pink-d); flex:none}
+.opt .cb{flex:none; font-size:1.1rem}
+.tf-row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.tf-row .opt{justify-content:center; font-size:1.1rem; padding:16px}
+.qact{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px}
+.feedback{padding:12px 16px; border-radius:14px; font-weight:900; margin-top:12px; line-height:1.5; animation:fadeUp .3s both}
+.feedback.ok{background:var(--mint-l); color:var(--mint-d)}
+.feedback.no{background:var(--red-l); color:#B91C1C}
+.feedback.warn{background:var(--yellow-l); color:#92600A}
+.exp-box{
+  background:var(--yellow-l); border-left:6px solid var(--yellow); padding:14px 16px;
+  border-radius:0 14px 14px 0; margin-top:12px; line-height:1.65; font-weight:700; animation:fadeUp .4s both;
+}
+.result{text-align:center; padding:10px 0 4px}
+.result .remoji{font-size:3.4rem; display:block; margin-bottom:4px; animation:pop .5s both}
+.result h3{font-size:1.7rem; color:var(--pink-d); margin-bottom:6px}
+.result .stars{font-size:1.9rem; letter-spacing:5px; margin:8px 0}
+.result p{font-weight:800; color:var(--muted); margin-bottom:14px; line-height:1.5}
+
+/* ===== GAME ===== */
+.game-card{position:relative; background:#fff; border-radius:26px; box-shadow:var(--shadow); padding:24px; text-align:center; margin-top:10px}
+.gift-name{font-family:'Baloo 2'; font-size:1.3rem; color:var(--pink-d)}
+.gmsg{font-weight:900; margin-top:12px; min-height:30px; font-size:1.05rem}
+.gmsg.good{color:var(--mint-d)} .gmsg.bad{color:#B91C1C}
+.ribbon{
+  display:inline-flex; align-items:center; gap:10px; padding:12px 22px; border-radius:999px;
+  border:3px solid transparent; background:var(--pink-l); font-weight:900; font-size:1.05rem;
+  cursor:pointer; margin:6px; transition:.2s; color:var(--ink);
+}
+.ribbon:hover{transform:translateY(-3px) rotate(-1.5deg)}
+.ribbon.correct{border-color:var(--mint); background:var(--mint-l)}
+.ribbon.wrong{border-color:var(--red); background:var(--red-l); animation:shake .4s}
+.spool{width:22px; height:22px; border-radius:50%; display:inline-block; box-shadow:inset 0 0 0 4px rgba(255,255,255,.65); flex:none}
+.stars{font-size:2rem; letter-spacing:4px}
+
+/* ===== KESIMPULAN ===== */
+.fgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr)); gap:12px; margin-top:8px}
+.fitem{display:flex; align-items:center; gap:12px; background:#fff; border-radius:18px; padding:12px 14px; box-shadow:var(--shadow); font-weight:800}
+.fitem .em{font-size:1.9rem; flex:none}
+.fitem .fx{font-family:'Baloo 2'; color:var(--pink-d); font-size:1.06rem}
+.fitem small{display:block; color:var(--muted); font-weight:700}
+.take{display:flex; gap:12px; align-items:flex-start; background:#fff; padding:14px 16px; border-radius:16px; margin-bottom:10px; font-weight:700; box-shadow:var(--shadow); line-height:1.55}
+.take .em{font-size:1.5rem; flex:none}
+
+/* ===== REFLEKSI ===== */
+.mood-row{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin:8px 0}
+.mood{font-size:2.3rem; background:#fff; border:3px solid var(--pink-l); border-radius:20px; padding:10px 18px; cursor:pointer; transition:.2s}
+.mood:hover{transform:scale(1.12)}
+.mood.sel{border-color:var(--pink); background:var(--pink-l)}
+.chk{display:flex; gap:12px; align-items:center; background:#fff; border:2px solid var(--purple-l); padding:12px 16px; border-radius:16px; cursor:pointer; font-weight:800; margin-bottom:10px; transition:.2s; text-align:left; width:100%}
+.chk:hover{transform:translateX(4px)}
+.chk.on{border-color:var(--mint); background:var(--mint-l)}
+.chk .star{font-size:1.4rem; flex:none}
+#moodOut{min-height:34px; font-weight:900; color:var(--pink-d); margin-top:8px}
+
+/* ===== THANK YOU ===== */
+.thanks{text-align:center}
+.thanks .bigem{font-size:4rem; display:block; animation:float 3.5s ease-in-out infinite}
+.thanks h2{font-size:clamp(2rem,5vw,3rem); color:var(--pink-d); margin:10px 0 6px}
+.closing-q{
+  background:linear-gradient(135deg,var(--purple-l),var(--pink-l)); border-radius:24px;
+  padding:24px; margin-top:18px; text-align:left; font-weight:800; line-height:1.7; box-shadow:var(--shadow);
+}
+.closing-q .em{font-size:1.9rem; display:block; margin-bottom:6px}
+
+/* ===== FOOTER ===== */
+footer{
+  height:64px; flex:none; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:0 16px; background:rgba(255,255,255,.82); backdrop-filter:blur(8px);
+  border-top:2px solid var(--pink-l); z-index:60;
+}
+#counter{font-weight:900; color:var(--purple); background:var(--purple-l); padding:7px 16px; border-radius:999px; font-size:.92rem}
+
+/* ===== CONFETTI ===== */
+.conf{position:absolute; top:-36px; animation:fall 2.4s ease-in forwards; pointer-events:none; z-index:8}
+@keyframes fall{0%{transform:translateY(0) rotate(0); opacity:1}100%{transform:translateY(480px) rotate(330deg); opacity:0}}
+
+/* ===== ANIMASI DASAR ===== */
+@keyframes pop{0%{transform:scale(.9); opacity:0}100%{transform:scale(1); opacity:1}}
+@keyframes fadeUp{from{opacity:0; transform:translateY(16px)}to{opacity:1; transform:none}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.anim{animation:fadeUp .55s both}
+.d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}.d4{animation-delay:.32s}.d5{animation-delay:.4s}.d6{animation-delay:.48s}
+.hidden{display:none!important}
+.shake-btn{animation:shake .4s}
+
+/* ===== KOMPONEN KHUSUS LUAS ===== */
+sup{font-size:.72em}
+.tilegrid{display:grid;gap:5px;justify-content:center;margin:10px auto}
+.tilegrid .tile{width:36px;height:36px;border-radius:9px;background:#fff;border:2px dashed var(--purple-l);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;transition:.25s}
+#dynGrid .tile{width:26px;height:26px;border-radius:7px}
+.tile.filled{background:linear-gradient(135deg,#FF8AB0,var(--pink));border:2px solid var(--pink);animation:pop .3s both}
+.rumus2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rumus2 h3{margin-bottom:2px}
+.rumus2 p{font-weight:700;color:var(--muted);font-size:.93rem;line-height:1.5;margin-top:6px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.cmp .col{background:#fff;border-radius:20px;padding:16px 18px;box-shadow:var(--shadow)}
+.cmp .col.k{border-top:6px solid var(--blue)}
+.cmp .col.l{border-top:6px solid var(--mint)}
+.cmp h3{text-align:center;margin-bottom:6px}
+.cmp .ci{display:flex;gap:10px;padding:9px 0;border-bottom:1.5px dashed #F1E8FA;font-weight:700;font-size:.93rem;line-height:1.5;align-items:flex-start}
+.cmp .ci:last-child{border-bottom:none}
+.cmp .ci .em{flex:none}
+.decide{display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.d-btn{padding:10px 24px;border-radius:999px;border:2px solid var(--purple-l);background:#fff;font-weight:900;cursor:pointer;transition:.2s;font-size:1rem;color:var(--ink)}
+.d-btn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--purple)}
+.d-btn.correct{border-color:var(--mint);background:var(--mint-l);animation:pop .4s}
+.d-btn.wrong{border-color:var(--red);background:var(--red-l);animation:shake .4s}
+.d-btn:disabled{cursor:default}
+.dec-t{font-weight:800;line-height:1.55;font-size:1.02rem}
+.dec-fb{margin-top:10px;font-weight:800;min-height:24px;line-height:1.5}
+.dec-fb.ok{color:var(--mint-d)}
+.dec-fb.no{color:#B91C1C}
+.carpet{display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;border:2px solid var(--mint-l);background:#fff;font-weight:900;font-size:1.05rem;cursor:pointer;margin:6px;transition:.2s;color:var(--ink)}
+.carpet:hover{transform:translateY(-3px) rotate(-1.5deg)}
+.carpet.correct{border-color:var(--mint);background:var(--mint-l)}
+.carpet.wrong{border-color:var(--red);background:var(--red-l);animation:shake .4s}
+.swatch{width:24px;height:24px;border-radius:7px;flex:none;box-shadow:inset 0 0 0 3px rgba(255,255,255,.6)}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:760px){
+  .sp-grid{grid-template-columns:1fr}
+  .rumus2{grid-template-columns:1fr}
+  .cmp{grid-template-columns:1fr}
+  .slide{padding:16px 10px 24px}
+  .m-card{padding:16px}
+  .qcard{padding:16px}
+  #counter{font-size:.8rem; padding:6px 10px}
+  .btn{padding:10px 18px; font-size:.92rem}
+  .tf-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🧱 Luas Bangun Datar <span style="font-size:.75rem;background:var(--mint-l);color:var(--mint-d);padding:3px 10px;border-radius:999px">Kelas 3 SD</span></div>
+  <button id="menuBtn" onclick="toggleMenu()">📚 Daftar Isi</button>
+</header>
+<div id="progressWrap"><div id="progressFill"></div></div>
+<nav id="menuPanel"></nav>
+
+<main id="deck">
+<!-- ============ SLIDE 1: COVER ============ -->
+<section class="slide active" id="s1">
+  <div class="cover-wrap">
+    <span class="float-e" style="top:6%;left:8%">🧱</span>
+    <span class="float-e" style="top:14%;right:10%;animation-delay:.7s">🌷</span>
+    <span class="float-e" style="bottom:12%;left:12%;animation-delay:1.2s">⭐</span>
+    <span class="float-e" style="bottom:18%;right:8%;animation-delay:.4s">🛋️</span>
+    <span class="float-e" style="top:45%;left:3%;animation-delay:1.6s">📏</span>
+    <span class="float-e" style="top:8%;left:42%;animation-delay:2s">💖</span>
+    <div class="cover-card">
+      <div class="cover-emoji">🧱✨🌷</div>
+      <h1>Luas <span>Bangun Datar</span></h1>
+      <div class="cover-sub">Matematika &bull; Kelas 3 SD</div>
+      <p class="cover-tag">Ayo menutupi permukaan dengan kotak-kotak ajaib bersama Kucing Momo! 🐱💖</p>
+      <button class="btn big" onclick="goTo(1)">Mulai Belajar ▶</button>
+      <p style="margin-top:16px;color:var(--muted);font-weight:700;font-size:.85rem">Gunakan tombol ◀ ▶ atau panah keyboard untuk berpindah slide</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2: APERSEPSI ============ -->
+<section class="slide" id="s2">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip pink">🎨 Apersepsi</span>
+      <h2>Pernahkah Kamu Melihat Ini? 👀</h2>
+      <p class="lead">Klik setiap kartu untuk membukanya, ya!</p>
+    </div>
+    <div class="flip-grid">
+      <div class="flip anim d1" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face front"><div class="big">🛋️</div><div class="nm">Karpet Lantai</div><div class="hint">Tap untuk membuka</div></div>
+          <div class="flip-face back">Karpet menutupi <b>seluruh permukaan</b> lantai ruangan. Besar permukaan yang tertutup bisa dihitung!</div>
+        </div>
+      </div>
+      <div class="flip anim d2" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face front"><div class="big">🧱</div><div class="nm">Ubin Lantai</div><div class="hint">Tap untuk membuka</div></div>
+          <div class="flip-face back">Ubin dipasang satu-satu sampai <b>seluruh lantai tertutup</b> rata. Jumlah ubinnya bisa dihitung!</div>
+        </div>
+      </div>
+      <div class="flip anim d3" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face front"><div class="big">🌱</div><div class="nm">Rumput Halaman</div><div class="hint">Tap untuk membuka</div></div>
+          <div class="flip-face back">Rumput ditanam menutupi <b>seluruh tanah halaman</b>. Halaman yang lebih besar butuh lebih banyak rumput!</div>
+        </div>
+      </div>
+      <div class="flip anim d4" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face front"><div class="big">🍽️</div><div class="nm">Taplak Meja</div><div class="hint">Tap untuk membuka</div></div>
+          <div class="flip-face back">Taplak meja menutupi <b>seluruh permukaan</b> meja makan sampai tidak terlihat lagi.</div>
+        </div>
+      </div>
+    </div>
+    <div class="bubble anim d5">
+      <span class="em">🤔</span>
+      <div><b>Pertanyaan pemantik:</b> Apa kesamaan dari karpet, ubin, rumput, dan taplak meja?</div>
+    </div>
+    <div class="center anim d6" style="margin-top:12px">
+      <button class="btn alt" onclick="revealAnswer('aperAns',this)">Lihat Jawaban 💡</button>
+    </div>
+    <div class="answer-card hidden" id="aperAns">
+      🧱 Semuanya <b>menutupi permukaan</b> sebuah tempat! Banyaknya permukaan yang tertutup itulah yang disebut <b style="color:var(--pink-d)">LUAS</b>. Hari ini kita akan belajar menghitung luas bangun datar!
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3: TUJUAN PEMBELAJARAN ============ -->
+<section class="slide" id="s3">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip purple">🎯 Tujuan Pembelajaran</span>
+      <h2>Setelah Belajar, Kamu Akan Bisa…</h2>
+      <p class="lead">Empat kehebatan baru yang akan kamu kuasai hari ini!</p>
+    </div>
+    <div class="obj-grid">
+      <div class="obj anim d1"><span class="num">1</span>🐱 <b>Menjelaskan</b> konsep luas sebagai banyaknya kotak satuan yang menutupi permukaan bangun.</div>
+      <div class="obj c2 anim d2"><span class="num">2</span>🧮 <b>Mencari</b> luas persegi dan persegi panjang dengan menghitung kotak dan dengan rumus.</div>
+      <div class="obj c3 anim d3"><span class="num">3</span>🎀 <b>Menyelesaikan</b> masalah sehari-hari yang berkaitan dengan luas.</div>
+      <div class="obj c4 anim d4"><span class="num">4</span>⚖️ <b>Membedakan</b> kapan masalah diselesaikan dengan luas dan kapan dengan keliling.</div>
+    </div>
+    <div class="bubble anim d5">
+      <span class="em">🌟</span>
+      <div>Pernah belajar keliling, kan? Hari ini kita bertemu teman barunya: <b>LUAS</b>! Siap berpetualang? Ayo mulai!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4: MATERI 1 - KONSEP LUAS ============ -->
+<section class="slide" id="s4">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip pink">📖 Materi 1</span>
+      <h2>Apa Itu Luas? 🧱</h2>
+      <p class="lead">Bantu Momo memasang ubin di lantai rumahnya!</p>
+    </div>
+
+    <div class="m-card center anim d1" id="tileCard">
+      <span class="interact-lab">✨ YUK COBA: PASANG UBIN</span>
+      <p style="font-weight:800;margin-bottom:4px">Lantai rumah Momo berbentuk persegi panjang. Tekan tombol untuk menutupinya dengan ubin satu per satu! 👇</p>
+      <div class="tilegrid" id="tileGrid" style="grid-template-columns:repeat(5, 36px)">
+        <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+        <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+        <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+      </div>
+      <div style="font-weight:900;color:var(--purple)" id="tileCount">Kotak tertutup: 0 dari 15</div>
+      <div style="margin-top:10px">
+        <button class="btn" id="tileBtn" onclick="startTiles()">Pasang Ubin! 🧱</button>
+        <button class="btn ghost" onclick="resetTiles()">Ulangi 🔄</button>
+      </div>
+      <div class="answer-card hidden" id="tileMsg" style="margin-top:12px">
+        🎉 Semua permukaan tertutup! Banyaknya kotak yang menutupi lantai disebut <b>luas</b>.<br>Luas lantai Momo = 15 kotak satuan = <b>15 cm<sup>2</sup></b> (baca: lima belas sentimeter persegi).
+      </div>
+    </div>
+
+    <div class="answer-card center anim d2" style="font-size:1.15rem">
+      💖 <b>Luas</b> adalah <b>banyaknya kotak satuan yang menutupi seluruh permukaan bangun datar</b>.
+    </div>
+
+    <div class="steps anim d3">
+      <div class="step"><span class="ico">🛋️</span><b>Karpet</b><p>Menutupi permukaan lantai = luas lantai</p></div>
+      <div class="step"><span class="ico">🌱</span><b>Rumput</b><p>Menutupi permukaan halaman = luas halaman</p></div>
+      <div class="step"><span class="ico">📐</span><b>Satuan Luas</b><p>Ditulis cm<sup>2</sup> atau m<sup>2</sup> — dibaca &ldquo;sentimeter persegi&rdquo;</p></div>
+    </div>
+
+    <div class="center anim d4" style="margin-top:16px">
+      <button class="btn alt" onclick="goTo(7)">Lanjut ke Latihan 1 ✏️</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 5: MATERI 2 - LUAS PERSEGI & PERSEGI PANJANG ============ -->
+<section class="slide" id="s5">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip pink">📖 Materi 2</span>
+      <h2>Cara Mencari Luas Persegi &amp; Persegi Panjang 🧮</h2>
+      <p class="lead">Dari menghitung kotak satu-satu menjadi perkalian yang cepat!</p>
+    </div>
+
+    <div class="rumus2 anim d1">
+      <div class="m-card center">
+        <h3 style="color:var(--pink-d)">🟨 Luas Persegi</h3>
+        <div class="formula">L = s × s</div>
+        <p>Persegi punya sisi yang sama panjang.<br>Contoh: sisi 4 cm → L = 4 × 4 = <b>16 cm<sup>2</sup></b></p>
+      </div>
+      <div class="m-card center">
+        <h3 style="color:#0284C7">🟦 Luas Persegi Panjang</h3>
+        <div class="formula">L = p × l</div>
+        <p>Panjang dikali lebar.<br>Contoh: p = 7 cm, l = 4 cm → L = 7 × 4 = <b>28 cm<sup>2</sup></b></p>
+      </div>
+    </div>
+
+    <div class="m-card center anim d2">
+      <span class="interact-lab">✨ YUK COBA: UBAH UKURANNYA!</span>
+      <p style="font-weight:800;margin-bottom:4px">Mainkan tombol <b>−</b> dan <b>＋</b>, lihat kotak-kotaknya bertambah dan luasnya berubah!</p>
+      <div>
+        <span class="stepper"><span class="lbl">p =</span><button onclick="dynBump(this,-1)">−</button><span class="val" id="dynP">6</span><button onclick="dynBump(this,1)">＋</button><span class="lbl">cm</span></span>
+        <span class="stepper"><span class="lbl">l =</span><button onclick="dynBump(this,-1)">−</button><span class="val" id="dynL">4</span><button onclick="dynBump(this,1)">＋</button><span class="lbl">cm</span></span>
+      </div>
+      <div class="tilegrid" id="dynGrid" style="margin-top:12px"></div>
+      <div class="eq" id="dynRows" style="min-height:44px"></div>
+      <div class="kout" id="dynK" style="margin-top:10px"></div>
+    </div>
+
+    <div class="tip-card anim d3">
+      💡 <b>Kenapa bisa pakai perkalian?</b> Karena kotak-kotak tersusun rapi berbaris! Seperti contoh di atas: <b>l</b> baris, setiap baris berisi <b>p</b> kotak. Jadi alih-alih menghitung satu-satu, kita cukup mengalikan <b>p × l</b>. Cepat sekali! 🚀
+    </div>
+
+    <div class="center anim d4" style="margin-top:16px">
+      <button class="btn alt" onclick="goTo(8)">Lanjut ke Latihan 2 ✏️</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6: MATERI 3 - PENYELESAIAN MASALAH LUAS ============ -->
+<section class="slide" id="s6">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip pink">📖 Materi 3</span>
+      <h2>Menyelesaikan Masalah tentang Luas 🎀</h2>
+      <p class="lead">Langkah-langkahnya sama dengan sebelumnya — sekarang untuk luas!</p>
+    </div>
+
+    <div class="steps anim d1">
+      <div class="step"><span class="ico">📖</span><b>1. Baca Pelan-pelan</b><p>Pahami ceritanya. Baca dua kali, boleh kok!</p></div>
+      <div class="step"><span class="ico">📋</span><b>2. Tulis Diketahui</b><p>Apa bentuk dan ukurannya?</p></div>
+      <div class="step"><span class="ico">❓</span><b>3. Tentukan Ditanya</b><p>Yang dicari luas atau keliling? Perhatikan kata kuncinya!</p></div>
+      <div class="step"><span class="ico">🧮</span><b>4. Hitung &amp; Jawab</b><p>Pilih rumus, hitung, tulis jawaban dengan satuan luas (m<sup>2</sup> atau cm<sup>2</sup>).</p></div>
+    </div>
+
+    <div class="m-card anim d2">
+      <span class="interact-lab">✨ YUK COBA: BUKA KARTU SATU PER SATU</span>
+      <p style="font-weight:800;font-size:1.08rem">🌱 <b>Contoh soal:</b> Halaman rumah Nina berbentuk persegi panjang dengan panjang 8 m dan lebar 5 m. Seluruh permukaannya akan ditanami rumput. Berapa luas tanah yang ditanami rumput?</p>
+      <div class="center" style="margin-top:10px">
+        <button class="btn small" onclick="revealCard('ms51',this)">Kartu 1: Diketahui 📋</button>
+        <button class="btn small alt" onclick="revealCard('ms52',this)">Kartu 2: Ditanya ❓</button>
+        <button class="btn small mint" onclick="revealCard('ms53',this)">Kartu 3: Jawab 🧮</button>
+      </div>
+      <div class="step-card" id="ms51">📋 <b>Diketahui:</b> Halaman berbentuk persegi panjang, panjang (p) = 8 m, lebar (l) = 5 m.</div>
+      <div class="step-card" id="ms52">❓ <b>Ditanya:</b> Luas tanah yang ditanami rumput, karena rumput menutupi <b>seluruh permukaan</b> halaman.</div>
+      <div class="step-card" id="ms53">🧮 <b>Jawab:</b><br>L = p × l<br>L = 8 × 5 = <b>40 m<sup>2</sup></b><br>Jadi, luas tanah yang ditanami rumput adalah <b>40 m<sup>2</sup></b>. 💖</div>
+    </div>
+
+    <div class="tip-card anim d3">
+      💡 <b>Kata kunci soal luas:</b> <i>karpet, rumput, ubin, taplak, kaca, alas, menutupi, permukaan, ditanami</i>. Kalau ada benda yang <b>menutupi permukaan</b>, berarti kita mencari <b>luas</b>!
+    </div>
+
+    <div class="center anim d4" style="margin-top:16px">
+      <button class="btn alt" onclick="goTo(9)">Lanjut ke Latihan 3 ✏️</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 7: MATERI 4 - PERBEDAAN KELILING & LUAS ============ -->
+<section class="slide" id="s7">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip pink">📖 Materi 4</span>
+      <h2>Keliling atau Luas? Jangan Tertukar! ⚖️</h2>
+      <p class="lead">Dua sahabat yang sering dikira kembar. Ayo kenali perbedaannya!</p>
+    </div>
+
+    <div class="cmp anim d1">
+      <div class="col k">
+        <h3 style="color:#0284C7">🚶 KELILING</h3>
+        <div class="ci"><span class="em">📏</span><div><b>Panjang seluruh tepi</b> bangun</div></div>
+        <div class="ci"><span class="em">🎀</span><div>Seperti <b>berjalan mengelilingi</b> tepinya satu putaran</div></div>
+        <div class="ci"><span class="em">📦</span><div>Satuan: <b>cm</b> atau <b>m</b> (satuan panjang)</div></div>
+        <div class="ci"><span class="em">🧮</span><div>Contoh rumus: K = 4 × s, K = 2 × (p + l)</div></div>
+        <div class="ci"><span class="em">🌷</span><div>Contoh: pagar taman, pita kado, tali, benang</div></div>
+      </div>
+      <div class="col l">
+        <h3 style="color:var(--mint-d)">🧱 LUAS</h3>
+        <div class="ci"><span class="em">🟪</span><div><b>Banyak kotak satuan</b> yang menutupi permukaan</div></div>
+        <div class="ci"><span class="em">🛋️</span><div>Seperti <b>menutupi seluruh permukaan</b> di dalam bangun</div></div>
+        <div class="ci"><span class="em">📦</span><div>Satuan: <b>cm<sup>2</sup></b> atau <b>m<sup>2</sup></b> (satuan luas)</div></div>
+        <div class="ci"><span class="em">🧮</span><div>Contoh rumus: L = s × s, L = p × l</div></div>
+        <div class="ci"><span class="em">🌱</span><div>Contoh: karpet, rumput, ubin, taplak, kaca</div></div>
+      </div>
+    </div>
+
+    <div class="m-card center anim d2" id="decCard">
+      <span class="interact-lab">✨ YUK COBA: PENENTU CERDAS 🧭</span>
+      <p style="font-weight:800;margin-bottom:4px" id="decHead">Baca masalahnya, lalu tentukan: diselesaikan dengan <b>Luas</b> atau <b>Keliling</b>?</p>
+      <div id="decideBox" style="text-align:left"></div>
+    </div>
+
+    <div class="tip-card anim d3">
+      💡 <b>Trik cepat:</b> Kalau benda berada di <b>tepi</b> atau <b>mengelilingi</b> → <b style="color:#0284C7">KELILING</b>. Kalau benda <b>menutupi permukaan</b> → <b style="color:var(--mint-d)">LUAS</b>. Bayangkan: pagar melingkar 🌷 vs karpet yang membentang 🛋️!
+    </div>
+
+    <div class="center anim d4" style="margin-top:16px">
+      <button class="btn alt" onclick="goTo(10)">Lanjut ke Latihan 4 ✏️</button>
+    </div>
+  </div>
+</section>
+<!-- ============ SLIDE 8: LATIHAN 1 ============ -->
+<section class="slide" id="s8">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip mint">✏️ Latihan 1</span>
+      <h2>Latihan: Konsep Luas 🧱</h2>
+      <p class="lead">5 soal &bull; klik jawabanmu, lalu tekan <b>Cek Jawaban</b> dan buka <b>Pembahasan</b>!</p>
+    </div>
+    <div class="quiz-box anim d1" id="latihan1-box"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 9: LATIHAN 2 ============ -->
+<section class="slide" id="s9">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip mint">✏️ Latihan 2</span>
+      <h2>Latihan: Luas Persegi &amp; Persegi Panjang 🧮</h2>
+      <p class="lead">5 soal &bull; ingat: L = s × s dan L = p × l!</p>
+    </div>
+    <div class="quiz-box anim d1" id="latihan2-box"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10: LATIHAN 3 ============ -->
+<section class="slide" id="s10">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip mint">✏️ Latihan 3</span>
+      <h2>Latihan: Penyelesaian Masalah Luas 🎀</h2>
+      <p class="lead">5 soal cerita &bull; baca pelan-pelan lalu hitung!</p>
+    </div>
+    <div class="quiz-box anim d1" id="latihan3-box"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 11: LATIHAN 4 ============ -->
+<section class="slide" id="s11">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip mint">✏️ Latihan 4</span>
+      <h2>Latihan: Luas atau Keliling? ⚖️</h2>
+      <p class="lead">5 soal &bull; tentukan dulu: yang dicari luas atau keliling!</p>
+    </div>
+    <div class="quiz-box anim d1" id="latihan4-box"></div>
+  </div>
+</section>
+<!-- ============ SLIDE 12: GAME - TOKO KARPET LARISSA ============ -->
+<section class="slide" id="s12">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip pink">🎮 Game Spesial</span>
+      <h2>Toko Karpet Larissa 💖</h2>
+      <p class="lead">Larissa pemilik toko karpet butuh bantuanmu! Pilih karpet yang luasnya <b>pas</b> untuk menutupi tiap ruangan. Jawab benar sekali coba = dapat ⭐!</p>
+    </div>
+    <div class="game-card anim d1" id="gameCard"></div>
+    <div class="tip-card anim d2" style="text-align:left">
+      💡 <b>Cara main:</b> Lihat bentuk dan ukuran ruangannya, hitung <b>luas</b>nya di bukumu, lalu klik gulungan karpet yang luasnya tepat untuk menutupi seluruh lantai!
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 13: KUIS AKHIR ============ -->
+<section class="slide" id="s13">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip purple">🏆 Kuis Akhir</span>
+      <h2>Kuis Besar: 20 Soal Seru! 🚀</h2>
+      <p class="lead">Pilihan ganda, benar–salah, dan pilihan ganda kompleks &bull; dari konsep luas hingga membedakan luas dan keliling. Kerjakan dengan teliti ya!</p>
+    </div>
+    <div class="quiz-box anim d1" id="kuis-box"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 14: KESIMPULAN ============ -->
+<section class="slide" id="s14">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip yellow">📌 Kesimpulan</span>
+      <h2>Ingat Selalu, Ya! 💖</h2>
+      <p class="lead">Rangkuman semua yang sudah kita pelajari hari ini.</p>
+    </div>
+
+    <div class="take anim d1"><span class="em">🧱</span><div><b>Luas</b> adalah <b>banyaknya kotak satuan yang menutupi seluruh permukaan bangun datar</b>. Satuannya cm<sup>2</sup> atau m<sup>2</sup>.</div></div>
+    <div class="take anim d2"><span class="em">🧮</span><div>Luas <b>persegi = s × s</b> dan luas <b>persegi panjang = p × l</b>. Rumus ini adalah cara cepat dari menghitung kotak satu per satu.</div></div>
+    <div class="take anim d3"><span class="em">🎀</span><div>Luas dipakai ketika benda <b>menutupi permukaan</b>: karpet, rumput, ubin, taplak, dan kaca jendela.</div></div>
+    <div class="take anim d4"><span class="em">⚖️</span><div><b>Keliling</b> = panjang tepi (pagar, pita — satuan cm/m). <b>Luas</b> = permukaan yang tertutup (karpet, rumput — satuan cm<sup>2</sup>/m<sup>2</sup>). Jangan sampai tertukar!</div></div>
+
+    <div class="m-card anim d5">
+      <h3 class="center" style="color:var(--pink-d);margin-bottom:10px">📖 Kumpulan Rumus Hari Ini</h3>
+      <div class="fgrid">
+        <div class="fitem"><span class="em">🟨</span><div class="fx">Luas persegi: L = s × s<small>sisi dikali sisi</small></div></div>
+        <div class="fitem"><span class="em">🟦</span><div class="fx">Luas persegi panjang: L = p × l<small>panjang kali lebar</small></div></div>
+        <div class="fitem"><span class="em">📦</span><div class="fx">Satuan luas: cm<sup>2</sup>, m<sup>2</sup><small>dibaca &ldquo;sentimeter/meter persegi&rdquo;</small></div></div>
+        <div class="fitem"><span class="em">⚖️</span><div class="fx">Keliling ≠ Luas<small>tepi (cm/m) vs permukaan (cm<sup>2</sup>/m<sup>2</sup>)</small></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 15: REFLEKSI ============ -->
+<section class="slide" id="s15">
+  <div class="slide-inner">
+    <div class="slide-head anim">
+      <span class="chip blue">🪞 Refleksi</span>
+      <h2>Bagaimana Perasaanmu Hari Ini? 😊</h2>
+      <p class="lead">Klik emoji yang sesuai, lalu centang pemahamanmu!</p>
+    </div>
+
+    <div class="m-card center anim d1">
+      <span class="interact-lab">✨ PILIH PERASAANMU</span>
+      <div class="mood-row">
+        <button class="mood" onclick="mood('senang',this)">😄</button>
+        <button class="mood" onclick="mood('biasa',this)">🙂</button>
+        <button class="mood" onclick="mood('bingung',this)">🤔</button>
+        <button class="mood" onclick="mood('capek',this)">😪</button>
+      </div>
+      <div id="moodOut"></div>
+    </div>
+
+    <div class="m-card anim d2">
+      <h3 style="color:var(--purple);margin-bottom:10px">⭐ Cek Pemahamanmu — klik yang sudah kamu kuasai!</h3>
+      <button class="chk" onclick="this.classList.toggle('on');chkUpdate()"><span class="star">☆</span> Saya bisa menjelaskan apa itu luas bangun datar.</button>
+      <button class="chk" onclick="this.classList.toggle('on');chkUpdate()"><span class="star">☆</span> Saya bisa menghitung luas persegi (s × s) dan persegi panjang (p × l).</button>
+      <button class="chk" onclick="this.classList.toggle('on');chkUpdate()"><span class="star">☆</span> Saya bisa menyelesaikan soal cerita tentang luas.</button>
+      <button class="chk" onclick="this.classList.toggle('on');chkUpdate()"><span class="star">☆</span> Saya bisa membedakan masalah luas dan masalah keliling.</button>
+      <div id="chkOut" style="font-weight:900;color:var(--mint-d);margin-top:6px"></div>
+    </div>
+
+    <div class="bubble anim d3">
+      <span class="em">💬</span>
+      <div><b>Diskusikan dengan teman atau gurumu:</b><br>1️⃣ Bagian mana yang paling kamu sukai hari ini?<br>2️⃣ Coba sebutkan satu benda di rumah yang luasnya perlu diukur. Rumus apa yang kamu pakai?</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 16: THANK YOU + PERTANYAAN PENUTUP ============ -->
+<section class="slide" id="s16">
+  <div class="slide-inner">
+    <div class="thanks">
+      <div class="slide-head anim">
+        <span class="bigem">🧱💖🧱</span>
+        <h2>Thank You for Today!</h2>
+        <p class="lead">Kamu sudah belajar dengan hebat sekali hari ini! 👏</p>
+      </div>
+
+      <div class="m-card anim d1" style="max-width:720px;margin:0 auto">
+        <h3 class="center" style="color:var(--pink-d)">🎈 Satu Pertanyaan Penutup</h3>
+        <div class="closing-q" style="margin-top:12px">
+          <span class="em">🏠📏</span>
+          <b>Tantangan rumah:</b> Pilih <u>satu permukaan datar</u> di rumahmu — bisa meja, alas kasur, atau lantai kamar kecil. Ukurlah panjang dan lebarnya, lalu hitunglah <b>luasnya</b>.<br><br>
+          🤔 <b>Berapa luas permukaan yang kamu hitung, dan benda apa (karpet, taplak, atau kaca) yang tepat untuk menutupinya?</b> Tuliskan di buku, lalu ceritakan hasilnya pada pertemuan berikutnya ya!
+        </div>
+      </div>
+
+      <div class="anim d2" style="margin-top:22px">
+        <p style="font-weight:900;font-size:1.2rem;color:var(--purple)">Sampai jumpa di petualangan matematika berikutnya! 👋✨</p>
+        <button class="btn big" style="margin-top:14px" onclick="goTo(0)">🏠 Kembali ke Awal</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER NAVIGASI ============ -->
+<footer>
+  <button id="prevBtn" class="btn ghost small" onclick="nav(-1)">◀ Sebelumnya</button>
+  <div id="counter">1 / 16</div>
+  <button id="nextBtn" class="btn small" onclick="nav(1)">Berikutnya ▶</button>
+</footer>
+<script>
+/* =================== UTIL =================== */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+function confetti(container, set){
+  if(!container) return;
+  const EMO = set || ['💖','✨','⭐','🎉','💜','🌸'];
+  for(let i=0;i<26;i++){
+    const s = document.createElement('span');
+    s.className = 'conf';
+    s.textContent = EMO[Math.floor(Math.random()*EMO.length)];
+    s.style.left = Math.random()*96 + '%';
+    s.style.animationDelay = (Math.random()*0.5) + 's';
+    s.style.fontSize = (14 + Math.random()*18) + 'px';
+    container.appendChild(s);
+    setTimeout(()=>s.remove(), 3000);
+  }
+}
+
+/* =================== NAVIGASI SLIDE =================== */
+const SLIDE_NAMES = ['Cover','Apersepsi','Tujuan Pembelajaran','Konsep Luas','Luas Persegi & Persegi Panjang','Penyelesaian Masalah','Perbedaan Keliling & Luas','Latihan 1','Latihan 2','Latihan 3','Latihan 4','Game: Toko Karpet Larissa','Kuis Akhir','Kesimpulan','Refleksi','Terima Kasih'];
+const slides = $$('.slide');
+let cur = 0;
+const total = slides.length;
+
+function goTo(i){
+  cur = Math.max(0, Math.min(total-1, i));
+  slides.forEach((s,k)=>s.classList.toggle('active', k===cur));
+  $('#counter').textContent = (cur+1) + ' / ' + total;
+  $('#progressFill').style.width = ((cur+1)/total*100) + '%';
+  $('#prevBtn').disabled = (cur===0);
+  $('#nextBtn').disabled = (cur===total-1);
+  $$('#menuPanel .mi').forEach((b,k)=>b.classList.toggle('cur', k===cur));
+  $('#menuPanel').classList.remove('open');
+  const act = slides[cur];
+  act.scrollTop = 0;
+  const inner = act.querySelector('.slide-inner, .cover-wrap');
+  if(inner){ inner.style.animation='none'; void inner.offsetWidth; inner.style.animation=''; }
+}
+function nav(d){ goTo(cur + d); }
+function toggleMenu(){ $('#menuPanel').classList.toggle('open'); }
+document.addEventListener('keydown', e=>{
+  if(e.target.matches('input,textarea')) return;
+  if(e.key==='ArrowRight'||e.key==='PageDown') nav(1);
+  if(e.key==='ArrowLeft'||e.key==='PageUp') nav(-1);
+});
+let tX=0;
+document.addEventListener('touchstart', e=>{ tX = e.changedTouches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', e=>{
+  const dx = e.changedTouches[0].clientX - tX;
+  if(Math.abs(dx)>60) nav(dx<0?1:-1);
+}, {passive:true});
+document.addEventListener('click', e=>{
+  const p = $('#menuPanel');
+  if(p.classList.contains('open') && !p.contains(e.target) && e.target.id!=='menuBtn') p.classList.remove('open');
+});
+
+/* =================== APERSEPSI & MATERI 3 =================== */
+function revealAnswer(id, btn){ $('#'+id).classList.remove('hidden'); btn.disabled = true; btn.style.opacity=.5; }
+function revealCard(id, btn){ $('#'+id).classList.add('show'); btn.disabled = true; btn.style.opacity=.45; }
+
+/* =================== MATERI 1: PASANG UBIN =================== */
+let tileTimer = null;
+function startTiles(){
+  if(tileTimer) return;
+  $('#tileMsg').classList.add('hidden');
+  const tiles = $$('#tileGrid .tile');
+  tiles.forEach(t=>{ t.classList.remove('filled'); t.textContent=''; });
+  let n = 0;
+  $('#tileBtn').disabled = true;
+  $('#tileCount').textContent = 'Kotak tertutup: 0 dari 15';
+  tileTimer = setInterval(()=>{
+    if(n >= tiles.length){
+      clearInterval(tileTimer); tileTimer = null;
+      $('#tileBtn').disabled = false;
+      $('#tileMsg').classList.remove('hidden');
+      confetti($('#tileCard'));
+      return;
+    }
+    tiles[n].classList.add('filled');
+    tiles[n].textContent = n+1;
+    n++;
+    $('#tileCount').textContent = 'Kotak tertutup: ' + n + ' dari 15';
+  }, 170);
+}
+function resetTiles(){
+  if(tileTimer) return;
+  $$('#tileGrid .tile').forEach(t=>{ t.classList.remove('filled'); t.textContent=''; });
+  $('#tileCount').textContent = 'Kotak tertutup: 0 dari 15';
+  $('#tileMsg').classList.add('hidden');
+}
+
+/* =================== MATERI 2: GRID DINAMIS =================== */
+function dynRender(){
+  const p = +$('#dynP').textContent, l = +$('#dynL').textContent;
+  const g = $('#dynGrid');
+  g.innerHTML = '';
+  g.style.gridTemplateColumns = 'repeat(' + p + ', 26px)';
+  for(let i=0;i<p*l;i++){
+    const d = document.createElement('div');
+    d.className = 'tile';
+    g.appendChild(d);
+  }
+  $('#dynRows').innerHTML = 'Ada <b>' + l + '</b> baris, setiap baris berisi <b>' + p + '</b> kotak → ' + l + ' × ' + p + ' = <b>' + (p*l) + '</b> kotak satuan';
+  $('#dynK').textContent = 'L = ' + p + ' × ' + l + ' = ' + (p*l) + ' cm²';
+}
+function dynBump(btn, d){
+  const valEl = btn.closest('.stepper').querySelector('.val');
+  let v = Math.min(8, Math.max(2, +valEl.textContent + d));
+  valEl.textContent = v;
+  dynRender();
+}
+
+/* =================== MATERI 4: PENENTU CERDAS =================== */
+const DECIDE = [
+ {t:'🎀 Ibu akan membeli pita untuk <b>mengelilingi</b> kado ulang tahun Dinda.', a:'keliling',
+  exp:'Pita berada di sekeliling <b>tepi</b> kado, jadi yang dicari adalah <b>keliling</b> kado.'},
+ {t:'🌱 Ayah akan menanam rumput sampai <b>seluruh permukaan</b> halaman tertutup.', a:'luas',
+  exp:'Rumput menutupi <b>seluruh permukaan</b> halaman, jadi yang dicari adalah <b>luas</b> halaman.'},
+ {t:'🚧 Bapak akan memasang pagar di <b>tepi</b> kebun sayur.', a:'keliling',
+  exp:'Pagar dibangun di <b>tepi</b> kebun, jadi Bapak mencari <b>keliling</b> kebun.'},
+ {t:'🪟 Tukang akan memasang kaca yang menutupi <b>seluruh permukaan</b> jendela.', a:'luas',
+  exp:'Kaca menutupi <b>seluruh permukaan</b> jendela, jadi yang dicari adalah <b>luas</b> jendela.'}
+];
+let decSolved = 0;
+function decideInit(){
+  const box = $('#decideBox');
+  box.innerHTML = DECIDE.map((d,i)=>
+    '<div class="m-card" style="margin-top:12px;box-shadow:none;border:2px solid var(--pink-l)" id="dec'+i+'">'
+    + '<p class="dec-t">'+d.t+'</p>'
+    + '<div class="decide">'
+    + '<button class="d-btn" data-i="'+i+'" data-c="luas">🟩 Luas</button>'
+    + '<button class="d-btn" data-i="'+i+'" data-c="keliling">🟦 Keliling</button>'
+    + '</div><div class="dec-fb"></div></div>'
+  ).join('');
+  box.querySelectorAll('.d-btn').forEach(b=>b.addEventListener('click',()=>decidePick(b)));
+  decSolved = 0;
+  $('#decHead').innerHTML = 'Baca masalahnya, lalu tentukan: diselesaikan dengan <b>Luas</b> atau <b>Keliling</b>?';
+}
+function decidePick(btn){
+  const i = +btn.dataset.i, c = btn.dataset.c, d = DECIDE[i];
+  const card = $('#dec'+i), fb = card.querySelector('.dec-fb');
+  if(card.dataset.done === '1') return;
+  if(c === d.a){
+    card.dataset.done = '1';
+    btn.classList.add('correct');
+    card.querySelectorAll('.d-btn').forEach(b=>{ b.disabled = true; if(b!==btn) b.style.opacity = .4; });
+    fb.className = 'dec-fb ok';
+    fb.innerHTML = '✅ <b>Tepat sekali!</b> ' + d.exp;
+    decSolved++;
+    if(decSolved === DECIDE.length){
+      $('#decHead').innerHTML = '🏅 <b style="color:var(--mint-d)">Hebat! Kamu ahli membedakan luas dan keliling!</b>';
+      confetti($('#decCard'));
+    }
+  }else{
+    btn.classList.add('wrong');
+    btn.disabled = true;
+    fb.className = 'dec-fb no';
+    fb.textContent = 'Belum tepat, coba pilih yang lain ya 💕';
+  }
+}
+
+/* =================== PEMBUAT FIGUR SVG UNTUK SOAL =================== */
+function lab(x,y,t){ return '<text x="'+x+'" y="'+y+'" text-anchor="middle" class="svg-lab">'+t+'</text>'; }
+function sqFig(s){
+  return '<svg class="qfig" viewBox="0 0 200 150">'
+    +'<rect x="55" y="20" width="90" height="90" rx="4" fill="#FFF1F7" stroke="#FF5C8A" stroke-width="3.5"/>'
+    + lab(100,14,s)+lab(100,128,s)+lab(40,70,s)+lab(160,70,s)+'</svg>';
+}
+function rectFig(p,l){
+  return '<svg class="qfig" viewBox="0 0 200 150">'
+    +'<rect x="40" y="25" width="120" height="70" rx="4" fill="#E3F5FE" stroke="#38BDF8" stroke-width="3.5"/>'
+    + lab(100,17,p)+lab(100,113,p)+lab(26,65,l)+lab(176,65,l)+'</svg>';
+}
+function gridFig(p,l){
+  const c=20, x0=35, y0=25, w=p*c, h=l*c;
+  let lines='';
+  for(let i=1;i<p;i++) lines += '<line x1="'+(x0+i*c)+'" y1="'+y0+'" x2="'+(x0+i*c)+'" y2="'+(y0+h)+'" stroke="#FFB3CB" stroke-width="1.5"/>';
+  for(let j=1;j<l;j++) lines += '<line x1="'+x0+'" y1="'+(y0+j*c)+'" x2="'+(x0+w)+'" y2="'+(y0+j*c)+'" stroke="#FFB3CB" stroke-width="1.5"/>';
+  return '<svg class="qfig" viewBox="0 0 200 150">'
+    + '<rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+h+'" fill="#FFF7FA" stroke="#FF5C8A" stroke-width="3"/>'
+    + lines
+    + lab(x0+w/2, y0-8, p)+lab(x0+w/2, y0+h+14, p)+lab(x0-12, y0+h/2, l)+lab(x0+w+12, y0+h/2, l)
+    +'</svg>';
+}
+</script>
+<script>
+/* =================== DATA SOAL =================== */
+/* type: mc = pilihan ganda, tf = benar/salah, cmc = pilihan ganda kompleks */
+const DATA = {
+
+latihan1: { qs:[
+ {type:'mc', q:'Apa yang dimaksud dengan luas bangun datar?',
+  opts:['Panjang seluruh tepi bangun','Banyaknya kotak satuan yang menutupi seluruh permukaan bangun','Panjang satu sisi bangun','Nama dari sebuah bangun datar'],
+  ans:1, exp:'Luas adalah banyaknya kotak satuan yang menutupi seluruh permukaan bangun datar. Bayangkan lantai yang ditutupi ubin sampai rata — banyak ubin itulah luasnya. (Panjang seluruh tepi itu keliling, ya!)'},
+ {type:'mc', fig:gridFig(4,3), q:'Bangun di atas ditutupi kotak-kotak satuan. Luas bangun tersebut adalah … kotak satuan.',
+  opts:['7','12','14','24'],
+  ans:1, exp:'Hitung semua kotaknya: ada 3 baris, setiap baris berisi 4 kotak, jadi 3 × 4 = 12 kotak satuan. Luasnya 12 kotak satuan.'},
+ {type:'tf', q:'Luas adalah ukuran panjang seluruh tepi bangun datar.',
+  ans:false, exp:'Salah. Panjang seluruh tepi bangun itu KELILING. Luas adalah banyaknya kotak satuan yang menutupi seluruh permukaan bangun.'},
+ {type:'mc', q:'Sebuah karpet dipasang menutupi seluruh lantai kamar. Hal yang diukur dari karpet tersebut adalah … kamar.',
+  opts:['keliling','nama','luas','warna'],
+  ans:2, exp:'Karpet menutupi seluruh permukaan lantai, jadi yang diukur adalah luas kamar.'},
+ {type:'tf', q:'Satuan luas contohnya cm<sup>2</sup> (sentimeter persegi) atau m<sup>2</sup> (meter persegi).',
+  ans:true, exp:'Benar. Satuan luas selalu ditulis dengan kata persegi, seperti cm<sup>2</sup> dan m<sup>2</sup>. Satuan cm dan m saja (tanpa persegi) adalah satuan panjang untuk keliling.'}
+]},
+
+latihan2: { qs:[
+ {type:'mc', fig:sqFig('5'), q:'Persegi di atas memiliki sisi 5 cm. Luas persegi tersebut adalah … cm<sup>2</sup>.',
+  opts:['10','20','25','30'],
+  ans:2, exp:'L = s × s = 5 × 5 = 25 cm<sup>2</sup>. (20 adalah kelilingnya: 4 × 5 — jangan tertukar!)'},
+ {type:'mc', fig:rectFig('7','4'), q:'Persegi panjang di atas memiliki panjang 7 cm dan lebar 4 cm. Luasnya adalah … cm<sup>2</sup>.',
+  opts:['11','22','24','28'],
+  ans:3, exp:'L = p × l = 7 × 4 = 28 cm<sup>2</sup>. (22 adalah kelilingnya: 2 × (7 + 4).)'},
+ {type:'mc', q:'Rumus luas persegi dengan panjang sisi s adalah …',
+  opts:['L = 4 × s','L = s × s','L = 2 × (s + s)','L = s + s'],
+  ans:1, exp:'Luas persegi = sisi dikali sisi (L = s × s). 4 × s adalah rumus keliling persegi.'},
+ {type:'mc', fig:gridFig(6,2), q:'Perhatikan bangun di atas! Luas bangun tersebut adalah … kotak satuan.',
+  opts:['8','12','14','16'],
+  ans:1, exp:'Ada 2 baris, setiap baris berisi 6 kotak: 2 × 6 = 12 kotak satuan. Cara cepatnya: L = p × l = 6 × 2 = 12.'},
+ {type:'mc', q:'Persegi panjang memiliki panjang 9 cm dan lebar 3 cm. Luasnya adalah … cm<sup>2</sup>.',
+  opts:['12','24','27','81'],
+  ans:2, exp:'L = 9 × 3 = 27 cm<sup>2</sup>. (24 adalah keliling: 2 × (9 + 3); 81 adalah 9 × 9 untuk persegi — bukan yang ini.)'}
+]},
+
+latihan3: { qs:[
+ {type:'mc', q:'Halaman rumah berbentuk persegi panjang dengan panjang 9 m dan lebar 4 m. Seluruh permukaannya akan ditanami rumput. Luas tanah yang ditanami rumput adalah … m<sup>2</sup>.',
+  opts:['13','26','36','46'],
+  ans:2, exp:'Rumput menutupi seluruh permukaan → mencari luas. L = 9 × 4 = 36 m<sup>2</sup>. (26 adalah kelilingnya: 2 × (9 + 4).)'},
+ {type:'mc', q:'Meja makan berbentuk persegi dengan sisi 3 m akan ditutup taplak sampai seluruh permukaannya tertutup. Luas taplak yang dibutuhkan adalah … m<sup>2</sup>.',
+  opts:['6','9','12','15'],
+  ans:1, exp:'Taplak menutupi seluruh permukaan meja → mencari luas. L = 3 × 3 = 9 m<sup>2</sup>.'},
+ {type:'mc', q:'Lantai kamar berbentuk persegi panjang dengan panjang 5 m dan lebar 4 m akan dipasangi ubin sampai seluruh lantai tertutup. Luas lantai kamar tersebut adalah … m<sup>2</sup>.',
+  opts:['9','10','18','20'],
+  ans:3, exp:'Ubin menutupi seluruh lantai → mencari luas. L = 5 × 4 = 20 m<sup>2</sup>. (18 adalah keliling: 2 × (5 + 4).)'},
+ {type:'tf', q:'Meja belajar berbentuk persegi panjang dengan panjang 2 m dan lebar 1 m akan ditutup kain sampai seluruh permukaannya tertutup. Kain yang dibutuhkan tepat 3 m<sup>2</sup>.',
+  ans:false, exp:'Salah. Kain menutupi permukaan meja → mencari luas. L = 2 × 1 = 2 m<sup>2</sup>, bukan 3 m<sup>2</sup>.'},
+ {type:'mc', q:'Kebun bunga berbentuk persegi panjang dengan panjang 12 m dan lebar 2 m. Luas kebun bunga tersebut adalah … m<sup>2</sup>.',
+  opts:['14','24','28','48'],
+  ans:1, exp:'L = 12 × 2 = 24 m<sup>2</sup>. (28 adalah kelilingnya: 2 × (12 + 2).)'}
+]},
+
+latihan4: { qs:[
+ {type:'mc', q:'Ibu akan membeli pita untuk <b>mengelilingi</b> kado ulang tahun. Yang harus dicari Ibu adalah … kado.',
+  opts:['luas','keliling','isi','gambar'],
+  ans:1, exp:'Pita mengelilingi tepi kado, jadi Ibu mencari KELILING kado. Ingat: tepi atau mengelilingi = keliling.'},
+ {type:'mc', q:'Rumput akan ditanam sampai <b>seluruh permukaan</b> halaman tertutup. Yang harus dihitung adalah … halaman.',
+  opts:['keliling','warna','luas','nama'],
+  ans:2, exp:'Rumput menutupi seluruh permukaan halaman, jadi yang dihitung adalah LUAS halaman.'},
+ {type:'mc', q:'Bapak memasang pagar di sekeliling tepi taman. Yang harus dihitung Bapak adalah … taman.',
+  opts:['luas','keliling','isi','bentuk'],
+  ans:1, exp:'Pagar berada di tepi taman dan mengelilinginya, jadi Bapak mencari KELILING taman.'},
+ {type:'mc', q:'Kakak menutupi seluruh permukaan meja belajarnya dengan alas kaca. Yang dihitung Kakak adalah … meja.',
+  opts:['keliling','panjang','tinggi','luas'],
+  ans:3, exp:'Kaca menutupi seluruh permukaan meja, jadi yang dihitung adalah LUAS meja.'},
+ {type:'tf', q:'Untuk mengetahui banyak ubin yang dibutuhkan sampai seluruh lantai ruangan tertutup, kita harus mencari luas ruangan tersebut.',
+  ans:true, exp:'Benar. Ubin menutupi seluruh permukaan lantai, sehingga banyak ubin yang dibutuhkan bergantung pada LUAS ruangan.'}
+]},
+
+kuis: { qs:[
+ {type:'mc', q:'Luas bangun datar adalah …',
+  opts:['panjang seluruh tepi bangun','banyaknya kotak satuan yang menutupi seluruh permukaan bangun','panjang sisi terpanjang bangun','garis tengah bangun'],
+  ans:1, exp:'Luas adalah banyaknya kotak satuan yang menutupi seluruh permukaan bangun. Panjang seluruh tepi itu keliling.'},
+ {type:'mc', fig:sqFig('6'), q:'Persegi di atas memiliki sisi 6 cm. Luasnya adalah … cm<sup>2</sup>.',
+  opts:['12','24','36','42'],
+  ans:2, exp:'L = s × s = 6 × 6 = 36 cm<sup>2</sup>. (24 adalah kelilingnya: 4 × 6.)'},
+ {type:'mc', fig:rectFig('8','5'), q:'Persegi panjang di atas memiliki panjang 8 cm dan lebar 5 cm. Luasnya adalah … cm<sup>2</sup>.',
+  opts:['13','26','40','45'],
+  ans:2, exp:'L = 8 × 5 = 40 cm<sup>2</sup>. (26 adalah keliling: 2 × (8 + 5).)'},
+ {type:'mc', fig:sqFig('9'), q:'Persegi di atas memiliki sisi 9 cm. Luasnya adalah … cm<sup>2</sup>.',
+  opts:['18','36','72','81'],
+  ans:3, exp:'L = 9 × 9 = 81 cm<sup>2</sup>. (36 adalah kelilingnya: 4 × 9.)'},
+ {type:'mc', q:'Persegi panjang memiliki panjang 12 cm dan lebar 3 cm. Luasnya adalah … cm<sup>2</sup>.',
+  opts:['15','30','36','45'],
+  ans:2, exp:'L = 12 × 3 = 36 cm<sup>2</sup>. (30 adalah keliling: 2 × (12 + 3).)'},
+ {type:'mc', fig:gridFig(4,3), q:'Bangun di atas ditutupi kotak-kotak satuan. Luasnya adalah … kotak satuan.',
+  opts:['7','12','14','24'],
+  ans:1, exp:'Ada 3 baris, setiap baris berisi 4 kotak: 3 × 4 = 12 kotak satuan.'},
+ {type:'mc', q:'Halaman berbentuk persegi panjang dengan panjang 10 m dan lebar 6 m ditanami rumput sampai seluruh permukaannya tertutup. Luas tanah yang ditanami rumput adalah … m<sup>2</sup>.',
+  opts:['16','32','60','66'],
+  ans:2, exp:'Rumput menutupi seluruh permukaan → mencari luas. L = 10 × 6 = 60 m<sup>2</sup>. (32 adalah keliling: 2 × (10 + 6).)'},
+ {type:'mc', q:'Meja berbentuk persegi panjang dengan panjang 3 m dan lebar 2 m akan ditutup taplak sampai seluruh permukaannya tertutup. Luas taplak yang dibutuhkan adalah … m<sup>2</sup>.',
+  opts:['5','6','10','12'],
+  ans:1, exp:'Taplak menutupi permukaan meja → mencari luas. L = 3 × 2 = 6 m<sup>2</sup>.'},
+ {type:'mc', fig:rectFig('7','4'), q:'Persegi panjang di atas memiliki panjang 7 cm dan lebar 4 cm. Luasnya adalah … cm<sup>2</sup>.',
+  opts:['11','22','28','49'],
+  ans:2, exp:'L = 7 × 4 = 28 cm<sup>2</sup>. (22 adalah keliling: 2 × (7 + 4); 49 adalah 7 × 7.)'},
+ {type:'mc', q:'Satuan yang tepat untuk menuliskan hasil pengukuran luas adalah …',
+  opts:['cm','cm<sup>2</sup>','m','kg'],
+  ans:1, exp:'Luas menggunakan satuan persegi seperti cm<sup>2</sup> atau m<sup>2</sup>. cm dan m adalah satuan panjang (untuk keliling).'},
+ {type:'tf', q:'Luas persegi dengan panjang sisi 5 cm adalah 25 cm<sup>2</sup>.',
+  ans:true, exp:'Benar. L = 5 × 5 = 25 cm<sup>2</sup>.'},
+ {type:'tf', q:'Luas persegi panjang dengan panjang 6 cm dan lebar 2 cm adalah 16 cm<sup>2</sup>.',
+  ans:false, exp:'Salah. L = 6 × 2 = 12 cm<sup>2</sup>. (16 adalah kelilingnya: 2 × (6 + 2).)'},
+ {type:'tf', q:'Satuan luas bisa ditulis dengan m<sup>2</sup> (meter persegi).',
+  ans:true, exp:'Benar. Satuan luas adalah satuan persegi, misalnya cm<sup>2</sup> untuk benda kecil dan m<sup>2</sup> untuk halaman atau lantai.'},
+ {type:'tf', q:'Karpet yang menutupi lantai kamar menggambarkan keliling lantai.',
+  ans:false, exp:'Salah. Karpet menutupi seluruh permukaan lantai, jadi itu menggambarkan LUAS lantai. Keliling justru seperti jalan mengelilingi tepi lantai.'},
+ {type:'tf', q:'Luas persegi panjang dapat dicari dengan menghitung banyak kotak satuan yang menutupinya.',
+  ans:true, exp:'Benar. Menghitung kotak satu per satu adalah cara dasar mencari luas. Rumus L = p × l adalah cara cepatnya!'},
+ {type:'cmc', q:'Pilih semua masalah yang diselesaikan dengan MENCARI LUAS!',
+  opts:['Menanam rumput di seluruh permukaan halaman','Memasang pagar di sekeliling taman','Menutupi meja dengan taplak','Memasang pita mengelilingi kado'],
+  ans:[0,2], exp:'Menanam rumput dan menutupi meja dengan taplak sama-sama MENUTUPI permukaan → luas. Memasang pagar dan pita sama-sama MENGELILINGI tepi → keliling.'},
+ {type:'cmc', q:'Pilih semua pasangan bangun dan luas yang BENAR!',
+  opts:['Persegi sisi 7 cm → luas 49 cm<sup>2</sup>','Persegi panjang 5 cm dan 4 cm → luas 20 cm<sup>2</sup>','Persegi sisi 3 cm → luas 6 cm<sup>2</sup>','Persegi panjang 6 cm dan 2 cm → luas 16 cm<sup>2</sup>'],
+  ans:[0,1], exp:'A benar: 7 × 7 = 49. B benar: 5 × 4 = 20. C salah: 3 × 3 = 9, bukan 6. D salah: 6 × 2 = 12 (16 itu kelilingnya).'},
+ {type:'cmc', q:'Pilih semua bangun yang luasnya 24 cm<sup>2</sup>!',
+  opts:['Persegi panjang dengan panjang 6 cm dan lebar 4 cm','Persegi panjang dengan panjang 8 cm dan lebar 3 cm','Persegi dengan sisi 5 cm','Persegi panjang dengan panjang 10 cm dan lebar 2 cm'],
+  ans:[0,1], exp:'A: 6 × 4 = 24 ✓. B: 8 × 3 = 24 ✓. C: 5 × 5 = 25 ✗. D: 10 × 2 = 20 ✗.'},
+ {type:'cmc', q:'Pilih semua pernyataan yang BENAR tentang keliling dan luas!',
+  opts:['Keliling mengukur panjang seluruh tepi bangun','Luas mengukur permukaan yang tertutup','Satuan keliling adalah cm<sup>2</sup>','Luas seperti karpet yang menutupi lantai'],
+  ans:[0,1,3], exp:'Keliling mengukur tepi dan satuannya cm/m (BUKAN cm<sup>2</sup>). Luas mengukur permukaan yang tertutup, seperti karpet di lantai.'},
+ {type:'cmc', q:'Pilih semua pernyataan yang BENAR tentang mencari luas!',
+  opts:['Luas persegi = s × s','Luas persegi panjang = p × l','Luas persegi panjang = 2 × (p + l)','Luas dapat dicari dengan menghitung kotak satuan yang menutupi bangun'],
+  ans:[0,1,3], exp:'2 × (p + l) adalah rumus KELILING persegi panjang, bukan luas. Luas persegi = s × s, luas persegi panjang = p × l, dan menghitung kotak satuan juga bisa!'}
+]}
+};
+
+/* =================== DATA GAME =================== */
+const GCOLORS = ['#FF9EC4','#B79CFF','#4ED9AC'];
+const GAME = [
+ {name:'🛋️ Ruang Tamu', fig:sqFig('4'), q:'Ruang tamu berbentuk persegi dengan sisi 4 m. Karpet berapa luas yang pas untuk menutupi seluruh lantainya?', opts:['8 m<sup>2</sup>','14 m<sup>2</sup>','16 m<sup>2</sup>'], ans:2, calc:'L = 4 × 4 = 16 m²'},
+ {name:'🛏️ Kamar Tidur', fig:rectFig('5','3'), q:'Kamar tidur berbentuk persegi panjang 5 m × 3 m. Pilih karpet yang luasnya tepat!', opts:['15 m<sup>2</sup>','16 m<sup>2</sup>','10 m<sup>2</sup>'], ans:0, calc:'L = 5 × 3 = 15 m²'},
+ {name:'🍳 Dapur', fig:sqFig('3'), q:'Dapur berbentuk persegi dengan sisi 3 m. Karpet berapa yang harus dibawa Larissa?', opts:['6 m<sup>2</sup>','9 m<sup>2</sup>','12 m<sup>2</sup>'], ans:1, calc:'L = 3 × 3 = 9 m²'},
+ {name:'🌺 Teras', fig:rectFig('6','2'), q:'Teras berbentuk persegi panjang 6 m × 2 m. Pilih luas karpet yang pas!', opts:['8 m<sup>2</sup>','12 m<sup>2</sup>','16 m<sup>2</sup>'], ans:1, calc:'L = 6 × 2 = 12 m²'},
+ {name:'🧸 Ruang Mainan', fig:rectFig('7','2'), q:'Ruang mainan berbentuk persegi panjang 7 m × 2 m. Karpet mana yang menutupi seluruh lantainya?', opts:['9 m<sup>2</sup>','14 m<sup>2</sup>','18 m<sup>2</sup>'], ans:1, calc:'L = 7 × 2 = 14 m²'}
+];
+let gI = 0, gScore = 0, gFirst = true;
+
+/* =================== MESIN KUIS =================== */
+const TYPE_LABEL = {mc:'Pilihan Ganda', tf:'Benar atau Salah', cmc:'Pilihan Ganda Kompleks'};
+const state = {};
+Object.keys(DATA).forEach(k=>state[k]={i:0,score:0,sel:[],checked:false});
+
+function renderQuiz(qid){
+  const st = state[qid], d = DATA[qid], q = d.qs[st.i], n = d.qs.length;
+  const box = $('#'+qid+'-box');
+  let h = '<div class="qtop">'
+    + '<span class="qchip">Soal '+(st.i+1)+' dari '+n+'</span>'
+    + '<span class="qchip score">⭐ '+st.score+'</span>'
+    + '<span class="qchip type">'+TYPE_LABEL[q.type]+'</span></div>';
+  h += '<div class="qcard">';
+  if(q.fig) h += '<div class="qfig-wrap">'+q.fig+'</div>';
+  h += '<p class="qtext">'+q.q+'</p>';
+  const isTF = q.type==='tf';
+  const opts = isTF ? ['Benar ✅','Salah ❌'] : q.opts;
+  if(q.type==='cmc') h += '<p class="hint">💡 Klik semua jawaban yang benar — bisa lebih dari satu!</p>';
+  if(isTF){
+    h += '<div class="tf-row">';
+    opts.forEach((o,i)=>{ h += '<button class="opt'+(st.sel[0]===i?' sel':'')+'" data-i="'+i+'">'+o+'</button>'; });
+    h += '</div>';
+  }else{
+    h += '<div class="opts">';
+    opts.forEach((o,i)=>{
+      const sel = q.type==='cmc' ? st.sel.includes(i) : st.sel[0]===i;
+      const cb = q.type==='cmc' ? '<span class="cb">'+(sel?'☑':'☐')+'</span>' : '<span class="ol">'+String.fromCharCode(65+i)+'.</span>';
+      h += '<button class="opt'+(sel?' sel':'')+'" data-i="'+i+'">'+cb+'<span>'+o+'</span></button>';
+    });
+    h += '</div>';
+  }
+  h += '<div class="qact">'
+    + '<button class="btn small" id="'+qid+'-check">Cek Jawaban 🔍</button>'
+    + '<button class="btn small alt hidden" id="'+qid+'-expbtn">💡 Pembahasan</button>'
+    + '<button class="btn small ghost hidden" id="'+qid+'-next">'+(st.i+1<n?'Soal Berikutnya ▶':'Lihat Hasil 🏁')+'</button>'
+    + '</div>';
+  h += '<div class="feedback hidden" id="'+qid+'-fb"></div>';
+  h += '<div class="exp-box hidden" id="'+qid+'-exp"><b>💡 Pembahasan:</b><br>'+q.exp+'</div>';
+  h += '</div>';
+  box.innerHTML = h;
+
+  box.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>pick(qid,+b.dataset.i)));
+  $('#'+qid+'-check').addEventListener('click',()=>checkQ(qid));
+  $('#'+qid+'-expbtn').addEventListener('click',()=>$('#'+qid+'-exp').classList.toggle('hidden'));
+  $('#'+qid+'-next').addEventListener('click',()=>{
+    if(st.i+1 < n){ st.i++; st.sel=[]; st.checked=false; renderQuiz(qid); }
+    else showResult(qid);
+  });
+}
+
+function pick(qid,i){
+  const st = state[qid], q = DATA[qid].qs[st.i];
+  if(st.checked) return;
+  if(q.type==='cmc'){ const k=st.sel.indexOf(i); if(k>=0) st.sel.splice(k,1); else st.sel.push(i); }
+  else st.sel = [i];
+  const box = $('#'+qid+'-box');
+  box.querySelectorAll('.opt').forEach(b=>{
+    const bi = +b.dataset.i;
+    const on = q.type==='cmc' ? st.sel.includes(bi) : st.sel[0]===bi;
+    b.classList.toggle('sel',on);
+    const cb = b.querySelector('.cb');
+    if(cb) cb.textContent = on?'☑':'☐';
+  });
+}
+
+function checkQ(qid){
+  const st = state[qid], q = DATA[qid].qs[st.i];
+  if(st.checked) return;
+  const fb = $('#'+qid+'-fb');
+  if(!st.sel.length){
+    fb.classList.remove('hidden','ok','no'); fb.classList.add('warn');
+    fb.textContent = 'Pilih jawaban dulu ya! 😊';
+    const c = $('#'+qid+'-check'); c.classList.add('shake-btn');
+    setTimeout(()=>c.classList.remove('shake-btn'),450);
+    return;
+  }
+  st.checked = true;
+  let ok;
+  if(q.type==='cmc'){ ok = [...st.sel].sort((a,b)=>a-b).join(',') === [...q.ans].sort((a,b)=>a-b).join(','); }
+  else{ const ansIdx = q.type==='tf' ? (q.ans?0:1) : q.ans; ok = st.sel[0]===ansIdx; }
+  if(ok) st.score++;
+
+  const box = $('#'+qid+'-box');
+  box.querySelectorAll('.opt').forEach(b=>{
+    b.disabled = true;
+    const bi = +b.dataset.i;
+    const correct = q.type==='cmc' ? q.ans.includes(bi) : (bi === (q.type==='tf'?(q.ans?0:1):q.ans));
+    if(correct) b.classList.add('correct');
+    else if(st.sel.includes(bi)) b.classList.add('wrong');
+  });
+
+  fb.classList.remove('hidden','warn');
+  if(ok){
+    fb.classList.add('ok');
+    fb.innerHTML = '🎉 <b>Hebat! Jawabanmu benar!</b>';
+    confetti(box.querySelector('.qcard'));
+    const chip = box.querySelector('.qtop .qchip.score'); if(chip) chip.textContent = '⭐ '+st.score;
+  }else{
+    fb.classList.add('no');
+    let corr;
+    if(q.type==='cmc') corr = q.ans.map(i=>String.fromCharCode(65+i)).join(' & ');
+    else if(q.type==='tf') corr = q.ans?'BENAR':'SALAH';
+    else corr = String.fromCharCode(65+q.ans);
+    fb.innerHTML = '🙈 <b>Belum tepat.</b> Jawaban yang benar: <b>'+corr+'</b>';
+    const chip = box.querySelector('.qtop .qchip.score'); if(chip) chip.textContent = '⭐ '+st.score;
+  }
+  $('#'+qid+'-expbtn').classList.remove('hidden');
+  $('#'+qid+'-next').classList.remove('hidden');
+  const ck = $('#'+qid+'-check'); ck.disabled = true; ck.style.opacity = .5;
+}
+
+function showResult(qid){
+  const st = state[qid], d = DATA[qid], n = d.qs.length;
+  const pct = st.score/n;
+  let emo, msg;
+  if(pct===1){ emo='🏆'; msg='Sempurna! Kamu juara luas sejati!'; }
+  else if(pct>=0.8){ emo='🌟'; msg='Hebat sekali! Kamu sudah memahami materi ini dengan baik!'; }
+  else if(pct>=0.6){ emo='💪'; msg='Bagus! Sedikit lagi latihan, kamu pasti makin jago!'; }
+  else { emo='🌱'; msg='Tidak apa-apa! Baca lagi materinya, lalu coba lagi ya. Kamu pasti bisa!'; }
+  let stars = '';
+  if(n<=10){ for(let i=0;i<n;i++) stars += (i<st.score?'⭐':'☆'); }
+  const box = $('#'+qid+'-box');
+  box.innerHTML = '<div class="qcard"><div class="result">'
+    + '<span class="remoji">'+emo+'</span>'
+    + '<h3>Skor: '+st.score+' / '+n+'</h3>'
+    + (stars?'<div class="stars">'+stars+'</div>':'')
+    + '<p>'+msg+'</p>'
+    + '<button class="btn" onclick="resetQuiz(\''+qid+'\')">🔄 Ulangi</button> '
+    + (cur<total-1?'<button class="btn alt" onclick="nav(1)">Lanjutkan ▶</button>':'')
+    + '</div></div>';
+  if(pct>=0.6) confetti(box.querySelector('.qcard'));
+}
+function resetQuiz(qid){ state[qid] = {i:0,score:0,sel:[],checked:false}; renderQuiz(qid); }
+
+/* =================== MESIN GAME =================== */
+function renderGame(){
+  const g = GAME[gI];
+  const card = $('#gameCard');
+  let h = '<div class="qtop"><span class="qchip">🛋️ Ruangan '+(gI+1)+' dari '+GAME.length+'</span><span class="qchip score">⭐ '+gScore+'</span></div>';
+  h += '<div class="gift-name">'+g.name+'</div>';
+  h += '<div class="qfig-wrap big">'+g.fig+'</div>';
+  h += '<p class="qtext">'+g.q+'</p>';
+  h += '<div>' + g.opts.map((o,i)=>'<button class="carpet" onclick="pickCarpet('+i+')"><span class="swatch" style="background:'+GCOLORS[i]+'"></span>🧶 '+o+'</button>').join('') + '</div>';
+  h += '<div class="gmsg" id="gmsg"></div>';
+  h += '<button class="btn hidden" id="gnext" onclick="gameNext()">'+(gI+1<GAME.length?'Ruangan Berikutnya 🏠':'Selesai & Lihat Bintangku 🌟')+'</button>';
+  card.innerHTML = h;
+}
+function pickCarpet(i){
+  const g = GAME[gI];
+  const btns = $$('#gameCard .carpet');
+  if(i === g.ans){
+    btns.forEach((b,k)=>{ b.disabled = true; if(k===i) b.classList.add('correct'); else b.style.opacity = .4; });
+    if(gFirst) gScore++;
+    const msg = $('#gmsg'); msg.className = 'gmsg good';
+    msg.textContent = 'Yeay! Karpetnya pas, seluruh lantai tertutup rata! Larissa senang 💖 (' + g.calc + ')';
+    const chip = $('#gameCard .qchip.score'); if(chip) chip.textContent = '⭐ '+gScore;
+    confetti($('#gameCard'));
+    $('#gnext').classList.remove('hidden');
+  }else{
+    btns[i].classList.add('wrong'); btns[i].disabled = true;
+    gFirst = false;
+    const msg = $('#gmsg'); msg.className = 'gmsg bad';
+    msg.textContent = 'Ups, karpetnya belum pas. Hitung lagi luasnya lalu coba yang lain ya 💕';
+  }
+}
+function gameNext(){ gI++; gFirst = true; if(gI < GAME.length) renderGame(); else gameFinish(); }
+function gameFinish(){
+  const card = $('#gameCard');
+  let stars = '';
+  for(let i=0;i<GAME.length;i++) stars += (i<gScore?'⭐':'☆');
+  const msg = gScore===5 ? 'Luar biasa! Larissa mengangkatmu sebagai Penata Karpet Utama! 💖👑'
+    : gScore>=3 ? 'Hebat! Larissa sangat terbantu berkatmu! 🌟'
+    : 'Terima kasih sudah membantu Larissa! Ayo main lagi biar makin jago! 🌱';
+  card.innerHTML = '<div class="result"><span class="remoji">🧶</span>'
+    + '<h3>Permainan Selesai!</h3>'
+    + '<div class="stars">'+stars+'</div>'
+    + '<p>Bintang dari jawaban benar percobaan pertama: <b>'+gScore+' dari 5</b><br>'+msg+'</p>'
+    + '<button class="btn" onclick="gameReset()">🔄 Main Lagi</button> '
+    + '<button class="btn alt" onclick="nav(1)">Lanjut ke Kuis 🚀</button></div>';
+  if(gScore>=3) confetti(card);
+}
+function gameReset(){ gI=0; gScore=0; gFirst=true; renderGame(); }
+
+/* =================== REFLEKSI =================== */
+function mood(m, el){
+  $$('.mood').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  const M = {
+    senang:'Wah, senangnya! Ayo pertahankan semangat belajarmu! 💖',
+    biasa:'Tidak apa-apa! Pelan-pelan saja, yang penting terus belajar. 🌱',
+    bingung:'Tenang! Coba buka lagi slide materinya, lalu tanyakan pada gurumu. Kamu pasti bisa! 🤗',
+    capek:'Terima kasih sudah berjuang! Tarik napas, minum air, lalu kita coba lagi pelan-pelan. 🍵'
+  };
+  $('#moodOut').textContent = M[m];
+  if(m==='senang') confetti(el.closest('.m-card'));
+}
+function chkUpdate(){
+  const all = $$('.chk'); let on = 0;
+  all.forEach(c=>{
+    c.querySelector('.star').textContent = c.classList.contains('on') ? '⭐' : '☆';
+    if(c.classList.contains('on')) on++;
+  });
+  const out = $('#chkOut');
+  if(on===4) out.textContent = '✨ Luar biasa! Kamu sudah menguasai semuanya!';
+  else if(on>=2) out.textContent = '💪 Bagus! '+on+' dari 4 sudah kamu kuasai, lanjutkan!';
+  else if(on===1) out.textContent = '🌱 Awal yang baik! Ayo pelajari bagian lainnya juga.';
+  else out.textContent = '';
+}
+
+/* =================== INISIALISASI =================== */
+(function init(){
+  const mp = $('#menuPanel');
+  SLIDE_NAMES.forEach((n,i)=>{
+    const b = document.createElement('button');
+    b.className = 'mi';
+    b.innerHTML = '<span class="n">'+(i+1)+'</span>'+n;
+    b.addEventListener('click',()=>goTo(i));
+    mp.appendChild(b);
+  });
+  Object.keys(DATA).forEach(k=>renderQuiz(k));
+  renderGame();
+  decideInit();
+  dynRender();
+  goTo(0);
+})();
+</script>
+</body>
+</html>
