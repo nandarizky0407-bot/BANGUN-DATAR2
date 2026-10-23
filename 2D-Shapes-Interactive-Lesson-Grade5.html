@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exploring 2D Shapes • Grade 5 Cambridge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Nunito','Segoe UI',system-ui,sans-serif;color:#2E2A47;background:#FFF7EA;overflow:hidden;font-size:16px}
+h1,h2,h3{font-family:'Fredoka','Nunito','Comic Sans MS',sans-serif;font-weight:600}
+button{font-family:inherit}
+.hidden{display:none!important}
+.tiny{font-size:.8rem;color:#7A7590;font-weight:700}
+.lead{font-weight:700;color:#5B5570;margin:6px 0 14px}
+h2{font-size:2rem;margin-bottom:6px}
+/* ---------- top / nav ---------- */
+#pbar{position:fixed;top:0;left:0;height:6px;width:0;background:linear-gradient(90deg,#FFB347,#FF5C8A,#7C6CFF);z-index:60;transition:width .35s;border-radius:0 4px 4px 0}
+#brand{position:fixed;top:12px;left:14px;z-index:55;background:#fff;border-radius:999px;padding:7px 14px;font-weight:800;box-shadow:0 4px 14px rgba(80,60,140,.15);font-size:.82rem}
+#topbar{position:fixed;top:12px;right:14px;z-index:55;display:flex;gap:8px}
+.tbtn{width:42px;height:42px;border-radius:50%;border:0;background:#fff;box-shadow:0 4px 14px rgba(80,60,140,.18);font-size:1.05rem;cursor:pointer;transition:.15s}
+.tbtn:hover{transform:translateY(-2px)}
+#langBtn{width:auto;border-radius:999px;padding:0 14px;font-weight:800;font-size:.85rem}
+#nav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:55;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.94);padding:8px 12px;border-radius:999px;box-shadow:0 8px 24px rgba(80,60,140,.22)}
+.nbtn{width:44px;height:44px;border-radius:50%;border:0;background:linear-gradient(135deg,#FF8A5C,#FF5C8A);color:#fff;font-size:1.1rem;cursor:pointer;transition:.15s;font-weight:900}
+.nbtn:hover{transform:scale(1.08)}
+#slideNum{font-weight:900;min-width:64px;text-align:center;font-size:.95rem}
+/* ---------- slides ---------- */
+.slide{position:fixed;inset:0;overflow-y:auto;display:none;padding:74px 18px 100px}
+.slide.active{display:block;animation:slideIn .5s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+.inner{max-width:1120px;margin:0 auto}
+.bg-cover{background:linear-gradient(135deg,#FFE29F 0%,#FFA99F 45%,#FF719A 100%)}
+.bg-obj{background:linear-gradient(135deg,#FFF3D6,#FFE0C7)}
+.bg-explore{background:linear-gradient(135deg,#E0F4FF,#F1E8FF)}
+.bg-shape{background:#FFFDF6;background:linear-gradient(140deg,color-mix(in srgb,var(--sc) 16%,#fff),#FFFDF6 70%)}
+.bg-riddle{background:linear-gradient(135deg,#DFF7EC,#CFF3FF)}
+.bg-quiz{background:linear-gradient(135deg,#FFF0F3,#F3E8FF)}
+.bg-memory{background:linear-gradient(135deg,#E4EDFF,#E0FFF4)}
+.bg-concl{background:linear-gradient(135deg,#FFF6D9,#FFEBF1)}
+.bg-refl{background:linear-gradient(135deg,#EFE9FF,#FFE9F3)}
+.bg-thanks{background:linear-gradient(135deg,#FFD9C2,#FFC2D9,#D9C2FF)}
+/* ---------- buttons / cards ---------- */
+.btn{border:0;border-radius:999px;padding:12px 22px;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.12);transition:.15s;display:inline-flex;gap:8px;align-items:center;justify-content:center;color:#2E2A47}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.btn-p{background:linear-gradient(135deg,#FF8A5C,#FF5C8A);color:#fff}
+.btn-s{background:#fff;border:2px solid #E8E0F5}
+.btn-t{background:linear-gradient(135deg,#5CC9FF,#7C6CFF);color:#fff}
+.btn.sm{padding:8px 14px;font-size:.82rem;box-shadow:0 4px 0 rgba(0,0,0,.1)}
+.big{font-size:1.15rem;padding:14px 28px}
+.btn-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.card{background:#fff;border-radius:20px;padding:16px 18px;box-shadow:0 8px 22px rgba(80,60,140,.1);margin-top:14px}
+.card h3{font-size:1.05rem;margin-bottom:4px}
+/* ---------- cover ---------- */
+.cover{text-align:center;position:relative}
+.floats span{position:absolute;font-size:2.6rem;opacity:.75;animation:floaty 5s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-18px) rotate(5deg)}}
+.cover-card{background:rgba(255,255,255,.94);border-radius:32px;padding:38px 26px;max-width:680px;margin:4vh auto 0;box-shadow:0 20px 50px rgba(150,60,90,.3);position:relative}
+.cover-emoji{font-size:2.6rem;letter-spacing:6px}
+.cover-card h1{font-size:2.5rem;line-height:1.15;margin:10px 0;color:#2E2A47}
+.cover-card h1 b{color:#FF5C8A}
+.sub{font-size:1.05rem;font-weight:700;color:#6B6584}
+.grade-chip{display:inline-block;background:#FFF3D6;border:2px solid #FFD66B;color:#8A6100;border-radius:999px;padding:8px 18px;font-weight:800;margin:14px 0 18px}
+.hint-row{margin-top:14px;font-size:.82rem;color:#8A84A0;font-weight:700}
+/* ---------- objectives ---------- */
+.obj-list{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:920px}
+.obj-list li{background:#fff;border-radius:18px;padding:14px 16px;display:flex;gap:12px;align-items:center;font-weight:800;box-shadow:0 6px 16px rgba(120,80,60,.12);font-size:.97rem}
+.obj-ico{font-size:1.6rem}
+.cam-chip{display:inline-block;margin-top:16px;background:#E8F4FF;border:2px solid #7CC4FF;color:#0B5394;border-radius:999px;padding:8px 16px;font-weight:800;font-size:.85rem}
+/* ---------- explore grid ---------- */
+.exp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.exp-card{background:#fff;border:3px solid var(--sc);border-radius:22px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:.18s}
+.exp-card:hover{transform:translateY(-6px) rotate(-1deg);box-shadow:0 14px 28px rgba(80,60,140,.2)}
+.exp-card svg{width:74px;height:74px}
+.exp-card b{font-size:1.02rem;color:#2E2A47}
+.exp-sub{font-size:.72rem;color:#7A7590;font-weight:800}
+/* ---------- shape slides ---------- */
+.shp-head{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.shp-emoji{font-size:3rem;filter:drop-shadow(0 6px 8px rgba(0,0,0,.15));animation:floaty 4s ease-in-out infinite}
+.tagline{font-weight:800;color:#7A7590}
+.shape-layout{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:10px}
+.stage-wrap{max-width:540px;margin:0 auto;width:100%}
+.stage{position:relative;aspect-ratio:1/1;background:radial-gradient(circle at 30% 20%,#fff,#FBF8FF);border-radius:26px;box-shadow:0 10px 26px rgba(80,60,140,.14);overflow:hidden}
+.stage .shape-svg{width:100%;height:100%;display:block;transition:transform .9s cubic-bezier(.5,0,.3,1.2)}
+.stage.folding .shape-svg{opacity:.18}
+.stage.wiggle .shape-svg{animation:wig .45s ease-in-out 2}
+@keyframes wig{0%,100%{transform:translateX(0) rotate(0)}25%{transform:translateX(-10px) rotate(-2deg)}75%{transform:translateX(10px) rotate(2deg)}}
+.stage-msg{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:#2E2A47;color:#fff;border-radius:999px;padding:9px 18px;font-weight:800;font-size:.88rem;white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis;z-index:5;animation:pop .3s}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;justify-content:center}
+.count-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;justify-content:center;align-items:center}
+.chip-btn{background:#fff;border:2px dashed var(--sc,#999);border-radius:999px;padding:8px 12px;font-weight:800;cursor:pointer;font-size:.8rem;color:#4a4560;transition:.15s}
+.chip-btn:hover{transform:translateY(-2px)}
+.count-chip{background:#FFF3C9;border:2px solid #F5C518;border-radius:999px;padding:8px 12px;font-weight:800;font-size:.8rem;color:#7A5B00}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:#fff;border:3px solid var(--sc);border-radius:18px;padding:10px 6px;text-align:center;cursor:pointer;transition:.15s}
+.stat:hover{transform:translateY(-3px)}
+.stat b{display:block;font-family:'Fredoka',sans-serif;font-size:2rem;color:var(--sc)}
+.stat span{font-size:.78rem;font-weight:800;color:#6B6584}
+.props{list-style:none;display:grid;gap:8px;margin-top:8px}
+.props li{background:#F8F6FF;border-radius:12px;padding:9px 12px 9px 38px;position:relative;font-weight:600;font-size:.93rem}
+.props li:before{content:"✔";position:absolute;left:12px;top:8px;color:var(--sc);font-weight:900}
+.sym-facts{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.fact{background:#E9FBF1;border:2px solid #34D399;border-radius:12px;padding:8px 12px;font-weight:800;font-size:.88rem;color:#065F46}
+.ex-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px}
+.ex{background:#fff;border:2px solid #EFEAF8;border-radius:16px;padding:10px 6px;text-align:center;transition:.15s;cursor:pointer}
+.ex:hover{transform:translateY(-4px) scale(1.03);border-color:var(--sc)}
+.ex-emo{font-size:1.9rem;display:block}
+.ex-lab{font-size:.73rem;font-weight:800;color:#5B5570;display:block;margin-top:4px}
+.tip-row{display:flex;gap:10px;align-items:flex-start;margin-top:14px}
+.tip-row.center{justify-content:center;align-items:center}
+.mascot{font-size:2.2rem;animation:floaty 3s ease-in-out infinite}
+.bubble{background:#fff;border-radius:16px;padding:10px 14px;font-weight:600;font-size:.92rem;box-shadow:0 6px 16px rgba(80,60,140,.12);position:relative;max-width:660px}
+.bubble:before{content:"";position:absolute;left:-8px;top:14px;border:8px solid transparent;border-right-color:#fff}
+/* ---------- svg internals ---------- */
+.g-diag,.g-sym{opacity:0;transition:.4s}
+.show-diag .g-diag{opacity:1}
+.show-sym .g-sym{opacity:1}
+.g-radius{opacity:0;transition:.4s}
+.show-radius .g-radius{opacity:1}
+.g-verts .vwrap{cursor:pointer}
+.g-verts circle{transition:.2s}
+.g-verts .vwrap.counted circle{fill:#FFD54F;stroke:#F59E0B}
+.cnt{opacity:0;font:800 15px 'Fredoka',sans-serif;fill:#7C3AED;transition:.2s}
+.cnt.s{fill:#E11D48}
+.counted .cnt{opacity:1}
+.g-sidehits line{stroke:transparent;stroke-width:18;cursor:pointer;transition:stroke .2s;pointer-events:stroke}
+.g-sidehits .swrap.counted line{stroke:#F43F5E;stroke-opacity:.45;stroke-width:12}
+.circ circle{fill:transparent;stroke:transparent;stroke-width:20;cursor:pointer;pointer-events:stroke}
+.circ.counted circle{stroke:#F43F5E;stroke-opacity:.35}
+.cvert{cursor:pointer}
+.shape-svg.mini *{pointer-events:none}
+/* ---------- fold layer ---------- */
+.fold-layer{position:absolute;inset:0;pointer-events:none;perspective:900px;opacity:0;transition:opacity .25s;z-index:3}
+.fold-layer.folded{opacity:1}
+.fold-layer .half{position:absolute;inset:0;width:100%;height:100%}
+.hl{clip-path:inset(-2% 50% -2% -2%)}
+.hr{clip-path:inset(-2% -2% -2% 50%);transform-origin:0 50%;transition:transform 1.5s cubic-bezier(.55,0,.45,1)}
+.fold-layer.folded .hr{transform:rotateY(-178deg)}
+.fold-layer:before{content:"";position:absolute;left:calc(50% - 3px);top:3%;bottom:3%;width:5px;border-radius:5px;background:repeating-linear-gradient(180deg,#F59E0B 0 14px,rgba(0,0,0,0) 14px 26px);opacity:0;transition:.25s;z-index:4}
+.fold-layer.folded:before{opacity:1}
+/* ---------- games shared ---------- */
+.game-head{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.chip{background:#fff;border-radius:999px;padding:8px 14px;font-weight:800;box-shadow:0 3px 10px rgba(80,60,140,.12);font-size:.85rem}
+.riddle-card{padding:22px;margin:8px 0}
+.riddle-card p{font-size:1.3rem;font-weight:800;font-family:'Fredoka',sans-serif;line-height:1.45}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:10px 0}
+.opt{display:flex;align-items:center;gap:12px;background:#fff;border:3px solid #E8E2F7;border-radius:18px;padding:14px 16px;font-size:1.05rem;font-weight:800;cursor:pointer;transition:.15s;color:#2E2A47;text-align:left}
+.opt:hover:not(:disabled){transform:translateY(-3px);border-color:#B9A7F5}
+.opt .opt-emo{font-size:1.8rem}
+.opt.ok{background:#E7F9EE;border-color:#2ECC71}
+.opt.no{background:#FDECEC;border-color:#F26D6D;animation:shake .4s}
+.opt.dim{opacity:.55}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.fb{min-height:52px;margin:6px 0}
+.fb-box{border-radius:16px;padding:12px 16px;font-weight:700;animation:pop .3s}
+.fb-box.good{background:#E7F9EE;border:2px solid #2ECC71}
+.fb-box.bad{background:#FDECEC;border:2px solid #F26D6D}
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.game-nav{display:flex;gap:10px;justify-content:flex-end;margin-top:4px}
+.results{text-align:center;background:#fff;border-radius:24px;padding:28px;box-shadow:0 10px 30px rgba(80,60,140,.15);animation:pop .4s}
+.big-score{font-family:'Fredoka',sans-serif;font-size:3.4rem;color:#FF5C8A;line-height:1.1}
+.stars{font-size:1.9rem;letter-spacing:4px;margin:6px 0}
+/* ---------- memory ---------- */
+.mem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:600px;margin:14px auto}
+.mem-card{aspect-ratio:3/3.4;background:none;border:0;padding:0;cursor:pointer;perspective:700px}
+.mem-in{display:block;position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.mem-card.flip .mem-in{transform:rotateY(180deg)}
+.mf{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}
+.mb{background:linear-gradient(135deg,#7C6CFF,#5CC9FF);color:#fff;font-size:1.7rem;font-family:'Fredoka',sans-serif;box-shadow:0 6px 14px rgba(80,60,140,.25)}
+.mf-front{background:#fff;border:3px solid var(--sc,#ccc);transform:rotateY(180deg);padding:6px}
+.mf-front svg{width:70%;height:62%}
+.mn-emo{font-size:2.2rem}
+.mf-front b{font-size:.95rem;color:var(--sc);text-align:center;line-height:1.2}
+.mem-card.match .mf-front{outline:3px solid #2ECC71;background:#F2FDF6}
+.mem-card.match{animation:pop .35s}
+/* ---------- conclusion ---------- */
+.tbl-wrap{overflow-x:auto;margin-top:10px}
+table.recap{border-collapse:collapse;width:100%;min-width:640px}
+.recap th{background:#7C6CFF;color:#fff;padding:10px 8px;font-size:.85rem}
+.recap td{border-bottom:2px solid #F1EDFA;padding:8px;font-weight:700;font-size:.9rem;text-align:center}
+.recap tbody tr{cursor:pointer;transition:.15s}
+.recap tbody tr:hover{background:#FFF3D6}
+.rc-shape{display:flex;align-items:center;gap:8px;text-align:left}
+.mini-svg{width:34px;height:34px;display:inline-block;flex:none}
+.mini-svg svg{width:100%;height:100%}
+.vocab{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.vcard{background:#F6F3FF;border:2px solid #E2D9FF;border-radius:16px;padding:12px;cursor:pointer;text-align:left;font-weight:800;color:#4C3FA3;transition:.15s;font-size:.9rem}
+.vcard:hover{border-color:#7C6CFF}
+.vcard .vdef{display:block;max-height:0;overflow:hidden;transition:max-height .35s,margin .35s;font-weight:600;color:#55506E;font-size:.82rem}
+.vcard.open .vdef{max-height:140px;margin-top:6px}
+/* ---------- reflection ---------- */
+.mood-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+.mood{background:#fff;border:3px solid #EFE7FF;border-radius:18px;padding:12px 18px;cursor:pointer;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:800;color:#4A4460}
+.mood span{font-size:2rem}
+.mood:hover{transform:translateY(-4px)}
+.mood.sel{border-color:#FF5C8A;background:#FFF0F5}
+.mood-msg{margin-top:10px;font-weight:700;color:#C2255C;animation:pop .3s}
+.checks{display:grid;gap:8px;margin-top:10px}
+.check{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #EFE7FF;border-radius:14px;padding:10px 12px;cursor:pointer;font-weight:700;color:#3F3A55;text-align:left;font-size:.95rem}
+.check.on{border-color:#2ECC71;background:#F2FDF6}
+.cb{font-size:1.1rem}
+.pbar-mini{height:12px;background:#EFEAF8;border-radius:99px;overflow:hidden;margin-top:10px}
+.pbar-mini div{height:100%;background:linear-gradient(90deg,#FFB347,#FF5C8A);transition:width .4s;border-radius:99px}
+textarea{width:100%;border:2px solid #E2D9FF;border-radius:14px;padding:12px;font-family:inherit;font-weight:600;font-size:.95rem;margin-top:10px;resize:vertical}
+.scores{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.score-chip{border:2px solid #FFD54F;background:#FFFCF0;border-radius:14px;padding:10px 14px;font-weight:800;font-size:.9rem}
+/* ---------- thanks ---------- */
+.thanks{text-align:center}
+.thanks-card{background:rgba(255,255,255,.92);border-radius:28px;padding:36px 24px;box-shadow:0 16px 40px rgba(120,60,120,.25);max-width:640px;margin:0 auto}
+.credit{margin-top:16px;font-size:.8rem;color:#8A84A0;font-weight:700}
+/* ---------- menu overlay ---------- */
+#menuOv{position:fixed;inset:0;background:rgba(40,28,70,.6);backdrop-filter:blur(4px);z-index:80;display:flex;align-items:center;justify-content:center;padding:20px}
+#menuOv.hidden{display:none}
+.menu-panel{background:#FFFDF7;border-radius:24px;padding:20px;max-width:780px;width:100%;max-height:84vh;overflow:auto}
+.menu-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+#menuGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.m-item{display:flex;align-items:center;gap:8px;background:#F6F3FF;border:2px solid #E9E1FF;border-radius:14px;padding:10px 12px;font-weight:800;color:#3F3A55;cursor:pointer;font-size:.85rem;text-align:left}
+.m-item:hover{border-color:#7C6CFF;background:#EFEBFF}
+.m-item .mi{font-size:1.2rem}
+/* ---------- confetti ---------- */
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:100;overflow:hidden}
+.cf{position:absolute;top:-20px;border-radius:3px;animation:cfall linear forwards}
+@keyframes cfall{to{transform:translateY(108vh) rotate(720deg)}}
+/* ---------- responsive ---------- */
+@media(max-width:920px){.shape-layout{grid-template-columns:1fr}.exp-grid{grid-template-columns:repeat(3,1fr)}.obj-list{grid-template-columns:1fr}.vocab{grid-template-columns:repeat(2,1fr)}#menuGrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.exp-grid{grid-template-columns:repeat(2,1fr)}.opts{grid-template-columns:1fr}.ex-row{grid-template-columns:repeat(2,1fr)}.mem-grid{gap:8px}.cover-card h1{font-size:1.8rem}h2{font-size:1.5rem}.stat b{font-size:1.5rem}.riddle-card p{font-size:1.12rem}.vocab{grid-template-columns:1fr}#brand{display:none}}
+</style>
+</head>
+<body>
+<div id="pbar"></div>
+<div id="brand">🔺 Grade 5 • 2D Shapes</div>
+<div id="topbar">
+ <button id="langBtn" class="tbtn" onclick="setLang(LANG==='en'?'id':'en')">🌐 English</button>
+ <button id="sndBtn" class="tbtn" onclick="toggleSound()" title="Sound">🔊</button>
+ <button class="tbtn" onclick="toggleFS()" title="Fullscreen">⛶</button>
+ <button class="tbtn" onclick="toggleMenu()" title="Menu">☰</button>
+</div>
+
+<!-- ============ 1. COVER ============ -->
+<section class="slide bg-cover" data-icon="🏠" data-title-en="Cover" data-title-id="Sampul">
+ <div class="inner cover">
+  <div class="floats">
+   <span style="left:6%;top:12%;animation-delay:0s">🔺</span>
+   <span style="left:14%;top:68%;animation-delay:.7s">🔵</span>
+   <span style="left:85%;top:16%;animation-delay:1.2s">⬛</span>
+   <span style="left:78%;top:70%;animation-delay:.4s">🔶</span>
+   <span style="left:45%;top:8%;animation-delay:1.6s">🪁</span>
+   <span style="left:60%;top:82%;animation-delay:.9s">⏢</span>
+   <span style="left:26%;top:22%;animation-delay:1.9s">▭</span>
+   <span style="left:72%;top:40%;animation-delay:2.2s">▱</span>
+  </div>
+  <div class="cover-card">
+   <div class="cover-emoji">🔺 ⬛ 🔶 ⭕</div>
+   <h1 data-en="The Wonderful World of <b>2D Shapes</b>!" data-id="Dunia Ajaib <b>Bangun Datar</b>!"></h1>
+   <p class="sub" data-en="Properties • Symmetry • Diagonals • Fun Games" data-id="Sifat-Sifat • Simetri • Diagonal • Permainan Seru"></p>
+   <div class="grade-chip" data-en="🎒 Grade 5 Mathematics • Cambridge Primary" data-id="🎒 Matematika Kelas 5 • Cambridge Primary"></div>
+   <div><button class="btn btn-p big" onclick="next()">🚀 <span data-en="Start Learning!" data-id="Mulai Belajar!"></span></button></div>
+   <p class="hint-row" data-en="💡 Tip: tap 🌐 to switch language • use ☰ to jump to any slide • use ◀ ▶ or arrow keys" data-id="💡 Tips: ketuk 🌐 untuk ganti bahasa • gunakan ☰ untuk melompat ke slide mana pun • gunakan ◀ ▶ atau tombol panah"></p>
+  </div>
+ </div>
+</section>
+
+<!-- ============ 2. LEARNING OBJECTIVES ============ -->
+<section class="slide bg-obj" data-icon="🎯" data-title-en="Learning Objectives" data-title-id="Tujuan Pembelajaran">
+ <div class="inner">
+  <h2 data-en="🎯 Learning Objectives" data-id="🎯 Tujuan Pembelajaran"></h2>
+  <p class="lead" data-en="By the end of today's shape adventure, you will be able to:" data-id="Setelah petualangan bangun datar hari ini, kamu akan bisa:"></p>
+  <ul class="obj-list">
+   <li><span class="obj-ico">🔺</span><span data-en="Identify and name 8 common 2D shapes" data-id="Mengenal dan menyebutkan 8 bangun datar"></span></li>
+   <li><span class="obj-ico">🔢</span><span data-en="Count sides, vertices and diagonals of each shape" data-id="Menghitung sisi, titik sudut, dan diagonal setiap bangun"></span></li>
+   <li><span class="obj-ico">📋</span><span data-en="Describe the properties of each shape" data-id="Menjelaskan ciri-ciri setiap bangun datar"></span></li>
+   <li><span class="obj-ico">✂️</span><span data-en="Find and draw lines of symmetry by folding" data-id="Menemukan dan menggambar sumbu simetri dengan melipat"></span></li>
+   <li><span class="obj-ico">🌀</span><span data-en="Explore rotational symmetry" data-id="Menjelajahi simetri putar"></span></li>
+   <li><span class="obj-ico">🏠</span><span data-en="Spot 2D shapes all around us in daily life" data-id="Menemukan bangun datar di kehidupan sehari-hari"></span></li>
+   <li><span class="obj-ico">🎮</span><span data-en="Show what you know through 3 fun games!" data-id="Menunjukkan pemahaman melalui 3 permainan seru!"></span></li>
+   <li><span class="obj-ico">🗣️</span><span data-en="Use maths words: vertex, diagonal, parallel, symmetry" data-id="Menggunakan kata matematika: titik sudut, diagonal, sejajar, simetri"></span></li>
+  </ul>
+  <div class="tip-row"><div class="mascot">🦉</div><div class="bubble" data-en="Hello! I am <b>Professor Poly</b> 🦉 — I will fly with you today. Click, fold and play with every shape!" data-id="Halo! Aku <b>Profesor Poli</b> 🦉 — aku akan menemanimu hari ini. Klik, lipat, dan mainkan setiap bangun!"></div></div>
+  <div class="cam-chip" data-en="📘 Cambridge Primary Mathematics Stage 5: 2D Shapes &amp; Symmetry" data-id="📘 Cambridge Primary Mathematics Stage 5: Bangun Datar &amp; Simetri"></div>
+ </div>
+</section>
+
+<!-- ============ 3. SHAPE EXPLORER MENU ============ -->
+<section class="slide bg-explore" data-icon="🗺️" data-title-en="Shape Explorer Menu" data-title-id="Menu Penjelajah Bangun">
+ <div class="inner">
+  <h2 data-en="🗺️ Choose a Shape to Explore!" data-id="🗺️ Pilih Bangun Datar untuk Dijelajahi!"></h2>
+  <p class="lead" data-en="Tap any shape card. On every page you can show diagonals, fold the shape, spin it, and count its parts!" data-id="Ketuk kartu bangun mana pun. Di setiap halaman kamu bisa menampilkan diagonal, melipat bangun, memutarnya, dan menghitung bagiannya!"></p>
+  <div id="exploreGrid" class="exp-grid"></div>
+ </div>
+</section>
+
+<!-- ============ 4-11. SHAPE SLIDES (generated by JS) ============ -->
+<div id="shapeHost"></div>
+
+<!-- ============ 12. GUESS WHO AM I ============ -->
+<section class="slide bg-riddle" data-icon="🕵️" data-title-en="Game: Guess Who Am I?" data-title-id="Permainan: Siapakah Aku?">
+ <div class="inner">
+  <h2 data-en="🕵️ Guess Who Am I?" data-id="🕵️ Tebak: Siapakah Aku?"></h2>
+  <p class="lead" data-en="Read each riddle, think like a shape detective, and pick the answer. There are 30 riddles waiting for you!" data-id="Baca setiap tebakan, berpikirlah seperti detektif bangun datar, lalu pilih jawabannya. Ada 30 tebakan menantimu!"></p>
+  <div id="riddleGame"></div>
+ </div>
+</section>
+
+<!-- ============ 13. QUIZ ============ -->
+<section class="slide bg-quiz" data-icon="📝" data-title-en="Shape Quiz" data-title-id="Kuis Bangun Datar">
+ <div class="inner">
+  <h2 data-en="📝 Shape Quiz Challenge!" data-id="📝 Tantangan Kuis Bangun Datar!"></h2>
+  <p class="lead" data-en="10 questions about everything we learned. Read carefully — you can do it!" data-id="10 pertanyaan tentang semua yang sudah kita pelajari. Baca dengan teliti — kamu pasti bisa!"></p>
+  <div id="quizGame"></div>
+ </div>
+</section>
+
+<!-- ============ 14. MEMORY MATCH ============ -->
+<section class="slide bg-memory" data-icon="🧠" data-title-en="Game: Memory Match" data-title-id="Permainan: Memori Cocok">
+ <div class="inner">
+  <h2 data-en="🧠 Memory Match Mania!" data-id="🧠 Serunya Memori Cocok!"></h2>
+  <p class="lead" data-en="Flip the cards and match each shape with its name. How few moves do you need?" data-id="Balik kartunya dan pasangkan setiap bangun dengan namanya. Berapa langkah yang kamu butuhkan?"></p>
+  <div id="memoryGame"></div>
+ </div>
+</section>
+
+<!-- ============ 15. CONCLUSION ============ -->
+<section class="slide bg-concl" data-icon="🎉" data-title-en="Conclusion" data-title-id="Kesimpulan">
+ <div class="inner">
+  <h2 data-en="🎉 What We Learned Today!" data-id="🎉 Apa yang Kita Pelajari Hari Ini!"></h2>
+  <div id="conclWrap"></div>
+ </div>
+</section>
+
+<!-- ============ 16. REFLECTION ============ -->
+<section class="slide bg-refl" data-icon="🪞" data-title-en="My Reflection" data-title-id="Refleksiku">
+ <div class="inner">
+  <h2 data-en="🪞 My Reflection" data-id="🪞 Refleksiku"></h2>
+  <div id="reflWrap"></div>
+ </div>
+</section>
+
+<!-- ============ 17. THANK YOU ============ -->
+<section class="slide bg-thanks" data-icon="🙏" data-title-en="Thank You!" data-title-id="Terima Kasih!">
+ <div class="inner thanks">
+  <div class="thanks-card">
+   <div class="cover-emoji">🌟 🎈 🎉</div>
+   <h1 data-en="Thank You for Today!" data-id="Terima Kasih untuk Hari Ini!"></h1>
+   <p class="sub" data-en="You were AMAZING, shape explorers! Keep finding shapes everywhere you go." data-id="Kamu LUAR BIASA, penjelajah bangun datar! Teruslah menemukan bangun datar di mana pun kamu pergi."></p>
+   <div class="tip-row center"><div class="mascot">🦉</div><div class="bubble" data-en="See you on our next maths adventure!" data-id="Sampai jumpa di petualangan matematika berikutnya!"></div></div>
+   <div class="btn-row">
+    <button class="btn btn-p big" onclick="party()">🎊 <span data-en="Confetti Party!" data-id="Pesta Konfeti!"></span></button>
+    <button class="btn btn-s big" onclick="restartAll()">🔁 <span data-en="Back to the Start" data-id="Kembali ke Awal"></span></button>
+   </div>
+   <p class="credit" data-en="Grade 5 • Cambridge Primary Mathematics • 2D Shapes &amp; Symmetry" data-id="Kelas 5 • Cambridge Primary Mathematics • Bangun Datar &amp; Simetri"></p>
+  </div>
+ </div>
+</section>
+
+<nav id="nav">
+ <button class="nbtn" onclick="prev()">◀</button>
+ <span id="slideNum">1 / 17</span>
+ <button class="nbtn" onclick="next()">▶</button>
+</nav>
+
+<div id="menuOv" class="hidden" onclick="if(event.target===this)closeMenu()">
+ <div class="menu-panel">
+  <div class="menu-head"><h3 data-en="🗺️ Slide Menu" data-id="🗺️ Menu Slide"></h3><button class="tbtn" onclick="closeMenu()">✕</button></div>
+  <div id="menuGrid"></div>
+ </div>
+</div>
+
+<div id="confetti"></div>
+<script>
+"use strict";
+/* ================================================================
+   EXPLOring 2D SHAPES - Grade 5 Cambridge Primary Mathematics
+   Interactive lesson: bilingual EN/ID, games, symmetry lab
+   ================================================================ */
+
+/* ============ SHAPE DATA ============ */
+const SHAPES=[
+{
+ id:"triangle",emo:"🔺",color:"#FF7A00",quad:false,
+ name:{en:"Triangle",id:"Segitiga"},
+ tag:{en:"The Strong Shape!",id:"Bangun yang Kuat!"},
+ sides:3,verts:3,diags:0,symN:"3",rot:"3",
+ props:{en:[
+  "Has 3 straight sides and 3 corners (vertices).",
+  "Its 3 inside angles always add up to 180°.",
+  "Types: equilateral (3 equal sides), isosceles (2 equal sides), scalene (no equal sides).",
+  "An equilateral triangle has 3 equal angles of 60°.",
+  "It is the strongest shape — that is why bridges use it!"],
+ id:[
+  "Punya 3 sisi lurus dan 3 titik sudut.",
+  "Jumlah ketiga sudutnya selalu 180°.",
+  "Jenis: sama sisi (3 sisi sama), sama kaki (2 sisi sama), sembarang (tidak ada sisi sama).",
+  "Segitiga sama sisi punya 3 sudut yang besarnya 60°.",
+  "Bangun paling kuat — itulah sebabnya jembatan memakainya!"]},
+ exs:[["🍕","Pizza slice","Potongan pizza"],["🏠","Roof of a house","Atap rumah"],["⚠️","Warning road sign","Rambu lalu lintas"],["🥪","Sandwich","Sandwich"]],
+ tip:{en:"A triangle has NO diagonals — you cannot join corners that are not next to each other!",id:"Segitiga TIDAK punya diagonal — titik sudutnya semuanya bersebelahan!"},
+ geo:{pts:[[100,28],[172,153],[28,153]],diag:[],sym:[[100,28,100,153],[172,153,64,90.5],[28,153,136,90.5]]}
+},
+{
+ id:"square",emo:"🟦",color:"#EF4444",quad:true,
+ name:{en:"Square",id:"Persegi"},
+ tag:{en:"Mr. Perfect!",id:"Si Sempurna!"},
+ sides:4,verts:4,diags:2,symN:"4",rot:"4",
+ props:{en:[
+  "All 4 sides are equal in length.",
+  "All 4 angles are right angles (90°).",
+  "Opposite sides are parallel.",
+  "Its 2 diagonals are equal and cross at right angles (90°).",
+  "It is a special rectangle AND a special rhombus!"],
+ id:[
+  "Keempat sisinya sama panjang.",
+  "Keempat sudutnya siku-siku (90°).",
+  "Sisi-sisi hadapannya sejajar.",
+  "Kedua diagonalnya sama panjang dan berpotongan tegak lurus (90°).",
+  "Persegi adalah persegi panjang DAN belah ketupat istimewa!"]},
+ exs:[["♟️","Chessboard square","Petak papan catur"],["🎲","Dice face","Mata dadu"],["🪟","Window pane","Kaca jendela"],["📝","Sticky note","Kertas tempel"]],
+ tip:{en:"Every square is a rectangle, but not every rectangle is a square!",id:"Setiap persegi adalah persegi panjang, tetapi tidak setiap persegi panjang adalah persegi!"},
+ geo:{pts:[[42,42],[158,42],[158,158],[42,158]],diag:[[42,42,158,158],[158,42,42,158]],sym:[[100,42,100,158],[42,100,158,100],[42,42,158,158],[158,42,42,158]]}
+},
+{
+ id:"rectangle",emo:"🟩",color:"#3B82F6",quad:true,
+ name:{en:"Rectangle",id:"Persegi Panjang"},
+ tag:{en:"The Stretched Square!",id:"Persegi yang Diregangkan!"},
+ sides:4,verts:4,diags:2,symN:"2",rot:"2",
+ props:{en:[
+  "Opposite sides are equal and parallel.",
+  "All 4 angles are right angles (90°).",
+  "It has 2 diagonals that are equal in length.",
+  "The diagonals cut each other exactly in half.",
+  "A square is a special rectangle with 4 equal sides."],
+ id:[
+  "Sisi hadapannya sama panjang dan sejajar.",
+  "Keempat sudutnya siku-siku (90°).",
+  "Punya 2 diagonal yang sama panjang.",
+  "Kedua diagonalnya saling membagi dua sama panjang.",
+  "Persegi adalah persegi panjang istimewa dengan 4 sisi sama."]},
+ exs:[["🚪","Door","Pintu"],["📖","Book","Buku"],["📱","Phone screen","Layar ponsel"],["🖥️","Whiteboard","Papan tulis"]],
+ tip:{en:"Its diagonals are equal, but they do NOT cross at 90° — only the square does that!",id:"Diagonalnya sama panjang, tetapi TIDAK berpotongan 90° — hanya persegi yang begitu!"},
+ geo:{pts:[[30,58],[170,58],[170,142],[30,142]],diag:[[30,58,170,142],[170,58,30,142]],sym:[[100,58,100,142],[30,100,170,100]]}
+},
+{
+ id:"rhombus",emo:"🔶",color:"#8B5CF6",quad:true,
+ name:{en:"Rhombus",id:"Belah Ketupat"},
+ tag:{en:"The Sparkling Diamond!",id:"Wajik yang Kemilau!"},
+ sides:4,verts:4,diags:2,symN:"2",rot:"2",
+ props:{en:[
+  "All 4 sides are equal in length.",
+  "Opposite sides are parallel.",
+  "Opposite angles are equal.",
+  "Its 2 diagonals cross at right angles (90°).",
+  "The diagonals cut each of the 4 corners in half."],
+ id:[
+  "Keempat sisinya sama panjang.",
+  "Sisi hadapannya sejajar.",
+  "Sudut hadapannya sama besar.",
+  "Kedua diagonalnya berpotongan tegak lurus (90°).",
+  "Diagonalnya membagi dua keempat sudutnya."]},
+ exs:[["🃏","Diamond playing card","Kartu wajik"],["🪟","Lattice window","Kisi-kisi jendela"],["🔮","Gem patterns","Pola permata"],["🧱","Floor tiles","Mosi lantai"]],
+ tip:{en:"A rhombus looks like a square that has been pushed sideways!",id:"Belah ketupat tampak seperti persegi yang didorong ke samping!"},
+ geo:{pts:[[100,26],[172,100],[100,174],[28,100]],diag:[[100,26,100,174],[172,100,28,100]],sym:[[100,26,100,174],[172,100,28,100]]}
+},
+{
+ id:"parallelogram",emo:"▱",color:"#14B8A6",quad:true,
+ name:{en:"Parallelogram",id:"Jajar Genjang"},
+ tag:{en:"The Leaner!",id:"Si Miring!"},
+ sides:4,verts:4,diags:2,symN:"0",rot:"2",
+ props:{en:[
+  "Opposite sides are parallel AND equal.",
+  "Opposite angles are equal.",
+  "It has no right angles (usually!).",
+  "It has NO lines of symmetry at all!",
+  "But it still has rotational symmetry of order 2."],
+ id:[
+  "Sisi hadapannya sejajar DAN sama panjang.",
+  "Sudut hadapannya sama besar.",
+  "Tidak punya sudut siku-siku (biasanya!).",
+  "TIDAK punya sumbu simetri sama sekali!",
+  "Tetapi tetap punya simetri putar tingkat 2."]},
+ exs:[["🪜","Staircase side","Sisi tangga"],["🌉","Bridge truss","Rangka jembatan"],["🧣","Scarf pattern","Pola syal"],["⛰️","Mountain slope","Tanjakan gunung"]],
+ tip:{en:"Push a rectangle sideways and it becomes a parallelogram!",id:"Dorong persegi panjang ke samping, ia berubah menjadi jajar genjang!"},
+ geo:{pts:[[38,56],[152,56],[162,144],[48,144]],diag:[[38,56,162,144],[152,56,48,144]],sym:[]}
+},
+{
+ id:"kite",emo:"🪁",color:"#EC4899",quad:true,
+ name:{en:"Kite",id:"Layang-layang"},
+ tag:{en:"The Flyer!",id:"Si Terbang!"},
+ sides:4,verts:4,diags:2,symN:"1",rot:"1",
+ props:{en:[
+  "It has 2 pairs of equal sides, and each pair sits NEXT to each other (adjacent).",
+  "It has one pair of equal angles where the unequal sides meet.",
+  "Its 2 diagonals cross at right angles (90°).",
+  "The longer diagonal cuts the shorter one exactly in half.",
+  "It has exactly ONE line of symmetry."],
+ id:[
+  "Punya 2 pasang sisi sama panjang, dan setiap pasang BERSEBELAHAN.",
+  "Punya satu pasang sudut sama besar tempat sisi tak sama bertemu.",
+  "Kedua diagonalnya berpotongan tegak lurus (90°).",
+  "Diagonal yang lebih panjang membagi dua diagonal pendek dengan sama.",
+  "Punya tepat SATU sumbu simetri."]},
+ exs:[["🪁","Kite toy","Mainan layang-layang"],["💎","Gemstone","Batu permata"],["💠","Diamond pattern","Pola berlian"],["🎏","Kite streamer","Umbul-umbul"]],
+ tip:{en:"The shape is named after the toy that dances in the wind!",id:"Bangun ini dinamai sesuai mainan yang menari tertiup angin!"},
+ geo:{pts:[[100,22],[158,92],[100,178],[42,92]],diag:[[100,22,100,178],[42,92,158,92]],sym:[[100,22,100,178]]}
+},
+{
+ id:"trapezoid",emo:"⏢",color:"#22C55E",quad:true,
+ name:{en:"Trapezoid",id:"Trapesium"},
+ tag:{en:"The Bridge Shape!",id:"Bentuk Jembatan!"},
+ sides:4,verts:4,diags:2,symN:"1",rot:"1",
+ props:{en:[
+  "It has exactly ONE pair of parallel sides (called the bases).",
+  "An isosceles trapezoid has 2 equal slanted sides.",
+  "An isosceles trapezoid has equal base angles.",
+  "An isosceles trapezoid has 1 line of symmetry.",
+  "In UK books it is called a trapezium!"],
+ id:[
+  "Punya tepat SATU pasang sisi sejajar (disebut sisi alas).",
+  "Trapesium sama kaki punya 2 sisi miring yang sama panjang.",
+  "Trapesium sama kaki punya sudut alas yang sama besar.",
+  "Trapesium sama kaki punya 1 sumbu simetri.",
+  "Di buku Inggris disebut trapezium!"]},
+ exs:[["🍿","Popcorn box","Kotak popcorn"],["💡","Lampshade","Kap lampu"],["👜","Handbag","Tas tangan"],["🌊","Dam wall","Bendungan"]],
+ tip:{en:"Watch out: UK books say trapezium, US books say trapezoid!",id:"Hati-hati: buku Inggris bilang trapezium, buku Amerika bilang trapezoid!"},
+ geo:{pts:[[58,58],[142,58],[172,144],[28,144]],diag:[[58,58,172,144],[142,58,28,144]],sym:[[100,58,100,144]]}
+},
+{
+ id:"circle",emo:"🔵",color:"#F59E0B",quad:false,circle:true,
+ name:{en:"Circle",id:"Lingkaran"},
+ tag:{en:"The Perfect Round!",id:"Bulat Sempurna!"},
+ sides:0,verts:0,diags:0,symN:"∞",rot:"∞",
+ props:{en:[
+  "It has NO straight sides and NO corners — only 1 curved line.",
+  "Every point on the circle is the same distance from the centre.",
+  "It has a centre, radius, diameter and circumference.",
+  "It has INFINITE lines of symmetry — you can fold it anywhere!",
+  "It always looks the same when spun — infinite rotational symmetry."],
+ id:[
+  "TIDAK punya sisi lurus dan titik sudut — hanya 1 garis lengkung.",
+  "Setiap titik di lingkaran berjarak sama dari pusatnya.",
+  "Lingkaran punya pusat, jari-jari, diameter, dan keliling.",
+  "Punya sumbu simetri TAK TERHINGGA — bisa dilipat di mana saja!",
+  "Selalu tampak sama saat diputar — simetri putar tak terhingga."]},
+ exs:[["🪙","Coin","Koin"],["🕐","Clock","Jam dinding"],["🍕","Whole pizza","Pizza utuh"],["🛞","Wheel","Roda"]],
+ tip:{en:"A circle is the only shape with NO diagonals and NO corners at all!",id:"Lingkaran satu-satunya bangun tanpa diagonal dan tanpa titik sudut!"},
+ geo:{circle:true,pts:[],diag:[],sym:[[100,26,100,174],[26,100,174,100],[46,46,154,154],[154,46,46,154]]}
+}
+];
+
+/* ============ 30 GUESS-WHO-AM-I RIDDLES (o = option shape ids, a = answer index) ============ */
+const RIDDLES=[
+{en:"I have 3 straight sides and 3 corners. My angles always add up to 180°. Who am I?",id:"Aku punya 3 sisi lurus dan 3 titik sudut. Jumlah sudutku selalu 180°. Siapakah aku?",o:["triangle","square","circle","kite"],a:0},
+{en:"I have 4 equal sides and 4 right angles. People say I am always fair and square!",id:"Aku punya 4 sisi sama panjang dan 4 sudut siku-siku. Orang bilang aku selalu jujur dan adil!",o:["rectangle","square","rhombus","circle"],a:1},
+{en:"I look like a square that has been stretched. My opposite sides are equal and I have 4 right angles.",id:"Aku seperti persegi yang diregangkan. Sisi hadapanku sama panjang dan aku punya 4 sudut siku-siku.",o:["rectangle","triangle","parallelogram","circle"],a:0},
+{en:"All my 4 sides are equal, but my corners are NOT right angles. I look like a diamond!",id:"Keempat sisiku sama panjang, tetapi sudutku BUKAN siku-siku. Aku tampak seperti wajik!",o:["kite","square","rhombus","trapezoid"],a:2},
+{en:"My opposite sides are parallel and equal, but I have NO right angles. I look like a leaning rectangle!",id:"Sisi hadapanku sejajar dan sama panjang, tetapi aku TIDAK punya sudut siku-siku. Aku seperti persegi panjang yang miring!",o:["rectangle","parallelogram","kite","circle"],a:1},
+{en:"I have 2 pairs of equal sides, and each pair sits NEXT to each other. Fly me high in the sky on a windy day!",id:"Aku punya 2 pasang sisi sama panjang, dan setiap pasang berdampingan. Terbangkanku tinggi-tinggi di hari berangin!",o:["kite","rhombus","triangle","square"],a:0},
+{en:"I have exactly ONE pair of parallel sides, like a slice of bread with the top cut off!",id:"Aku punya tepat SATU pasang sisi sejajar, seperti roti yang bagian atasnya dipotong!",o:["trapezoid","rectangle","rhombus","circle"],a:0},
+{en:"I have no corners and no straight sides. I am perfectly round like a coin!",id:"Aku tidak punya titik sudut dan sisi lurus. Aku bulat sempurna seperti koin!",o:["circle","square","triangle","kite"],a:0},
+{en:"Fold me ANYWHERE through my centre and both halves always match. I have infinite lines of symmetry!",id:"Lipatku di MANA SAJA melalui pusatku, kedua bagianku selalu sama. Sumbu simetrisku tak terhingga!",o:["square","circle","rectangle","kite"],a:1},
+{en:"My 2 diagonals are equal AND cross at right angles. All 4 of my sides are equal too!",id:"Kedua diagonaluku sama panjang DAN berpotongan tegak lurus. Keempat sisiku juga sama panjang!",o:["square","rectangle","rhombus","parallelogram"],a:0},
+{en:"My diagonals cross at right angles, but they are NOT equal in length. All my sides are equal.",id:"Diagonaluku berpotongan tegak lurus, tetapi panjangnya TIDAK sama. Semua sisiku sama panjang.",o:["rhombus","square","rectangle","kite"],a:0},
+{en:"My diagonals are equal and cut each other in half, but they do NOT cross at right angles.",id:"Diagonaluku sama panjang dan saling membagi dua, tetapi TIDAK berpotongan tegak lurus.",o:["rectangle","square","rhombus","trapezoid"],a:0},
+{en:"I am the shape of a pizza slice and of the road sign that tells drivers to give way!",id:"Aku bentuk potongan pizza dan rambu yang menyuruh pengendara memberi jalan!",o:["circle","triangle","trapezoid","parallelogram"],a:1},
+{en:"You can see me on a chessboard and on every face of a dice!",id:"Kamu bisa melihatku di papan catur dan di setiap sisi dadu!",o:["circle","rectangle","square","kite"],a:2},
+{en:"I am the shape of your classroom door and your maths book!",id:"Aku bentuk pintu kelasmu dan buku matematikamu!",o:["square","rectangle","circle","trapezoid"],a:1},
+{en:"A wheel, a clock and a coin all have my shape!",id:"Roda, jam, dan koin semuanya berbentuk aku!",o:["square","triangle","circle","rectangle"],a:2},
+{en:"Stairs, ramps and sliding gates often use my shape. I lean to one side!",id:"Tangga, tanjakan, dan gerbang geser sering memakai bentukku. Aku condong ke satu sisi!",o:["trapezoid","rectangle","parallelogram","rhombus"],a:2},
+{en:"I look like a bridge or a lampshade: one of my sides is short, the opposite side is long!",id:"Aku seperti jembatan atau kap lampu: satu sisiku pendek, sisi hadapanku panjang!",o:["trapezoid","parallelogram","kite","circle"],a:0},
+{en:"I have NO lines of symmetry, but I still have rotational symmetry of order 2!",id:"Aku TIDAK punya sumbu simetri, tetapi aku tetap punya simetri putar tingkat 2!",o:["kite","parallelogram","rhombus","rectangle"],a:1},
+{en:"I have exactly ONE line of symmetry, and I love to dance in the wind!",id:"Aku punya tepat SATU sumbu simetri, dan aku suka menari tertiup angin!",o:["kite","rhombus","square","circle"],a:0},
+{en:"I have 4 corners: two of my angles are acute and two are obtuse. My opposite sides are parallel and equal.",id:"Aku punya 4 titik sudut: dua sudut lancip dan dua sudut tumpul. Sisi hadapanku sejajar dan sama panjang.",o:["parallelogram","square","rectangle","triangle"],a:0},
+{en:"I am the shape of the red diamond suit on playing cards!",id:"Aku bentuk gambar wajik merah pada kartu remi!",o:["kite","circle","rhombus","square"],a:2},
+{en:"I have no diagonals at all — not even one!",id:"Aku tidak punya diagonal sama sekali — bahkan satu pun tidak!",o:["circle","triangle","kite","trapezoid"],a:0},
+{en:"Turn me 4 times and I look exactly the same. My rotational symmetry order is 4!",id:"Putarku 4 kali dan aku tampak sama persis. Simetri putarku tingkat 4!",o:["rectangle","square","rhombus","circle"],a:1},
+{en:"My diagonals cut me into 4 identical triangles. I look like a stretched diamond!",id:"Diagonaluku membagiku menjadi 4 segitiga yang sama. Aku seperti wajik yang diregangkan!",o:["rhombus","kite","rectangle","circle"],a:0},
+{en:"The hands of a clock dance around inside me every day. What shape am I?",id:"Jarum jam menari di dalamku setiap hari. Aku bangun apa?",o:["circle","square","triangle","rectangle"],a:0},
+{en:"I have 3 corners and my 3 sides can all be different lengths. Builders use me to make frames strong!",id:"Aku punya 3 titik sudut dan ketiga sisiku bisa berbeda panjang. Para tukang memakai aku agar rangka kuat!",o:["trapezoid","triangle","kite","parallelogram"],a:1},
+{en:"My diagonals cross at 90°. One diagonal cuts the other in half, and I have just ONE line of symmetry!",id:"Diagonaluku berpotongan 90°. Satu diagonal membagi dua yang lain, dan aku hanya punya SATU sumbu simetri!",o:["kite","square","parallelogram","rectangle"],a:0},
+{en:"If you cut my top off parallel to my bottom, I look like a popcorn box!",id:"Jika bagian atasku dipotong sejajar dengan alasuku, aku seperti kotak popcorn!",o:["circle","trapezoid","triangle","rhombus"],a:1},
+{en:"Count my sides: 1, 2, 3! Count my corners: 1, 2, 3! I am the simplest polygon of all!",id:"Hitung sisiku: 1, 2, 3! Hitung sudutku: 1, 2, 3! Aku poligon paling sederhana dari semua!",o:["triangle","square","circle","trapezoid"],a:0}
+];
+
+/* ============ 10 QUIZ QUESTIONS (fx = shape fact shown after answer) ============ */
+const QUIZ=[
+{en:"How many vertices does a triangle have?",id:"Berapa banyak titik sudut pada segitiga?",o:[{en:"1",id:"1"},{en:"2",id:"2"},{en:"3",id:"3"},{en:"4",id:"4"}],a:2,fx:"triangle"},
+{en:"How many lines of symmetry does a square have?",id:"Berapa banyak sumbu simetri pada persegi?",o:[{en:"2",id:"2"},{en:"3",id:"3"},{en:"4",id:"4"},{en:"Infinite",id:"Tak terhingga"}],a:2,fx:"square"},
+{en:"Which shape has exactly ONE pair of parallel sides?",id:"Bangun mana yang punya tepat SATU pasang sisi sejajar?",o:[{en:"Trapezoid",id:"Trapesium"},{en:"Rectangle",id:"Persegi panjang"},{en:"Rhombus",id:"Belah ketupat"},{en:"Circle",id:"Lingkaran"}],a:0,fx:"trapezoid"},
+{en:"Which shape has NO corners at all?",id:"Bangun mana yang TIDAK punya titik sudut sama sekali?",o:[{en:"Square",id:"Persegi"},{en:"Triangle",id:"Segitiga"},{en:"Kite",id:"Layang-layang"},{en:"Circle",id:"Lingkaran"}],a:3,fx:"circle"},
+{en:"Which shape has diagonals that are equal AND cross at right angles?",id:"Bangun mana yang diagonalnya sama panjang DAN berpotongan tegak lurus?",o:[{en:"Rectangle",id:"Persegi panjang"},{en:"Square",id:"Persegi"},{en:"Rhombus",id:"Belah ketupat"},{en:"Parallelogram",id:"Jajar genjang"}],a:1,fx:"square"},
+{en:"Which shape has two pairs of equal ADJACENT sides?",id:"Bangun mana yang punya dua pasang sisi sama yang BERSEBELAHAN?",o:[{en:"Kite",id:"Layang-layang"},{en:"Rectangle",id:"Persegi panjang"},{en:"Circle",id:"Lingkaran"},{en:"Parallelogram",id:"Jajar genjang"}],a:0,fx:"kite"},
+{en:"What do we call the point where two sides meet?",id:"Apa nama titik tempat dua sisi bertemu?",o:[{en:"Side",id:"Sisi"},{en:"Vertex",id:"Titik sudut"},{en:"Diagonal",id:"Diagonal"},{en:"Radius",id:"Jari-jari"}],a:1},
+{en:"How many diagonals does a rectangle have?",id:"Berapa banyak diagonal pada persegi panjang?",o:[{en:"1",id:"1"},{en:"2",id:"2"},{en:"3",id:"3"},{en:"4",id:"4"}],a:1,fx:"rectangle"},
+{en:"Which shape has INFINITE lines of symmetry?",id:"Bangun mana yang punya sumbu simetri TAK TERHINGGA?",o:[{en:"Square",id:"Persegi"},{en:"Equilateral triangle",id:"Segitiga sama sisi"},{en:"Circle",id:"Lingkaran"},{en:"Rhombus",id:"Belah ketupat"}],a:2,fx:"circle"},
+{en:"A rhombus has how many equal sides?",id:"Belah ketupat punya berapa sisi yang sama panjang?",o:[{en:"2",id:"2"},{en:"3",id:"3"},{en:"4",id:"4"},{en:"0",id:"0"}],a:2,fx:"rhombus"}
+];
+
+/* ============ VOCABULARY ============ */
+const VOCAB=[
+{en:"Vertex (vertices)",id:"Titik sudut",den:"A corner point where two sides meet. More than one? Vertices!",di:"Titik tempat dua sisi bertemu. Lebih dari satu? Titik sudut!"},
+{en:"Diagonal",id:"Diagonal",den:"A line joining two corners that are NOT next to each other.",di:"Garis yang menghubungkan dua titik sudut yang TIDAK bersebelahan."},
+{en:"Parallel lines",id:"Garis sejajar",den:"Lines that always stay the same distance apart and never meet.",di:"Garis yang selalu berjarak sama dan tidak akan pernah bertemu."},
+{en:"Line of symmetry",id:"Sumbu simetri",den:"An imaginary fold line that splits a shape into two matching halves.",di:"Garis khayalan tempat melipat bangun menjadi dua bagian yang sama."},
+{en:"Rotational symmetry",id:"Simetri putar",den:"How many times a shape looks the same during one full turn.",di:"Berapa kali bangun tampak sama dalam satu putaran penuh."},
+{en:"Quadrilateral",id:"Segi empat",den:"Any shape with exactly 4 straight sides.",di:"Setiap bangun yang memiliki tepat 4 sisi lurus."},
+{en:"Polygon",id:"Poligon",den:"A closed flat shape made of straight sides.",di:"Bangun datar tertutup yang dibentuk oleh sisi-sisi lurus."},
+{en:"Right angle",id:"Sudut siku-siku",den:"A square corner measuring exactly 90°.",di:"Sudut siku yang besarnya tepat 90°."}
+];
+
+/* ============ UI STRINGS ============ */
+const U={
+score:{en:"Score",id:"Skor"},streak:{en:"Streak",id:"Beruntun"},riddleW:{en:"Riddle",id:"Tebakan"},
+hint:{en:"Hint",id:"Petunjuk"},listen:{en:"Listen",id:"Dengarkan"},
+next:{en:"Next ▶",id:"Lanjut ▶"},finish:{en:"🏁 See my results",id:"🏁 Lihat hasilmu"},
+again:{en:"🔁 Play again",id:"🔁 Main lagi"},toMenu:{en:"🏠 Back to menu",id:"🏠 Kembali ke menu"},
+corners:{en:"Corners",id:"Titik sudut"},sides:{en:"Sides",id:"Sisi"},diagonals:{en:"Diagonals",id:"Diagonal"},
+vertices:{en:"Vertices",id:"Titik sudut"},
+props:{en:"Properties",id:"Ciri-ciri"},symTitle:{en:"Symmetry",id:"Simetri"},
+symLines:{en:"Lines of symmetry",id:"Sumbu simetri"},rotSym:{en:"Rotational symmetry",id:"Simetri putar"},
+irl:{en:"Shapes around us",id:"Di kehidupan sehari-hari"},tipLbl:{en:"Professor Poly says:",id:"Kata Profesor Poli:"},
+diagBtn:{en:"🔍 Diagonals",id:"🔍 Diagonal"},symBtn:{en:"✂️ Symmetry lines",id:"✂️ Garis simetri"},
+foldBtn:{en:"🔄 Fold test",id:"🔄 Uji lipat"},spinBtn:{en:"🌀 Spin",id:"🌀 Putar"},resetBtn:{en:"🔁 Reset",id:"🔁 Ulangi"},
+cvBtn:{en:"👆 Count corners",id:"👆 Hitung titik sudut"},csBtn:{en:"👆 Count sides",id:"👆 Hitung sisi"},
+tapEdge:{en:"👆 Tap the edge!",id:"👆 Ketuk tepiannya!"},
+curved:{en:"Curved sides",id:"Sisi lengkung"},
+circleNoCorners:{en:"A circle has 0 corners — it is perfectly round! 😲",id:"Lingkaran punya 0 titik sudut — bulat sempurna! 😲"},
+circleCurved:{en:"Just ONE curved side — brilliant! 🌟",id:"Hanya SATU sisi lengkung — hebat! 🌟"},
+radiusMsg:{en:"That is the radius — every point is the same distance from the centre!",id:"Itu jari-jari — setiap titik berjarak sama dari pusat!"},
+doneCorners:{en:"Great counting! All corners found! 🌟",id:"Hitungan bagus! Semua titik sudut ditemukan! 🌟"},
+doneSides:{en:"Great counting! All sides found! 🌟",id:"Hitungan bagus! Semua sisi ditemukan! 🌟"},
+noDiag:{en:"0 diagonals! Diagonals join corners that are NOT next to each other.",id:"0 diagonal! Diagonal menghubungkan titik sudut yang TIDAK bersebelahan."},
+diagOn:{en:"The purple dashed lines are the diagonals!",id:"Garis putus-putus ungu adalah diagonalnya!"},
+symOn:{en:"The green dashed lines are lines of symmetry!",id:"Garis putus-putus hijau adalah sumbu simetrinya!"},
+noSym:{en:"No lines of symmetry — it never matches when folded! 😲",id:"Tidak punya sumbu simetri — tidak pernah sama saat dilipat! 😲"},
+foldMatch:{en:"Perfect match! The halves are identical! ✨",id:"Sempurna! Kedua bagian sama persis! ✨"},
+spinOk:{en:"I look the SAME again! Rotational symmetry order {o}!",id:"Aku tampak SAMA lagi! Simetri putar tingkat {o}!"},
+spinFull:{en:"Only after a FULL turn do I look the same — order 1!",id:"Hanya setelah satu putaran penuh aku tampak sama — tingkat 1!"},
+spinInf:{en:"Still the same — INFINITE rotational symmetry! ♾️",id:"Tetap sama — simetri putar TAK TERHINGGA! ♾️"},
+oops:{en:"Oops! Not quite.",id:"Ups! Belum tepat."},
+hintPre:{en:"Hint:",id:"Petunjuk:"},startWith:{en:"It starts with",id:"Namanya dimulai dengan"},
+noStraight:{en:"It has no straight sides at all!",id:"Tidak punya sisi lurus sama sekali!"},
+moves:{en:"Moves",id:"Langkah"},time:{en:"Time",id:"Waktu"},best:{en:"Best",id:"Terbaik"},
+newGame:{en:"🎴 New game",id:"🎴 Permainan baru"},
+memWin:{en:"ALL MATCHED! Amazing memory! 🎉",id:"SEMUA COCOK! Memori luar biasa! 🎉"},
+moodQ:{en:"How do you feel about shapes today?",id:"Bagaimana perasaanmu tentang bangun datar hari ini?"},
+selfCheck:{en:"My shape skills — tap to check!",id:"Skill bangun datarku — ketuk untuk mencentang!"},
+checkDone:{en:"WOW! All checked — you are a true Shape Star! 🌟",id:"WOW! Semua tercentang — kamu benar-benar Bintang Bangun Datar! 🌟"},
+checkTip:{en:"Check a box when you can do it confidently.",id:"Centang kotak jika kamu sudah bisa melakukannya dengan percaya diri."},
+learnQ:{en:"One thing I learned today...",id:"Satu hal yang aku pelajari hari ini..."},
+learnPh:{en:"Write here — anything you like!",id:"Tulis di sini — apa saja!"},
+save:{en:"💾 Save",id:"💾 Simpan"},savedMsg:{en:"Saved! Professor Poly is proud of you! 🦉",id:"Tersimpan! Profesor Poli bangga padamu! 🦉"},
+report:{en:"My game report card",id:"Rapor permainanku"},
+reportTip:{en:"Play the games to fill your report card!",id:"Mainkan permainannya untuk mengisi rapormu!"},
+recap:{en:"Shape recap table",id:"Tabel rekap bangun datar"},shape:{en:"Shape",id:"Bangun"},
+rotOrder:{en:"Rotational order",id:"Tingkat putar"},
+recapTip:{en:"👆 Tip: click any row to visit that shape again!",id:"👆 Tips: klik baris mana pun untuk mengunjungi bangun itu lagi!"},
+vocab:{en:"Magic words of geometry",id:"Kata ajaib geometri"},
+quadClub:{en:"The Quadrilateral Club (4 sides!)",id:"Klub Segi Empat (4 sisi!)"},
+quadNote:{en:"All members have 4 sides and 4 vertices, but each has different diagonals and symmetry!",id:"Semua anggota punya 4 sisi dan 4 titik sudut, tetapi diagonal dan simetrinya berbeda-beda!"}
+};
+
+const PRAISE={en:["Fantastic! 🌟","You got it! 🎉","Super smart! 🧠","Brilliant! 💫","Shape master! 🏆"],id:["Luar biasa! 🌟","Tepat sekali! 🎉","Kamu pintar! 🧠","Hebat! 💫","Master bangun datar! 🏆"]};
+
+const MOODS=[
+{e:"🤩",en:"Amazing!",id:"Luar biasa!",msg:{en:"Shapes love you too! Keep that sparkle! ✨",id:"Bangun datar juga menyukaimu! Pertahankan semangatmu! ✨"}},
+{e:"😄",en:"Happy!",id:"Senang!",msg:{en:"Wonderful! Happy learners become shape stars! 🌟",id:"Luar biasa! Yang belajar dengan senang menjadi bintang bangun datar! 🌟"}},
+{e:"🙂",en:"Okay!",id:"Baik!",msg:{en:"Nice! Explore the shape pages once more to feel super confident! 💪",id:"Bagus! Jelajahi lagi halaman bangun datar agar makin percaya diri! 💪"}},
+{e:"🤔",en:"Still learning...",id:"Masih belajar...",msg:{en:"That is okay! Every explorer starts somewhere. Try the fold test again! 🦉",id:"Tidak apa-apa! Setiap penjelajah mulai dari suatu tempat. Coba lagi uji lipatnya! 🦉"}}];
+
+const CHECKS=[
+{en:"I can name the 8 shapes we learned.",id:"Aku bisa menyebutkan 8 bangun datar yang dipelajari."},
+{en:"I can count sides, vertices and diagonals.",id:"Aku bisa menghitung sisi, titik sudut, dan diagonal."},
+{en:"I can describe the properties of each shape.",id:"Aku bisa menjelaskan ciri-ciri setiap bangun datar."},
+{en:"I can find lines of symmetry and fold shapes.",id:"Aku bisa menemukan sumbu simetri dan melipat bangun."},
+{en:"I can find 2D shapes in everyday life.",id:"Aku bisa menemukan bangun datar di kehidupan sehari-hari."}];
+
+/* ============ CORE HELPERS ============ */
+let LANG="en",CUR=0,SLIDES=[],MUTED=false;
+const $=s=>document.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+function t(o){return !o?"":(LANG==="en"?o.en:o.id)}
+function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const byId={};SHAPES.forEach(s=>byId[s.id]=s);
+function starStr(n){n=Math.max(0,Math.min(5,n));let s="";for(let i=0;i<5;i++)s+=i<n?"⭐":"☆";return s}
+function store(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function factLine(s){const sid=LANG==="en"?(s.sides===1?"side":"sides"):"sisi";const vid=LANG==="en"?(s.verts===1?"vertex":"vertices"):"titik sudut";const lid=(LANG==="en"&&s.symN!=="∞"&&s.symN!=="1")?"lines of symmetry":(LANG==="en"?"line of symmetry":"sumbu simetri");return "✅ <b>"+t(s.name)+"</b> — "+s.sides+" "+sid+" • "+s.verts+" "+vid+" • "+s.diags+" "+(LANG==="en"?"diagonals":"diagonal")+" • ✂️ "+s.symN+" "+lid}
+
+/* ============ AUDIO ============ */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function tone(f,d,ty,vol,when){const c=ac();if(!c||MUTED)return;const o=c.createOscillator(),g=c.createGain();o.type=ty||"sine";o.frequency.value=f;g.gain.value=vol||.15;o.connect(g);g.connect(c.destination);const t0=c.currentTime+(when||0);o.start(t0);g.gain.setValueAtTime(vol||.15,t0);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.stop(t0+d)}
+function sfx(k){if(k==="ok"){tone(523,.12);tone(659,.12,"sine",.15,.09);tone(784,.22,"sine",.15,.18)}else if(k==="no"){tone(220,.2,"sawtooth",.07);tone(160,.3,"sawtooth",.07,.12)}else if(k==="flip"){tone(440,.06,"triangle",.1)}else if(k==="pop"){tone(600,.05,"triangle",.12)}else if(k==="fold"){tone(330,.1,"triangle",.1);tone(392,.14,"triangle",.1,.1)}else if(k==="win"){[523,659,784,1046].forEach((f,i)=>tone(f,.18,"sine",.16,i*.13))}}
+function toggleSound(){MUTED=!MUTED;$("#sndBtn").textContent=MUTED?"🔇":"🔊";store("g5_mute",MUTED?"1":"0")}
+
+/* ============ CONFETTI ============ */
+function confetti(n){const layer=$("#confetti");for(let i=0;i<(n||70);i++){const d=document.createElement("div");d.className="cf";d.style.left=(Math.random()*100)+"vw";d.style.background=["#FF5C8A","#FFB347","#5CC9FF","#7CE0A0","#B28DFF","#FFD54F"][i%6];const s=6+Math.random()*8;d.style.width=s+"px";d.style.height=s*1.4+"px";d.style.animationDuration=(1.8+Math.random()*1.6)+"s";d.style.animationDelay=(Math.random()*.4)+"s";layer.appendChild(d);setTimeout(()=>d.remove(),3800)}}
+function party(){confetti(140);sfx("win")}
+
+/* ============ SPEECH ============ */
+function speak(txt){try{if(!("speechSynthesis" in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang=LANG==="en"?"en-GB":"id-ID";u.rate=.95;speechSynthesis.speak(u)}catch(e){}}
+
+/* ============ SLIDES / NAV ============ */
+function collectSlides(){SLIDES=$$(".slide");buildMenu()}
+function go(i){if(i<0||i>=SLIDES.length)return;SLIDES[CUR].classList.remove("active");CUR=i;SLIDES[CUR].classList.add("active");SLIDES[CUR].scrollTop=0;$("#pbar").style.width=((CUR+1)/SLIDES.length*100)+"%";$("#slideNum").textContent=(CUR+1)+" / "+SLIDES.length;closeMenu()}
+function next(){go(CUR+1)}
+function prev(){go(CUR-1)}
+function goShape(id){const k=SLIDES.findIndex(s=>s.dataset.shape===id);if(k>=0)go(k)}
+function buildMenu(){$("#menuGrid").innerHTML=SLIDES.map((s,i)=>'<button class="m-item" onclick="go('+i+')"><span class="mi">'+(s.dataset.icon||"📄")+"</span><span>"+(LANG==="en"?(s.dataset.titleEn||"Slide"):(s.dataset.titleId||"Slide"))+"</span></button>").join("")}
+function toggleMenu(){const m=$("#menuOv");m.classList.toggle("hidden")}
+function closeMenu(){$("#menuOv").classList.add("hidden")}
+function toggleFS(){if(document.fullscreenElement){document.exitFullscreen()}else if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen()}}
+function restartAll(){newRiddleRun();newQuizRun();newMemRun();renderRiddle();renderQuiz();renderMemory();RS.ref={mood:null,ch:[false,false,false,false,false],text:"",saved:false};buildReflection();go(0);party()}
+
+/* ============ LANGUAGE ============ */
+function setLang(l){LANG=l;store("g5_lang",l);$("#langBtn").textContent=l==="en"?"🌐 Bahasa Indonesia":"🌐 English";document.documentElement.lang=l;applyLang()}
+function applyLang(){$$("[data-en]").forEach(el=>{el.innerHTML=LANG==="en"?el.dataset.en:el.dataset.id});buildMenu();renderAll()}
+function renderAll(){buildExplore();buildShapes();renderRiddle();renderQuiz();renderMemory();buildConclusion();buildReflection()}
+
+/* ============ SVG BUILDER ============ */
+function innerOnly(s){const c=s.color;if(s.geo.circle)return '<circle cx="100" cy="100" r="74" fill="'+c+'33" stroke="'+c+'" stroke-width="6"/>';const pa=s.geo.pts.map(p=>p.join(",")).join(" ");return '<polygon points="'+pa+'" fill="'+c+'33" stroke="'+c+'" stroke-width="6" stroke-linejoin="round"/>'}
+function shapeSVG(s,o){o=o||{};const c=s.color;let h="";
+ if(s.geo.circle){h+='<circle class="outline" cx="100" cy="100" r="74" fill="'+c+'22" stroke="'+c+'" stroke-width="6"/>'}
+ else{const pa=s.geo.pts.map(p=>p.join(",")).join(" ");h+='<polygon class="outline" points="'+pa+'" fill="'+c+'22" stroke="'+c+'" stroke-width="6" stroke-linejoin="round"/>'}
+ h+='<g class="g-diag">'+(s.geo.diag||[]).map(d=>'<line x1="'+d[0]+'" y1="'+d[1]+'" x2="'+d[2]+'" y2="'+d[3]+'" stroke="#8B5CF6" stroke-width="4" stroke-dasharray="8 7" stroke-linecap="round"/>').join("")+"</g>";
+ h+='<g class="g-sym">'+(s.geo.sym||[]).map(d=>'<line x1="'+d[0]+'" y1="'+d[1]+'" x2="'+d[2]+'" y2="'+d[3]+'" stroke="#10B981" stroke-width="4" stroke-dasharray="3 7" stroke-linecap="round"/>').join("")+"</g>";
+ if(s.geo.circle){h+='<g class="g-radius"><line x1="100" y1="100" x2="174" y2="100" stroke="#F43F5E" stroke-width="5" stroke-linecap="round"/><circle cx="100" cy="100" r="7" fill="#F43F5E"/></g>'}
+ if(!s.geo.circle){
+  h+='<g class="g-verts">'+s.geo.pts.map((p,i)=>'<g class="vwrap" data-n="'+(i+1)+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="9" fill="#fff" stroke="'+c+'" stroke-width="4"/><text class="cnt" x="'+p[0]+'" y="'+(p[1]-16)+'" text-anchor="middle">'+(i+1)+"</text></g>").join("")+"</g>";
+  let seg="";for(let i=0;i<s.geo.pts.length;i++){const a=s.geo.pts[i],b=s.geo.pts[(i+1)%s.geo.pts.length];const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;seg+='<g class="swrap" data-n="'+(i+1)+'"><line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'"/><text class="cnt s" x="'+mx+'" y="'+(my-12)+'" text-anchor="middle">'+(i+1)+"</text></g>"}
+  h+='<g class="g-sidehits">'+seg+"</g>";
+ }else{
+  h+='<g class="swrap circ" data-n="1"><circle cx="100" cy="100" r="74"/><text class="cnt s" x="100" y="18" text-anchor="middle">1</text></g>';
+  h+='<g class="vwrap cvert" data-n="1"><circle cx="100" cy="100" r="8" fill="#F43F5E" stroke="#fff" stroke-width="3"/></g>';
+ }
+ return '<svg viewBox="0 0 200 200" class="shape-svg'+(o.mini?" mini":"")+'" aria-label="'+t(s.name)+'">'+h+"</svg>"}
+
+/* ============ SHAPE SECTIONS ============ */
+function buildShapes(){SHAPES.forEach(s=>{
+ let sec=document.getElementById("shp-"+s.id);
+ if(!sec){sec=document.createElement("section");sec.id="shp-"+s.id;sec.className="slide bg-shape";sec.dataset.shape=s.id;$("#shapeHost").appendChild(sec)}
+ sec.dataset.icon=s.emo;sec.dataset.titleEn=s.name.en;sec.dataset.titleId=s.name.id;sec.style.setProperty("--sc",s.color);
+ sec.innerHTML=shapeSectionHTML(s)})}
+
+function shapeSectionHTML(s){const c=s.color;const cornerChip=s.geo.circle?(U.corners[LANG]+": 0 😲"):(U.corners[LANG]+": 0/"+s.verts);const sideChip=s.geo.circle?(U.curved[LANG]+": 0/1"):(U.sides[LANG]+": 0/"+s.sides);
+ return '<div class="inner">'
+ +'<div class="shp-head"><div class="shp-emoji">'+s.emo+'</div><div><h2 style="color:'+c+'">'+t(s.name)+'</h2><div class="tagline">'+t(s.tag)+"</div></div></div>"
+ +'<div class="shape-layout"><div class="stage-wrap">'
+ +'<div class="stage" data-stage>'+shapeSVG(s)+'<div class="stage-msg hidden" data-msg></div></div>'
+ +'<div class="ctrls">'
+ +'<button class="btn btn-s sm" data-act="diag">'+U.diagBtn[LANG]+"</button>"
+ +'<button class="btn btn-s sm" data-act="sym">'+U.symBtn[LANG]+"</button>"
+ +'<button class="btn btn-s sm" data-act="fold">'+U.foldBtn[LANG]+"</button>"
+ +'<button class="btn btn-s sm" data-act="spin">'+U.spinBtn[LANG]+"</button>"
+ +'<button class="btn btn-s sm" data-act="reset">'+U.resetBtn[LANG]+"</button></div>"
+ +'<div class="count-row">'
+ +'<button class="chip-btn" data-act="countv">'+U.cvBtn[LANG]+"</button>"
+ +'<span class="count-chip cv">'+cornerChip+"</span>"
+ +'<button class="chip-btn" data-act="counts">'+(s.geo.circle?U.tapEdge[LANG]:U.csBtn[LANG])+"</button>"
+ +'<span class="count-chip cs">'+sideChip+"</span></div>"
+ +"</div>"
+ +'<div class="info-col">'
+ +'<div class="stat-row">'
+ +'<div class="stat" data-act="countv" style="border-color:'+c+'"><b style="color:'+c+'">'+s.verts+'</b><span>'+U.vertices[LANG]+"</span></div>"
+ +'<div class="stat" data-act="counts" style="border-color:'+c+'"><b style="color:'+c+'">'+s.sides+'</b><span>'+U.sides[LANG]+"</span></div>"
+ +'<div class="stat" data-act="diag" style="border-color:'+c+'"><b style="color:'+c+'">'+s.diags+'</b><span>'+U.diagonals[LANG]+"</span></div></div>"
+ +'<div class="card"><h3>📋 '+U.props[LANG]+'</h3><ul class="props" style="--sc:'+c+'">'+s.props[LANG].map(p=>"<li>"+p+"</li>").join("")+"</ul></div>"
+ +'<div class="card"><h3>🔄 '+U.symTitle[LANG]+'</h3><div class="sym-facts"><span class="fact">✂️ '+U.symLines[LANG]+": <b>"+s.symN+'</b></span><span class="fact">🌀 '+U.rotSym[LANG]+": <b>"+s.rot+"</b></span></div></div>"
+ +'<div class="card"><h3>🏠 '+U.irl[LANG]+'</h3><div class="ex-row">'+s.exs.map(e=>'<div class="ex" style="--sc:'+c+'"><span class="ex-emo">'+e[0]+'</span><span class="ex-lab">'+(LANG==="en"?e[1]:e[2])+"</span></div>").join("")+"</div></div>"
+ +'<div class="tip-row"><div class="mascot">🦉</div><div class="bubble"><b>'+U.tipLbl[LANG]+"</b> "+t(s.tip)+"</div></div>"
+ +"</div></div></div>"}
+
+function buildExplore(){$("#exploreGrid").innerHTML=SHAPES.map(s=>'<button class="exp-card" style="--sc:'+s.color+'" onclick="goShape(\''+s.id+'\')">'+shapeSVG(s,{mini:1})+"<b>"+t(s.name)+"</b>"+'<span class="exp-sub">'+s.sides+" "+U.sides[LANG].toLowerCase()+" • "+s.verts+" "+U.corners[LANG].toLowerCase()+" • ✂️ "+s.symN+"</span></button>").join("")}
+
+/* ============ STAGE HELPERS ============ */
+function msg(sec,txt){const m=sec.querySelector("[data-msg]");if(!m)return;m.textContent=txt;m.classList.remove("hidden");clearTimeout(m._tm);m._tm=setTimeout(()=>m.classList.add("hidden"),2800)}
+
+function updateChip(sec,s,kind){const chip=sec.querySelector(".count-chip."+kind);if(!chip)return;
+ if(kind==="cv"){if(s.geo.circle){return}const n=sec.querySelectorAll(".g-verts .vwrap.counted").length;chip.textContent=U.corners[LANG]+": "+n+"/"+s.verts;if(n===s.verts){msg(sec,U.doneCorners[LANG]);sfx("ok");confetti(25)}}
+ else{const n=sec.querySelectorAll(".swrap.counted").length;const tot=s.geo.circle?1:s.sides;chip.textContent=(s.geo.circle?U.curved[LANG]:U.sides[LANG])+": "+n+"/"+tot;if(n===tot){msg(sec,s.geo.circle?U.circleCurved[LANG]:U.doneSides[LANG]);sfx("ok");confetti(25)}}}
+
+function autoCount(sec,s,kind){if(kind==="cv"){if(s.geo.circle){msg(sec,U.circleNoCorners[LANG]);sfx("pop");return}const wraps=sec.querySelectorAll(".g-verts .vwrap");wraps.forEach(w=>w.classList.remove("counted"));wraps.forEach((w,i)=>setTimeout(()=>{w.classList.add("counted");sfx("pop");updateChip(sec,s,"cv")},i*420))}
+ else{let wraps;if(s.geo.circle){wraps=sec.querySelectorAll(".swrap.circ")}else{wraps=sec.querySelectorAll(".g-sidehits .swrap")}wraps.forEach(w=>w.classList.remove("counted"));wraps.forEach((w,i)=>setTimeout(()=>{w.classList.add("counted");sfx("pop");updateChip(sec,s,"cs");if(s.geo.circle)msg(sec,U.circleCurved[LANG])},i*450))}}
+
+function playFold(sec,s){const stage=sec.querySelector("[data-stage]");
+ if(!s.geo.sym||!s.geo.sym.length){stage.classList.add("wiggle");msg(sec,U.noSym[LANG]);sfx("no");setTimeout(()=>stage.classList.remove("wiggle"),1000);return}
+ let fl=stage.querySelector(".fold-layer");
+ if(!fl){fl=document.createElement("div");fl.className="fold-layer";fl.innerHTML='<svg viewBox="0 0 200 200" class="half hl">'+innerOnly(s)+'</svg><svg viewBox="0 0 200 200" class="half hr">'+innerOnly(s)+"</svg>";stage.appendChild(fl)}
+ fl.classList.remove("folded");void fl.offsetWidth;stage.classList.add("folding");fl.classList.add("folded");sfx("fold");msg(sec,U.foldMatch[LANG]);
+ setTimeout(()=>{fl.classList.remove("folded");setTimeout(()=>stage.classList.remove("folding"),600)},1700)}
+
+function playSpin(sec,s){const svg=sec.querySelector(".shape-svg");if(!svg)return;
+ let step;if(s.rot==="∞"){step=120}else{step=Math.round(360/parseInt(s.rot,10))}
+ svg._rot=(svg._rot||0)+step;svg.style.transform="rotate("+svg._rot+"deg)";sfx("flip");
+ if(s.rot==="∞")msg(sec,U.spinInf[LANG]);else if(s.rot==="1")msg(sec,U.spinFull[LANG]);else msg(sec,U.spinOk[LANG].replace("{o}",s.rot))}
+
+function resetStage(sec,s){const svg=sec.querySelector(".shape-svg");svg.classList.remove("show-diag","show-sym","show-radius");svg.style.transform="none";svg._rot=0;
+ sec.querySelectorAll(".vwrap.counted,.swrap.counted").forEach(w=>w.classList.remove("counted"));
+ const cv=sec.querySelector(".count-chip.cv"),cs=sec.querySelector(".count-chip.cs");
+ if(cv)cv.textContent=s.geo.circle?(U.corners[LANG]+": 0 😲"):(U.corners[LANG]+": 0/"+s.verts);
+ if(cs)cs.textContent=s.geo.circle?(U.curved[LANG]+": 0/1"):(U.sides[LANG]+": 0/"+s.sides);
+ const m=sec.querySelector("[data-msg]");if(m)m.classList.add("hidden")}
+
+/* ============ SHAPE SLIDE EVENTS (delegated) ============ */
+function bindShapeHost(){$("#shapeHost").addEventListener("click",e=>{
+ const sec=e.target.closest(".slide");if(!sec||!sec.dataset.shape)return;const s=byId[sec.dataset.shape];if(!s)return;
+ const vw=e.target.closest(".vwrap");
+ if(vw&&!s.geo.circle){if(!vw.classList.contains("counted")){vw.classList.add("counted");sfx("pop");updateChip(sec,s,"cv")}return}
+ if(vw&&s.geo.circle){const svg=sec.querySelector(".shape-svg");svg.classList.toggle("show-radius");msg(sec,U.radiusMsg[LANG]);sfx("pop");return}
+ const sw=e.target.closest(".swrap");
+ if(sw){if(!sw.classList.contains("counted")){sw.classList.add("counted");sfx("pop");if(s.geo.circle)msg(sec,U.circleCurved[LANG]);updateChip(sec,s,"cs")}return}
+ const btn=e.target.closest("[data-act]");if(!btn)return;const act=btn.dataset.act;const svg=sec.querySelector(".shape-svg");
+ if(act==="diag"){svg.classList.toggle("show-diag");if(!s.geo.diag.length)msg(sec,U.noDiag[LANG]);else if(svg.classList.contains("show-diag"))msg(sec,U.diagOn[LANG])}
+ else if(act==="sym"){svg.classList.toggle("show-sym");if(svg.classList.contains("show-sym")){if(!s.geo.sym.length)msg(sec,U.noSym[LANG]);else msg(sec,U.symOn[LANG])}}
+ else if(act==="fold"){playFold(sec,s)}
+ else if(act==="spin"){playSpin(sec,s)}
+ else if(act==="countv"){autoCount(sec,s,"cv")}
+ else if(act==="counts"){autoCount(sec,s,"cs")}
+ else if(act==="reset"){resetStage(sec,s)}
+})}
+
+/* ============ GAME STATE ============ */
+const RS={r:null,q:null,m:null,ref:{mood:null,ch:[false,false,false,false,false],text:"",saved:false}};
+function newRiddleRun(){RS.r={order:shuf(RIDDLES.map((_,i)=>i)),i:0,score:0,streak:0,ans:Array(RIDDLES.length).fill(-2),perm:RIDDLES.map(()=>shuf([0,1,2,3])),done:false,hinted:{}}}
+function newQuizRun(){RS.q={order:shuf(QUIZ.map((_,i)=>i)),i:0,score:0,ans:Array(QUIZ.length).fill(-2),perm:QUIZ.map(()=>shuf([0,1,2,3])),done:false}}
+function newMemRun(){const cards=[];SHAPES.forEach((s,i)=>{cards.push({p:i,k:"s"});cards.push({p:i,k:"n"})});shuf(cards);RS.m={cards,flip:[],matched:new Set(),moves:0,sec:0,timer:null,busy:false,done:false,best:null};const b=load("g5_mem_best");if(b){try{RS.m.best=JSON.parse(b)}catch(e){}}}
+
+/* ============ RIDDLE GAME ============ */
+function riddleResult(){const sc=RS.r.score;let m;if(sc>=27)m={en:"WOW! A true Shape Master! 🏆",id:"WOW! Master Bangun Datar sejati! 🏆"};else if(sc>=20)m={en:"Excellent detective work! 🔎✨",id:"Kerja detektif yang luar biasa! 🔎✨"};else if(sc>=12)m={en:"Good job! Keep exploring! 💪",id:"Kerja bagus! Teruslah menjelajah! 💪"};else m={en:"Nice try! Visit the shape pages, then try again! 🌈",id:"Bagus! Kunjungi halaman bangun datar, lalu coba lagi! 🌈"};const stars=sc>0?Math.max(1,Math.round(sc/6)):0;return '<div class="results"><div style="font-size:3rem">🏁</div><h2>'+ (LANG==="en"?"Riddle Results!":"Hasil Tebakan!") +'</h2><div class="big-score">'+sc+" / 30</div>"+'<div class="stars">'+starStr(stars)+"</div>"+'<p style="font-weight:700">'+t(m)+"</p"+'><div class="btn-row"><button class="btn btn-p" id="rAgain">'+U.again[LANG]+'</button><button class="btn btn-s" id="rMenu">'+U.toMenu[LANG]+"</button></div></div>"}
+
+function renderRiddle(){const box=$("#riddleGame");if(!RS.r)newRiddleRun();const st=RS.r;
+ if(st.done){box.innerHTML=riddleResult();return}
+ const ri=st.order[st.i];const r=RIDDLES[ri];const opts=st.perm[ri].map(k=>r.o[k]);const correct=r.o[r.a];const answered=st.ans[ri]!==-2;
+ let oh="";opts.forEach(sid=>{const sh=byId[sid];let cls="opt";if(answered){if(sid===correct)cls+=" ok";else if(sid===st.ans[ri])cls+=" no";else cls+=" dim"}oh+='<button class="'+cls+'" data-sid="'+sid+'" '+(answered?"disabled":"")+'><span class="opt-emo">'+sh.emo+"</span><span>"+t(sh.name)+"</span></button>"});
+ let fb="";if(answered){const ok=st.ans[ri]===correct;const pr=PRAISE[LANG][Math.floor(Math.random()*PRAISE[LANG].length)];fb='<div class="fb-box '+(ok?"good":"bad")+'">'+(ok?pr:U.oops[LANG])+" "+factLine(byId[correct])+"</div>"}
+ let hint="";if(st.hinted[ri]){const sh=byId[correct];hint='<div class="fb-box good" style="background:#FFF9E6;border-color:#F5C518">💡 '+U.hintPre[LANG]+" "+U.startWith[LANG]+' "'+t(sh.name).charAt(0)+'" — '+(sh.sides>0?(sh.sides+" "+U.sides[LANG].toLowerCase()):U.noStraight[LANG])+"</div>"}
+ let nav="";if(answered){nav=st.i>=RIDDLES.length-1?'<button class="btn btn-p" id="rNext">'+U.finish[LANG]+"</button>":'<button class="btn btn-p" id="rNext">'+U.next[LANG]+"</button>"}
+ box.innerHTML='<div class="game-head"><span class="chip">🧩 '+U.riddleW[LANG]+": <b>"+(st.i+1)+"</b>/30</span>"
+ +'<span class="chip">⭐ '+U.score[LANG]+": <b>"+st.score+"</b></span>"
+ +'<span class="chip">🔥 '+U.streak[LANG]+": <b>"+st.streak+"</b></span>"
+ +'<button class="btn btn-s sm" id="rHint">💡 '+U.hint[LANG]+"</button>"
+ +'<button class="btn btn-s sm" id="rSpeak">🔊 '+U.listen[LANG]+"</button></div>"
+ +'<div class="card riddle-card"><p>"'+t(r)+'"</p></div>'
+ +'<div class="opts">'+oh+"</div>"
+ +(hint?'<div class="fb">'+hint+"</div>":"")
+ +'<div class="fb">'+fb+"</div>"
+ +'<div class="game-nav">'+nav+"</div>"}
+
+function answerRiddle(sid){const st=RS.r;const ri=st.order[st.i];if(st.ans[ri]!==-2)return;st.ans[ri]=sid;const r=RIDDLES[ri];
+ if(sid===r.o[r.a]){st.score++;st.streak++;sfx("ok");confetti(45)}else{st.streak=0;sfx("no")}
+ renderRiddle()}
+function advRiddle(){const st=RS.r;if(st.i>=RIDDLES.length-1){st.done=true;sfx("win");confetti(90)}else{st.i++}renderRiddle()}
+function restartRiddle(){newRiddleRun();renderRiddle()}
+
+/* ============ QUIZ ============ */
+function quizResult(){const sc=RS.q.score;let m;if(sc>=9)m={en:"OUTSTANDING! You are ready for Grade 6! 🚀",id:"LUAR BIASA! Kamu siap untuk kelas 6! 🚀"};else if(sc>=7)m={en:"Excellent work, shape star! 🌟",id:"Kerja hebat, bintang bangun datar! 🌟"};else if(sc>=5)m={en:"Good job! Review the shapes once more! 💪",id:"Kerja bagus! Pelajari lagi bangun datarnya! 💪"};else m={en:"Nice try! Explore the shape pages and retry! 🌈",id:"Bagus! Jelajahi halaman bangun datar lalu coba lagi! 🌈"};const stars=sc>0?Math.max(1,Math.round(sc/2)):0;return '<div class="results"><div style="font-size:3rem">🏆</div><h2>'+(LANG==="en"?"Quiz Results!":"Hasil Kuis!")+'</h2><div class="big-score">'+sc+" / 10</div>"+'<div class="stars">'+starStr(stars)+"</div>"+'<p style="font-weight:700">'+t(m)+'</p><div class="btn-row"><button class="btn btn-p" id="qAgain">'+U.again[LANG]+'</button><button class="btn btn-s" id="qMenu">'+U.toMenu[LANG]+"</button></div></div>"}
+
+function renderQuiz(){const box=$("#quizGame");if(!RS.q)newQuizRun();const st=RS.q;
+ if(st.done){box.innerHTML=quizResult();return}
+ const qi=st.order[st.i];const q=QUIZ[qi];const opts=st.perm[qi].map(k=>q.o[k]);const answered=st.ans[qi]!==-2;
+ let oh="";opts.forEach((op,k)=>{let cls="opt";if(answered){if(k===q.a)cls+=" ok";else if(k===st.ans[qi])cls+=" no";else cls+=" dim"}oh+='<button class="'+cls+'" data-oi="'+k+'" '+(answered?"disabled":"")+'><span class="opt-emo">'+["1️⃣","2️⃣","3️⃣","4️⃣"][k]+"</span><span>"+t(op)+"</span></button>"});
+ let fb="";if(answered){const ok=st.ans[qi]===q.a;const pr=PRAISE[LANG][Math.floor(Math.random()*PRAISE[LANG].length)];fb='<div class="fb-box '+(ok?"good":"bad")+'">'+(ok?pr:U.oops[LANG])+(q.fx?" "+factLine(byId[q.fx]):"")+"</div>"}
+ let nav="";if(answered){nav=(st.i>=QUIZ.length-1?'<button class="btn btn-p" id="qNext">'+U.finish[LANG]+"</button>":'<button class="btn btn-p" id="qNext">'+U.next[LANG]+"</button>")}
+ box.innerHTML='<div class="game-head"><span class="chip">📝 '+(LANG==="en"?"Question":"Soal")+": <b>"+(st.i+1)+"</b>/10</span>"
+ +'<span class="chip">⭐ '+U.score[LANG]+": <b>"+st.score+"</b></span>"
+ +'<button class="btn btn-s sm" id="qSpeak">🔊 '+U.listen[LANG]+"</button></div>"
+ +'<div class="card riddle-card"><p>'+t(q)+"</p></div>"
+ +'<div class="opts">'+oh+"</div>"
+ +'<div class="fb">'+fb+"</div>"
+ +'<div class="game-nav">'+nav+"</div>"}
+
+function answerQuiz(oi){const st=RS.q;const qi=st.order[st.i];if(st.ans[qi]!==-2)return;st.ans[qi]=oi;
+ if(oi===QUIZ[qi].a){st.score++;sfx("ok");confetti(45)}else{sfx("no")}
+ renderQuiz()}
+function advQuiz(){const st=RS.q;if(st.i>=QUIZ.length-1){st.done=true;sfx("win");confetti(90)}else{st.i++}renderQuiz()}
+function restartQuiz(){newQuizRun();renderQuiz()}
+
+/* ============ MEMORY GAME ============ */
+function memTick(){if(!RS.m||RS.m.done)return;RS.m.sec++;const el=$("#mTime");if(el)el.textContent=RS.m.sec+"s"}
+function memContent(c){const sh=SHAPES[c.p];if(c.k==="s")return shapeSVG(sh,{mini:1});return '<span class="mn-emo">'+sh.emo+"</span><b>"+t(sh.name)+"</b>"}
+function renderMemory(){const box=$("#memoryGame");if(!RS.m)newMemRun();const st=RS.m;
+ let grid="";st.cards.forEach((c,i)=>{const open=st.flip.includes(i)||st.matched.has(c.p);grid+='<button class="mem-card'+(open?" flip":"")+(st.matched.has(c.p)?" match":"")+'" data-i="'+i+'" style="--sc:'+SHAPES[c.p].color+'"><span class="mem-in"><span class="mf mb">❓</span><span class="mf mf-front">'+memContent(c)+"</span></span></button>"});
+ let win="";if(st.done){let stars=st.moves<=14?3:(st.moves<=20?2:1);let msg2=st.moves<=14?{en:"WOW! Super memory power! 🧠✨",id:"WOW! Memori super! 🧠✨"}:(st.moves<=20?{en:"Great matching! Well done! 🎉",id:"Pasangan hebat! Kerja bagus! 🎉"}:{en:"You did it! Try again with fewer moves? 💪",id:"Kamu berhasil! Coba lagi dengan langkah lebih sedikit? 💪"});win='<div class="results" style="max-width:560px;margin:16px auto"><div style="font-size:3rem">🎉</div><h2>'+U.memWin[LANG]+'</h2><div class="stars">'+starStr(stars)+'</div><p style="font-weight:700">'+t(msg2)+" — "+U.moves[LANG]+": "+st.moves+" • "+U.time[LANG]+": "+st.sec+"s</p>"+'<div class="btn-row"><button class="btn btn-p" id="mNew">'+U.newGame[LANG]+"</button></div></div>"}
+ box.innerHTML='<div class="game-head" style="justify-content:center">'
+ +'<span class="chip">🃏 '+U.moves[LANG]+": <b>"+st.moves+"</b></span>"
+ +'<span class="chip">⏱️ '+U.time[LANG]+': <b id="mTime">'+st.sec+'s</b></span>'
+ +'<span class="chip">🏆 '+U.best[LANG]+": <b>"+(st.best?st.best.moves+" "+U.moves[LANG].toLowerCase()+" • "+st.best.sec+"s":"—")+"</b></span>"
+ +'<button class="btn btn-s sm" id="mNew">'+U.newGame[LANG]+"</button></div>"
+ +'<div class="mem-grid">'+grid+"</div>"+win}
+function flipCard(i){const st=RS.m;if(!st||st.done||st.busy)return;if(st.flip.includes(i)||st.matched.has(st.cards[i].p))return;
+ st.flip.push(i);sfx("flip");
+ if(!st.timer&&!st.done){st.timer=setInterval(memTick,1000)}
+ if(st.flip.length===2){st.moves++;const a=st.cards[st.flip[0]],b=st.cards[st.flip[1]];
+  if(a.p===b.p){st.matched.add(a.p);st.flip=[];sfx("ok");renderMemory();
+   if(st.matched.size===8){st.done=true;clearInterval(st.timer);st.timer=null;
+    if(!st.best||st.moves<st.best.moves||(st.moves===st.best.moves&&st.sec<st.best.sec)){st.best={moves:st.moves,sec:st.sec};store("g5_mem_best",JSON.stringify(st.best))}
+    sfx("win");confetti(120);renderMemory()}
+   return}
+  st.busy=true;renderMemory();setTimeout(()=>{RS.m.flip=[];RS.m.busy=false;renderMemory()},850);return}
+ renderMemory()}
+function memNew(){if(RS.m&&RS.m.timer)clearInterval(RS.m.timer);newMemRun();renderMemory()}
+
+/* ============ CONCLUSION ============ */
+function buildConclusion(){$("#conclWrap").innerHTML=
+ '<div class="card"><h3>📊 '+U.recap[LANG]+'</h3><div class="tbl-wrap"><table class="recap"><thead><tr><th>'+U.shape[LANG]+"</th><th>"+U.sides[LANG]+"</th><th>"+U.corners[LANG]+"</th><th>"+U.diagonals[LANG]+"</th><th>"+U.symLines[LANG]+"</th><th>"+U.rotOrder[LANG]+"</th></tr></thead><tbody>"
+ +SHAPES.map(s=>'<tr onclick="goShape(\''+s.id+'\')"><td class="rc-shape"><span class="mini-svg">'+shapeSVG(s,{mini:1})+"</span>"+s.emo+" <b>"+t(s.name)+"</b></td><td>"+s.sides+"</td><td>"+s.verts+"</td><td>"+s.diags+"</td><td>"+s.symN+"</td><td>"+s.rot+"</td></tr>").join("")
+ +'</tbody></table></div><p class="tiny">'+U.recapTip[LANG]+"</p></div>"
+ +'<div class="card"><h3>📚 '+U.vocab[LANG]+'</h3><div class="vocab">'+VOCAB.map((v,i)=>'<button class="vcard" data-v="'+i+'"><b>'+t(v)+'</b><span class="vdef">'+(LANG==="en"?v.den:v.di)+"</span></button>").join("")+"</div></div>"
+ +'<div class="card"><h3>👪 '+U.quadClub[LANG]+'</h3><div class="ex-row">'+SHAPES.filter(s=>s.quad).map(s=>'<div class="ex" style="--sc:'+s.color+'"><span class="mini-svg" style="width:44px;height:44px">'+shapeSVG(s,{mini:1})+'</span><span class="ex-lab">'+t(s.name)+"</span></div>").join("")+'</div><p class="tiny" style="margin-top:8px">'+U.quadNote[LANG]+"</p></div>"}
+
+/* ============ REFLECTION ============ */
+function buildReflection(){const r=RS.ref;const done=r.ch.filter(Boolean).length;const pct=done/CHECKS.length*100;
+ $("#reflWrap").innerHTML=
+ '<div class="card"><h3>😊 '+U.moodQ[LANG]+'</h3><div class="mood-row">'+MOODS.map((m,i)=>'<button class="mood'+(r.mood===i?" sel":"")+'" data-m="'+i+'"><span>'+m.e+"</span><small>"+t(m)+"</small></button>").join("")+"</div>"+(r.mood!=null?'<p class="mood-msg">'+t(MOODS[r.mood].msg)+"</p>":"")+"</div>"
+ +'<div class="card"><h3>✅ '+U.selfCheck[LANG]+'</h3><div class="checks">'+CHECKS.map((c,i)=>'<button class="check'+(r.ch[i]?" on":"")+'" data-c="'+i+'"><span class="cb">'+(r.ch[i]?"✅":"⬜")+"</span> "+t(c)+"</button>").join("")+'</div><div class="pbar-mini"><div style="width:'+pct+'%"></div></div><p class="tiny">'+(done===CHECKS.length?U.checkDone[LANG]:U.checkTip[LANG])+"</p></div>"
+ +'<div class="card"><h3>💭 '+U.learnQ[LANG]+'</h3><textarea id="refText" rows="3" placeholder="'+U.learnPh[LANG]+'"></textarea><div class="btn-row" style="justify-content:flex-start"><button class="btn btn-p" id="refSave">'+U.save[LANG]+'</button><span id="refMsg" class="tiny">'+(r.saved?U.savedMsg[LANG]:"")+"</span></div></div>"
+ +'<div class="card"><h3>🏅 '+U.report[LANG]+'</h3><div class="scores">'
+ +'<span class="score-chip">🕵️ '+(RS.r?RS.r.score:0)+" / 30</span>"
+ +'<span class="score-chip">📝 '+(RS.q?RS.q.score:0)+" / 10</span>"
+ +'<span class="score-chip">🧠 '+(RS.m&&RS.m.best?RS.m.best.moves+" "+U.moves[LANG].toLowerCase()+" • "+RS.m.best.sec+"s":"—")+"</span>"
+ +'</div><p class="tiny">'+U.reportTip[LANG]+"</p></div>";
+ const ta=$("#refText");if(ta){ta.value=r.text;ta.addEventListener("input",()=>{r.text=ta.value})}
+ const sv=$("#refSave");if(sv)sv.addEventListener("click",()=>{r.saved=true;store("g5_reflect",r.text);const m=$("#refMsg");if(m)m.textContent=U.savedMsg[LANG];sfx("ok")})}
+
+/* ============ GLOBAL EVENT BINDINGS ============ */
+function bindGlobal(){
+ $("#riddleGame").addEventListener("click",e=>{
+  const st=RS.r;if(!st)return;
+  const opt=e.target.closest(".opt");if(opt&&opt.dataset.sid){answerRiddle(opt.dataset.sid);return}
+  if(e.target.closest("#rHint")){const ri=st.order[st.i];if(st.ans[ri]!==-2)return;st.hinted[ri]=true;sfx("pop");renderRiddle();return}
+  if(e.target.closest("#rSpeak")){const r=RIDDLES[st.order[st.i]];speak(t(r));return}
+  if(e.target.closest("#rNext")){advRiddle();return}
+  if(e.target.closest("#rAgain")){restartRiddle();return}
+  if(e.target.closest("#rMenu")){go(2);return}});
+ $("#quizGame").addEventListener("click",e=>{
+  const st=RS.q;if(!st)return;
+  const opt=e.target.closest(".opt");if(opt&&opt.dataset.oi!==undefined){answerQuiz(parseInt(opt.dataset.oi,10));return}
+  if(e.target.closest("#qSpeak")){const q=QUIZ[st.order[st.i]];speak(t(q));return}
+  if(e.target.closest("#qNext")){advQuiz();return}
+  if(e.target.closest("#qAgain")){restartQuiz();return}
+  if(e.target.closest("#qMenu")){go(2);return}});
+ $("#memoryGame").addEventListener("click",e=>{
+  if(e.target.closest("#mNew")){memNew();return}
+  const card=e.target.closest(".mem-card");if(card)flipCard(parseInt(card.dataset.i,10))});
+ $("#conclWrap").addEventListener("click",e=>{const v=e.target.closest(".vcard");if(v){v.classList.toggle("open");sfx("pop")}});
+ $("#reflWrap").addEventListener("click",e=>{
+  const mood=e.target.closest(".mood");if(mood){RS.ref.mood=parseInt(mood.dataset.m,10);sfx("pop");buildReflection();return}
+  const chk=e.target.closest(".check");if(chk){const i=parseInt(chk.dataset.c,10);RS.ref.ch[i]=!RS.ref.ch[i];sfx("pop");buildReflection();if(RS.ref.ch.every(Boolean)){confetti(80);sfx("win")}return}});
+ bindShapeHost();
+ document.addEventListener("keydown",e=>{
+  if(e.target&&(e.target.tagName==="TEXTAREA"||e.target.tagName==="INPUT"))return;
+  if(e.key==="ArrowRight")next();else if(e.key==="ArrowLeft")prev();else if(e.key==="Escape")closeMenu()});
+ let tx=0,ty=0;
+ document.addEventListener("touchstart",e=>{if(e.target.closest("button,input,textarea,svg,a")){tx=null;return}tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+ document.addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;const dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){if(dx<0)next();else prev()}tx=null},{passive:true});
+}
+
+/* ============ INIT ============ */
+function init(){
+ const sv=load("g5_lang");if(sv==="id")LANG="id";
+ if(load("g5_mute")==="1"){MUTED=true;const sb=$("#sndBtn");if(sb)sb.textContent="🔇"}
+ newRiddleRun();newQuizRun();newMemRun();
+ const savedText=load("g5_reflect");if(savedText)RS.ref.text=savedText;
+ buildShapes();collectSlides();
+ setLang(LANG);
+ bindGlobal();
+ go(0);
+}
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
