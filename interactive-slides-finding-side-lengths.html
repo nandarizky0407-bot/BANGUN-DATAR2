@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finding Side Lengths — Grade 5 Maths</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; }
+body {
+  font-family:'Nunito','Segoe UI',system-ui,-apple-system,sans-serif;
+  background:linear-gradient(135deg,#eef2ff 0%,#f5f3ff 45%,#ecfeff 100%);
+  color:#1e293b; overflow:hidden;
+}
+
+/* ---------- Language toggle system ---------- */
+body.lang-id .txt-en { display:none !important; }
+body:not(.lang-id) .txt-id { display:none !important; }
+
+/* ---------- Floating background shapes ---------- */
+.bg-decor { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.shape { position:absolute; border-radius:16px; opacity:.14; animation:float 12s ease-in-out infinite; }
+.shape.a { width:70px; height:70px; background:#6366f1; top:12%; left:6%; }
+.shape.b { width:110px; height:70px; background:#ec4899; top:64%; left:4%; animation-delay:-3s; }
+.shape.c { width:60px; height:60px; background:#10b981; top:18%; right:8%; animation-delay:-6s; }
+.shape.d { width:120px; height:74px; background:#f59e0b; top:70%; right:6%; animation-delay:-9s; }
+.shape.e { width:46px; height:46px; background:#14b8a6; top:40%; left:12%; animation-delay:-5s; border-radius:50%; }
+.shape.f { width:56px; height:56px; background:#a855f7; top:42%; right:14%; animation-delay:-7s; }
+@keyframes float {
+  0%,100% { transform:translateY(0) rotate(10deg); }
+  50% { transform:translateY(-26px) rotate(24deg); }
+}
+
+/* ---------- Top bar ---------- */
+.topbar {
+  position:fixed; top:0; left:0; right:0; height:58px; z-index:60;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 18px; background:rgba(255,255,255,.85);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid #e2e8f0;
+}
+.brand { font-weight:900; color:#4f46e5; font-size:15px; display:flex; gap:8px; align-items:center; white-space:nowrap; }
+.topbar-right { display:flex; gap:10px; align-items:center; }
+.chip {
+  background:#eef2ff; color:#4f46e5; font-weight:800; font-size:13px;
+  padding:6px 12px; border-radius:999px; border:1px solid #e0e7ff; white-space:nowrap;
+}
+.chip b { color:#4338ca; }
+.lang-btn {
+  font-family:inherit; font-weight:800; font-size:13px; border:none; cursor:pointer;
+  background:linear-gradient(135deg,#6366f1,#a855f7); color:#fff;
+  border-radius:999px; padding:9px 16px; box-shadow:0 4px 12px rgba(99,102,241,.35); transition:.2s;
+}
+.lang-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,.45); }
+
+/* ---------- Progress bar ---------- */
+.progress { position:fixed; top:58px; left:0; right:0; height:5px; background:#e2e8f0; z-index:59; }
+#progressFill { height:100%; width:0%; background:linear-gradient(90deg,#6366f1,#a855f7,#ec4899); transition:width .35s ease; }
+
+/* ---------- Deck & slides ---------- */
+.deck { position:fixed; inset:0; z-index:10; }
+.slide {
+  position:absolute; inset:0; overflow-y:auto; display:flex;
+  opacity:0; visibility:hidden; transform:translateY(26px) scale(.99);
+  transition:opacity .45s ease, transform .45s ease, visibility .45s;
+}
+.slide.active { opacity:1; visibility:visible; transform:none; z-index:12; }
+.slide-inner { margin:auto; width:100%; max-width:1100px; padding:84px 26px 106px; }
+
+/* ---------- Navbar ---------- */
+.navbar {
+  position:fixed; bottom:0; left:0; right:0; height:66px; z-index:60;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 20px; background:rgba(255,255,255,.9);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border-top:1px solid #e2e8f0;
+}
+.nav-btns { display:flex; gap:10px; }
+.nav-btn {
+  font-family:inherit; font-weight:800; font-size:14px; border:none; cursor:pointer;
+  border-radius:999px; padding:11px 24px; transition:.2s;
+}
+.nav-btn.primary { background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff; box-shadow:0 6px 14px rgba(99,102,241,.35); }
+.nav-btn.primary:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 9px 20px rgba(99,102,241,.45); }
+.nav-btn.ghost { background:#eef2ff; color:#4f46e5; }
+.nav-btn.ghost:hover:not(:disabled) { background:#e0e7ff; }
+.nav-btn:disabled { opacity:.35; cursor:not-allowed; }
+#slideCounter { font-weight:800; color:#64748b; font-size:14px; white-space:nowrap; }
+
+/* ---------- Generic cards ---------- */
+.card {
+  background:#fff; border-radius:22px; padding:24px 26px;
+  box-shadow:0 10px 30px rgba(15,23,42,.08); border:1px solid #eef2f7;
+}
+.card-title { font-size:18px; font-weight:900; color:#111827; margin-bottom:12px; }
+
+/* ---------- Slide headers ---------- */
+.slide-head { text-align:center; margin-bottom:22px; }
+.part-badge {
+  display:inline-block; font-weight:900; font-size:12.5px; letter-spacing:.8px;
+  padding:6px 16px; border-radius:999px; margin-bottom:10px; text-transform:uppercase;
+}
+.b1 { background:#dbeafe; color:#1d4ed8; }
+.b2 { background:#d1fae5; color:#047857; }
+.b3 { background:#fef3c7; color:#b45309; }
+.b4 { background:#fce7f3; color:#be185d; }
+.b5 { background:#ccfbf1; color:#0f766e; }
+.slide-head h2 { font-size:clamp(23px,3.4vw,34px); font-weight:900; color:#111827; line-height:1.2; }
+.slide-sub { color:#64748b; font-weight:600; margin-top:8px; font-size:15.5px; }
+
+/* ---------- Formula box & steps ---------- */
+.formula-box {
+  margin:16px auto; max-width:660px; text-align:center;
+  background:linear-gradient(135deg,#eef2ff,#fdf2f8);
+  border:2px dashed #c7d2fe; border-radius:18px; padding:15px 20px;
+  font-size:clamp(18px,2.6vw,25px); font-weight:900; color:#3730a3;
+}
+.steps { display:grid; gap:12px; margin:4px 0; }
+.step { display:flex; gap:14px; align-items:flex-start; background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:13px 16px; }
+.step-num { flex:0 0 34px; height:34px; border-radius:50%; background:#4f46e5; color:#fff; font-weight:900; display:flex; align-items:center; justify-content:center; font-size:15px; }
+.step p { font-weight:600; color:#334155; line-height:1.5; font-size:15px; }
+
+.two-col { display:grid; grid-template-columns:1.05fr .95fr; gap:20px; align-items:stretch; margin-bottom:18px; }
+.visual-card {
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  background:#f8fafc; border:1px solid #e2e8f0; border-radius:18px; padding:16px; text-align:center;
+}
+.visual-card p { font-weight:700; color:#475569; font-size:14px; line-height:1.5; }
+.visual-card svg { max-width:100%; height:auto; }
+
+.example-card { background:#fffbeb; border:2px solid #fde68a; border-radius:18px; padding:18px 22px; margin-bottom:16px; }
+.badge {
+  display:inline-block; background:#f59e0b; color:#fff; font-weight:900; font-size:12px;
+  padding:4px 13px; border-radius:999px; margin-bottom:10px; letter-spacing:.6px; text-transform:uppercase;
+}
+.ex-q { font-weight:800; color:#1e293b; margin-bottom:8px; line-height:1.55; }
+.ex-a { font-weight:700; color:#374151; line-height:1.6; font-size:15.5px; }
+
+.why-box {
+  display:flex; gap:12px; align-items:flex-start;
+  background:#ecfeff; border:2px solid #a5f3fc; border-radius:16px;
+  padding:14px 16px; font-weight:700; color:#155e75; line-height:1.5; font-size:15px;
+}
+.center-cta { text-align:center; margin-top:20px; }
+.btn-goto {
+  font-family:inherit; font-weight:900; font-size:15px; cursor:pointer; transition:.2s;
+  background:#eef2ff; color:#4f46e5; border:2px solid #c7d2fe; border-radius:999px; padding:12px 26px;
+}
+.btn-goto:hover { transform:translateY(-2px); background:#e0e7ff; box-shadow:0 8px 18px rgba(79,70,229,.2); }
+.btn-back {
+  font-family:inherit; font-weight:800; font-size:13px; cursor:pointer; transition:.2s;
+  background:#fff; border:2px solid #e2e8f0; color:#64748b; border-radius:999px; padding:8px 16px;
+}
+.btn-back:hover { background:#f8fafc; color:#4f46e5; border-color:#c7d2fe; }
+
+/* ---------- Cover ---------- */
+.cover-inner { text-align:center; }
+.cover-emoji { font-size:42px; margin-bottom:10px; letter-spacing:14px; }
+.cover-kicker {
+  font-weight:800; color:#6d28d9; letter-spacing:1.6px; text-transform:uppercase;
+  font-size:13px; margin-bottom:14px;
+}
+.cover-title {
+  font-size:clamp(32px,5.6vw,56px); font-weight:900; line-height:1.1;
+  background:linear-gradient(90deg,#4f46e5,#a855f7,#ec4899);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.cover-sub { font-size:clamp(16px,2.2vw,21px); color:#475569; font-weight:700; margin-top:12px; line-height:1.45; }
+.name-card { max-width:470px; margin:30px auto 0; background:#fff; border-radius:24px; padding:26px 28px; box-shadow:0 16px 40px rgba(15,23,42,.1); border:1px solid #eef2f7; }
+.name-card label { display:block; font-weight:800; color:#334155; margin-bottom:10px; font-size:15px; }
+#nameInput {
+  width:100%; padding:14px 18px; font-family:inherit; font-size:17px; font-weight:700;
+  border:2px solid #c7d2fe; border-radius:16px; text-align:center; outline:none; transition:.2s; color:#0f172a;
+}
+#nameInput:focus { border-color:#6366f1; box-shadow:0 0 0 4px rgba(99,102,241,.15); }
+#startBtn {
+  margin-top:14px; width:100%; padding:14px; font-family:inherit; font-size:17px; font-weight:900;
+  border:none; border-radius:16px; cursor:pointer; color:#fff;
+  background:linear-gradient(135deg,#6366f1,#a855f7); box-shadow:0 8px 20px rgba(99,102,241,.4); transition:.2s;
+}
+#startBtn:hover { transform:translateY(-2px); box-shadow:0 12px 26px rgba(99,102,241,.5); }
+.name-hint { color:#dc2626; font-weight:700; margin-top:10px; font-size:13.5px; }
+.cover-note { margin-top:16px; color:#94a3b8; font-weight:600; font-size:13.5px; line-height:1.6; }
+.cover-features { margin-top:18px; color:#64748b; font-weight:800; font-size:13.5px; }
+
+/* ---------- Objectives ---------- */
+.obj-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:14px; }
+.obj-card { position:relative; cursor:pointer; display:flex; gap:14px; align-items:flex-start; padding:18px 20px; transition:.2s; }
+.obj-card:hover { transform:translateY(-3px); box-shadow:0 14px 30px rgba(15,23,42,.13); border-color:#c7d2fe; }
+.obj-emoji { font-size:27px; line-height:1.2; }
+.obj-card h3 { font-size:16px; font-weight:800; margin-bottom:4px; color:#111827; line-height:1.35; padding-right:22px; }
+.obj-card p { font-size:13.5px; color:#64748b; font-weight:700; }
+.obj-go { position:absolute; right:16px; top:16px; font-size:13px; font-weight:900; color:#4f46e5; }
+
+/* ---------- Practice ---------- */
+.practice-head { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.practice-head .chip { font-size:14px; }
+.q-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+.q-card { background:#fff; border:2px solid #e2e8f0; border-radius:18px; padding:16px 18px; transition:.25s; }
+.q-card.solved { border-color:#34d399; background:#f0fdf4; }
+.q-top { display:flex; gap:11px; margin-bottom:10px; }
+.q-num {
+  flex:0 0 30px; height:30px; border-radius:10px; background:#4f46e5; color:#fff;
+  font-weight:900; display:flex; align-items:center; justify-content:center; font-size:14px;
+}
+.q-card.solved .q-num { background:#10b981; }
+.q-text { font-weight:700; color:#1e293b; font-size:15px; line-height:1.5; }
+.q-controls { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.q-input {
+  width:112px; font-family:inherit; font-weight:800; font-size:15px; color:#0f172a;
+  padding:9px 10px; border:2px solid #cbd5e1; border-radius:12px; outline:none; transition:.2s;
+}
+.q-input:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,.15); }
+.q-input:disabled { background:#ecfdf5; border-color:#a7f3d0; }
+.q-unit { font-weight:900; color:#475569; font-size:15px; }
+.btn-check {
+  font-family:inherit; font-weight:800; font-size:13.5px; border:none; cursor:pointer;
+  border-radius:999px; padding:9px 17px; background:#10b981; color:#fff; transition:.2s;
+}
+.btn-check:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 5px 12px rgba(16,185,129,.35); }
+.btn-exp {
+  font-family:inherit; font-weight:800; font-size:13.5px; cursor:pointer; transition:.2s;
+  border:2px solid #fbbf24; background:#fffbeb; color:#b45309; border-radius:999px; padding:7px 14px;
+}
+.btn-exp:hover { background:#fef3c7; }
+.feedback { margin-top:9px; font-weight:800; font-size:14px; min-height:20px; }
+.feedback.ok { color:#059669; }
+.feedback.err { color:#dc2626; }
+.exp-box {
+  margin-top:10px; background:#f1f5f9; border-left:4px solid #6366f1;
+  border-radius:0 12px 12px 0; padding:12px 15px; font-weight:600; color:#334155;
+  font-size:14.5px; line-height:1.6; display:none;
+}
+.exp-box.open { display:block; animation:pop .25s ease; }
+@keyframes pop { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+.shake { animation:shake .4s; }
+@keyframes shake { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
+
+/* ---------- Chips / tables for the speed trick ---------- */
+.sq-chips, .lm-chips { display:flex; flex-wrap:wrap; gap:7px; justify-content:center; }
+.sq-chip { background:#ecfdf5; border:1px solid #a7f3d0; color:#047857; font-weight:800; font-size:13px; padding:5px 10px; border-radius:9px; }
+.lm-chip { background:#fff7ed; border:1px solid #fed7aa; color:#c2410c; font-weight:800; font-size:13px; padding:5px 10px; border-radius:9px; }
+.mini-table { width:100%; border-collapse:separate; border-spacing:5px; font-weight:800; font-size:14px; }
+.mini-table td { background:#f8fafc; border-radius:10px; padding:8px 10px; text-align:left; color:#334155; }
+.mini-table td.k { background:#eef2ff; color:#4338ca; font-weight:900; white-space:nowrap; }
+.trick-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.sub-title { font-weight:900; color:#111827; font-size:16px; margin:14px 0 10px; }
+
+/* ---------- Conclusion ---------- */
+.form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr)); gap:14px; }
+.form-card { border-radius:18px; padding:20px 16px; text-align:center; border:2px solid; }
+.form-card .f-title { font-weight:900; font-size:12.5px; letter-spacing:.6px; text-transform:uppercase; margin-bottom:9px; }
+.form-card .f-formula { font-weight:900; font-size:clamp(17px,2vw,21px); line-height:1.35; }
+.fc1 { background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8; }
+.fc2 { background:#ecfdf5; border-color:#a7f3d0; color:#047857; }
+.fc3 { background:#fff7ed; border-color:#fed7aa; color:#c2410c; }
+.fc4 { background:#fdf4ff; border-color:#f5d0fe; color:#a21caf; }
+.fc5 { background:#fefce8; border-color:#fde68a; color:#a16207; }
+.remind-box {
+  margin-top:18px; text-align:center; background:#fff; border:2px dashed #fca5a5;
+  border-radius:16px; padding:14px 18px; font-weight:800; color:#b91c1c; font-size:15px;
+}
+
+/* ---------- Reflection ---------- */
+.emoji-row { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin:16px 0 24px; }
+.emoji-btn {
+  font-family:inherit; background:#fff; border:2px solid #e2e8f0; border-radius:18px;
+  padding:14px 24px; font-size:15px; font-weight:800; cursor:pointer; transition:.2s; color:#334155;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+}
+.emoji-btn .e { font-size:34px; line-height:1; }
+.emoji-btn:hover { transform:translateY(-3px); box-shadow:0 10px 22px rgba(15,23,42,.1); }
+.emoji-btn.selected { border-color:#6366f1; background:#eef2ff; box-shadow:0 8px 18px rgba(99,102,241,.25); }
+.ref-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; }
+.ref-card h3 { font-size:15.5px; font-weight:800; color:#111827; line-height:1.4; }
+.ref-card textarea {
+  width:100%; min-height:100px; margin-top:10px; border:2px solid #e2e8f0; border-radius:14px;
+  padding:12px 14px; font-family:inherit; font-weight:600; font-size:14.5px; resize:vertical;
+  outline:none; transition:.2s; color:#0f172a;
+}
+.ref-card textarea:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,.12); }
+
+/* ---------- Thank you ---------- */
+.ty-inner { text-align:center; }
+.ty-emoji { font-size:62px; display:inline-block; animation:bounce 2s infinite; }
+@keyframes bounce { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-12px); } }
+.ty-kicker { font-weight:900; letter-spacing:2px; color:#059669; font-size:13px; margin-top:10px; text-transform:uppercase; }
+.ty-title {
+  font-size:clamp(30px,5vw,50px); font-weight:900; margin:8px 0 10px; line-height:1.15;
+  background:linear-gradient(90deg,#4f46e5,#ec4899); -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.ty-msg { font-size:19px; font-weight:700; color:#334155; line-height:1.6; }
+.ty-score {
+  margin:24px auto 6px; max-width:400px; font-size:17px; font-weight:900; color:#4f46e5;
+  background:#eef2ff; border:2px dashed #c7d2fe; border-radius:18px; padding:16px 20px;
+}
+#perfectLine { margin:10px auto 0; max-width:400px; font-size:16px; font-weight:900; color:#b45309; background:#fef3c7; border:2px solid #fde68a; border-radius:16px; padding:12px 18px; }
+#restartBtn {
+  margin-top:24px; font-family:inherit; font-size:16px; font-weight:900; border:none; cursor:pointer;
+  color:#fff; background:linear-gradient(135deg,#10b981,#059669); border-radius:999px;
+  padding:14px 34px; box-shadow:0 8px 20px rgba(16,185,129,.4); transition:.2s;
+}
+#restartBtn:hover { transform:translateY(-2px); box-shadow:0 12px 26px rgba(16,185,129,.5); }
+
+.hidden { display:none !important; }
+
+/* ---------- Responsive ---------- */
+@media (max-width:860px) {
+  .two-col, .trick-grid, .q-grid { grid-template-columns:1fr; }
+  .slide-inner { padding:76px 14px 100px; }
+  .brand .brand-text { display:none; }
+  .nav-btn { padding:10px 18px; font-size:13px; }
+  .topbar { padding:0 10px; }
+}
+@media (max-height:700px) {
+  .slide-inner { padding-top:70px; padding-bottom:92px; }
+  .cover-emoji { font-size:32px; margin-bottom:6px; letter-spacing:10px; }
+  .cover-kicker { margin-bottom:8px; }
+  .cover-sub { margin-top:8px; }
+  .name-card { margin-top:18px; padding:20px 24px; }
+  .slide-head { margin-bottom:14px; }
+  .formula-box { margin:12px auto; padding:12px 18px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-decor">
+  <div class="shape a"></div><div class="shape b"></div><div class="shape c"></div>
+  <div class="shape d"></div><div class="shape e"></div><div class="shape f"></div>
+</div>
+
+<header class="topbar">
+  <div class="brand">📐 <span class="brand-text"><span class="txt-en">Grade 5 Maths • Cambridge</span><span class="txt-id">Matematika Kelas 5 • Cambridge</span></span></div>
+  <div class="topbar-right">
+    <span class="chip name-chip" id="nameChipWrap" style="display:none">👤 <b id="nameChip"></b></span>
+    <span class="chip">⭐ <b id="scoreNum">0</b>/50</span>
+    <button class="lang-btn" id="langToggle" type="button">
+      <span class="txt-en">🇮🇩 Bahasa Indonesia</span>
+      <span class="txt-id">🇬🇧 English</span>
+    </button>
+  </div>
+</header>
+<div class="progress"><div id="progressFill"></div></div>
+
+<main class="deck" id="deck">
+
+<!-- ============ SLIDE 1 : COVER ============ -->
+<section class="slide active" id="cover">
+  <div class="slide-inner cover-inner">
+    <div class="cover-emoji">📐🟦📏</div>
+    <p class="cover-kicker"><span class="txt-en">Cambridge Primary Mathematics • Stage 5</span><span class="txt-id">Matematika Cambridge Primary • Stage 5</span></p>
+    <h1 class="cover-title">
+      <span class="txt-en">Finding Side Lengths of<br>Squares &amp; Rectangles</span>
+      <span class="txt-id">Menentukan Panjang Sisi<br>Persegi &amp; Persegi Panjang</span>
+    </h1>
+    <p class="cover-sub">
+      <span class="txt-en">From the perimeter and the area — without any magic, just smart maths! 🪄</span>
+      <span class="txt-id">Dari keliling dan luas — tanpa sulap, hanya matematika yang cerdas! 🪄</span>
+    </p>
+    <div class="name-card">
+      <label for="nameInput">👤 <span class="txt-en">Student name</span><span class="txt-id">Nama siswa</span></label>
+      <input id="nameInput" type="text" maxlength="30" autocomplete="off"
+             data-ph-en="Type your name here..." data-ph-id="Tulis namamu di sini...">
+      <p class="name-hint hidden" id="nameHint">
+        <span class="txt-en">Please type your name first 😊</span>
+        <span class="txt-id">Tulis namamu dulu ya 😊</span>
+      </p>
+      <button id="startBtn" type="button">🚀 <span class="txt-en">Start Learning</span><span class="txt-id">Mulai Belajar</span></button>
+    </div>
+    <p class="cover-note">
+      <span class="txt-en">Your name will appear on the final slide ⭐</span>
+      <span class="txt-id">Namamu akan muncul di slide terakhir ⭐</span>
+    </p>
+    <p class="cover-features">
+      <span class="txt-en">50 practice problems • Instant checking • Bilingual EN 🇬🇧 / ID 🇮🇩</span>
+      <span class="txt-id">50 soal latihan • Pemeriksaan instan • Dua bahasa EN 🇬🇧 / ID 🇮🇩</span>
+    </p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2 : OBJECTIVES ============ -->
+<section class="slide" id="objectives">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <h2>🎯 <span class="txt-en">Learning Objectives</span><span class="txt-id">Tujuan Pembelajaran</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">By the end of this lesson, you will be able to... (click a card to jump in!)</span>
+        <span class="txt-id">Setelah pelajaran ini, kamu akan mampu... (klik kartu untuk melompat ke materi!)</span>
+      </p>
+    </header>
+    <div class="obj-grid">
+      <div class="card obj-card" data-goto="concept-1">
+        <span class="obj-emoji">📏</span>
+        <div>
+          <h3><span class="txt-en">Find a square's side from its perimeter</span><span class="txt-id">Menentukan sisi persegi jika kelilingnya diketahui</span></h3>
+          <p><span class="txt-en">s = P ÷ 4 — just divide by 4!</span><span class="txt-id">s = K ÷ 4 — cukup bagi dengan 4!</span></p>
+        </div>
+        <span class="obj-go">→</span>
+      </div>
+      <div class="card obj-card" data-goto="concept-2">
+        <span class="obj-emoji">🔢</span>
+        <div>
+          <h3><span class="txt-en">Find a square's side from its area</span><span class="txt-id">Menentukan sisi persegi jika luasnya diketahui</span></h3>
+          <p><span class="txt-en">Use square roots (√) — the opposite of squaring!</span><span class="txt-id">Gunakan akar kuadrat (√) — kebalikan dari kuadrat!</span></p>
+        </div>
+        <span class="obj-go">→</span>
+      </div>
+      <div class="card obj-card" data-goto="trick">
+        <span class="obj-emoji">⚡</span>
+        <div>
+          <h3><span class="txt-en">Use a speed trick for square roots of thousands numbers</span><span class="txt-id">Menggunakan trik cepat akar kuadrat bilangan ribuan</span></h3>
+          <p><span class="txt-en">3 easy steps — no calculator needed!</span><span class="txt-id">3 langkah mudah — tanpa kalkulator!</span></p>
+        </div>
+        <span class="obj-go">→</span>
+      </div>
+      <div class="card obj-card" data-goto="concept-4">
+        <span class="obj-emoji">📐</span>
+        <div>
+          <h3><span class="txt-en">Find a rectangle's length or width from its perimeter</span><span class="txt-id">Menentukan panjang atau lebar persegi panjang dari keliling</span></h3>
+          <p><span class="txt-en">Half of the perimeter is the secret key!</span><span class="txt-id">Setengah dari keliling adalah kunci rahasianya!</span></p>
+        </div>
+        <span class="obj-go">→</span>
+      </div>
+      <div class="card obj-card" data-goto="concept-5">
+        <span class="obj-emoji">🟦</span>
+        <div>
+          <h3><span class="txt-en">Find a rectangle's length or width from its area</span><span class="txt-id">Menentukan panjang atau lebar persegi panjang dari luas</span></h3>
+          <p><span class="txt-en">Divide the area by the side you know.</span><span class="txt-id">Bagi luas dengan sisi yang sudah diketahui.</span></p>
+        </div>
+        <span class="obj-go">→</span>
+      </div>
+      <div class="card obj-card" data-goto="practice-1">
+        <span class="obj-emoji">🏆</span>
+        <div>
+          <h3><span class="txt-en">Bonus mission: solve all 50 problems!</span><span class="txt-id">Misi bonus: selesaikan semua 50 soal!</span></h3>
+          <p><span class="txt-en">10 problems for every part — become a champion 💪</span><span class="txt-id">10 soal untuk setiap bagian — jadilah juara 💪</span></p>
+        </div>
+        <span class="obj-go">→</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3 : PART 1 CONCEPT ============ -->
+<section class="slide" id="concept-1">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <span class="part-badge b1"><span class="txt-en">Part 1 of 5</span><span class="txt-id">Bagian 1 dari 5</span></span>
+      <h2><span class="txt-en">🔍 Finding a Square's Side from its Perimeter</span><span class="txt-id">🔍 Mencari Sisi Persegi dari Kelilingnya</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">The perimeter is the distance all the way around the shape.</span>
+        <span class="txt-id">Keliling adalah jarak menyeluruh di sekeliling bangun.</span>
+      </p>
+    </header>
+
+    <div class="formula-box">
+      <span class="txt-en">P = 4 × s &nbsp;&nbsp;→&nbsp;&nbsp; s = P ÷ 4</span>
+      <span class="txt-id">K = 4 × s &nbsp;&nbsp;→&nbsp;&nbsp; s = K ÷ 4</span>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3 class="card-title">🪜 <span class="txt-en">Steps</span><span class="txt-id">Langkah-langkah</span></h3>
+        <div class="steps">
+          <div class="step"><span class="step-num">1</span>
+            <p><span class="txt-en">Remember: a square has <b>4 equal sides</b>, so P = 4 × s.</span><span class="txt-id">Ingat: persegi memiliki <b>4 sisi yang sama panjang</b>, jadi K = 4 × s.</span></p>
+          </div>
+          <div class="step"><span class="step-num">2</span>
+            <p><span class="txt-en">Flip the formula around: <b>s = P ÷ 4</b>.</span><span class="txt-id">Balik rumusnya: <b>s = K ÷ 4</b>.</span></p>
+          </div>
+          <div class="step"><span class="step-num">3</span>
+            <p><span class="txt-en">Divide the perimeter by 4 — done! Don't forget the unit.</span><span class="txt-id">Bagi keliling dengan 4 — selesai! Jangan lupa tulis satuannya.</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="visual-card">
+        <svg class="txt-en" viewBox="0 0 170 160" width="185" height="174" role="img" aria-label="Square with 4 equal sides">
+          <rect x="35" y="30" width="100" height="100" fill="#dbeafe" stroke="#2563eb" stroke-width="3.5" rx="6"/>
+          <text x="85" y="18" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563eb" font-family="Nunito, sans-serif">s</text>
+          <text x="85" y="150" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563eb" font-family="Nunito, sans-serif">s</text>
+          <text x="22" y="85" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563eb" font-family="Nunito, sans-serif">s</text>
+          <text x="148" y="85" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563eb" font-family="Nunito, sans-serif">s</text>
+          <text x="85" y="85" text-anchor="middle" font-size="19" font-weight="900" fill="#1e3a8a" font-family="Nunito, sans-serif">P</text>
+        </svg>
+        <svg class="txt-id" viewBox="0 0 170 160" width="185" height="174" role="img" aria-label="Persegi dengan 4 sisi sama panjang">
+          <rect x="35" y="30" width="100" height="100" fill="#dbeafe" stroke="#2563eb" stroke-width="3.5" rx="6"/>
+          <text x="85" y="18" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563eb" font-family="Nunito, sans-serif">s</text>
+          <text x="85" y="150" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563eb" font-family="Nunito, sans-serif">s</text>
+          <text x="22" y="85" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563eb" font-family="Nunito, sans-serif">s</text>
+          <text x="148" y="85" text-anchor="middle" font-size="15" font-weight="bold" fill="#2563eb" font-family="Nunito, sans-serif">s</text>
+          <text x="85" y="85" text-anchor="middle" font-size="19" font-weight="900" fill="#1e3a8a" font-family="Nunito, sans-serif">K</text>
+        </svg>
+        <p><span class="txt-en">All 4 sides are equal — each one is <b>s</b>. Together they make the perimeter <b>P</b>.</span><span class="txt-id">Keempat sisinya sama panjang — masing-masing <b>s</b>. Semuanya membentuk keliling <b>K</b>.</span></p>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <span class="badge"><span class="txt-en">Worked example</span><span class="txt-id">Contoh soal</span></span>
+      <p class="ex-q"><span class="txt-en">The perimeter of a square is <b>36 cm</b>. How long is each side?</span><span class="txt-id">Keliling sebuah persegi adalah <b>36 cm</b>. Berapa panjang setiap sisinya?</span></p>
+      <p class="ex-a">
+        <span class="txt-en">s = P ÷ 4 = 36 ÷ 4 = <b>9 cm</b> ✔ &nbsp;&nbsp;<i>(Check: 4 × 9 = 36 ✓)</i></span>
+        <span class="txt-id">s = K ÷ 4 = 36 ÷ 4 = <b>9 cm</b> ✔ &nbsp;&nbsp;<i>(Periksa: 4 × 9 = 36 ✓)</i></span>
+      </p>
+    </div>
+
+    <div class="why-box">💡
+      <span class="txt-en"><b>Why divide by 4?</b> Because the perimeter is built from 4 equal sides — sharing it equally gives you exactly one side!</span>
+      <span class="txt-id"><b>Mengapa dibagi 4?</b> Karena keliling tersusun dari 4 sisi yang sama panjang — membaginya sama rata menghasilkan tepat satu sisi!</span>
+    </div>
+
+    <div class="center-cta">
+      <button class="btn-goto" data-goto="practice-1" type="button">🏋️ <span class="txt-en">Go to Practice</span><span class="txt-id">Ke Soal Latihan</span> →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4 : PART 1 PRACTICE ============ -->
+<section class="slide" id="practice-1">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <span class="part-badge b1"><span class="txt-en">Part 1 of 5</span><span class="txt-id">Bagian 1 dari 5</span></span>
+      <h2>🏋️ <span class="txt-en">Practice: Square Side from Perimeter</span><span class="txt-id">Berlatih: Sisi Persegi dari Keliling</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">Type your answer, click ✓ Check, and open 💡 Solution if you need help.</span>
+        <span class="txt-id">Tulis jawabanmu, klik ✓ Periksa, dan buka 💡 Pembahasan jika butuh bantuan.</span>
+      </p>
+    </header>
+    <div class="practice-head">
+      <span class="chip"><span class="txt-en">Solved</span><span class="txt-id">Terpecahkan</span>: <b class="sec-score" data-sec="s1">0/10</b></span>
+      <button class="btn-back" data-goto="concept-1" type="button">← <span class="txt-en">Back to lesson</span><span class="txt-id">Kembali ke materi</span></button>
+    </div>
+    <div class="q-grid" id="q-s1"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 5 : PART 2 CONCEPT ============ -->
+<section class="slide" id="concept-2">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <span class="part-badge b2"><span class="txt-en">Part 2 of 5</span><span class="txt-id">Bagian 2 dari 5</span></span>
+      <h2><span class="txt-en">🔢 Finding a Square's Side from its Area</span><span class="txt-id">🔢 Mencari Sisi Persegi dari Luasnya</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">Area counts the little squares that fill the shape.</span>
+        <span class="txt-id">Luas menghitung kotak-kotak kecil yang memenuhi bangun.</span>
+      </p>
+    </header>
+
+    <div class="formula-box">
+      <span class="txt-en">A = s × s &nbsp;&nbsp;→&nbsp;&nbsp; s = √A</span>
+      <span class="txt-id">L = s × s &nbsp;&nbsp;→&nbsp;&nbsp; s = √L</span>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3 class="card-title">🪜 <span class="txt-en">Understand the square root</span><span class="txt-id">Memahami akar kuadrat</span></h3>
+        <div class="steps">
+          <div class="step"><span class="step-num">1</span>
+            <p><span class="txt-en"><b>Squaring</b> means multiplying a number by itself: 7 × 7 = 49.</span><span class="txt-id"><b>Kuadrat</b> berarti mengalikan bilangan dengan dirinya sendiri: 7 × 7 = 49.</span></p>
+          </div>
+          <div class="step"><span class="step-num">2</span>
+            <p><span class="txt-en"><b>Square root (√)</b> is the opposite — it asks: which number times itself makes this? √49 = 7.</span><span class="txt-id"><b>Akar kuadrat (√)</b> adalah kebalikannya — ia bertanya: bilangan berapa dikali dirinya sendiri menghasilkan bilangan ini? √49 = 7.</span></p>
+          </div>
+          <div class="step"><span class="step-num">3</span>
+            <p><span class="txt-en">So if the area is A, the side is <b>s = √A</b>. Think: s × s = A.</span><span class="txt-id">Jadi jika luasnya L, sisinya adalah <b>s = √L</b>. Pikirkan: s × s = L.</span></p>
+          </div>
+        </div>
+        <p class="sub-title">🔢 <span class="txt-en">Perfect squares to remember</span><span class="txt-id">Kuadrat sempurna untuk diingat</span></p>
+        <div class="sq-chips">
+          <span class="sq-chip">1²=1</span><span class="sq-chip">2²=4</span><span class="sq-chip">3²=9</span><span class="sq-chip">4²=16</span><span class="sq-chip">5²=25</span><span class="sq-chip">6²=36</span><span class="sq-chip">7²=49</span><span class="sq-chip">8²=64</span><span class="sq-chip">9²=81</span><span class="sq-chip">10²=100</span><span class="sq-chip">11²=121</span><span class="sq-chip">12²=144</span><span class="sq-chip">13²=169</span><span class="sq-chip">14²=196</span><span class="sq-chip">15²=225</span>
+        </div>
+      </div>
+      <div class="visual-card">
+        <svg viewBox="0 0 150 128" width="172" role="img" aria-label="7 by 7 grid">
+          <rect x="16" y="14" width="100" height="100" fill="#d1fae5" stroke="#059669" stroke-width="3.5" rx="4"/>
+          <path d="M30.3 14V114 M44.6 14V114 M58.9 14V114 M73.1 14V114 M87.4 14V114 M101.7 14V114 M16 28.3H116 M16 42.6H116 M16 56.9H116 M16 71.1H116 M16 85.4H116 M16 99.7H116" stroke="#6ee7b7" stroke-width="1.4" fill="none"/>
+          <text x="66" y="9" text-anchor="middle" font-size="12" font-weight="bold" fill="#047857" font-family="Nunito, sans-serif">7 cm</text>
+          <text x="133" y="68" text-anchor="middle" font-size="12" font-weight="bold" fill="#047857" font-family="Nunito, sans-serif">7 cm</text>
+        </svg>
+        <p>
+          <span class="txt-en">A square with area <b>49 cm²</b> is a 7 × 7 grid:<br>7 rows × 7 columns = 49 little squares.<br>So the side is <b>7 cm</b>!</span>
+          <span class="txt-id">Persegi dengan luas <b>49 cm²</b> adalah grid 7 × 7:<br>7 baris × 7 kolom = 49 kotak kecil.<br>Jadi sisinya <b>7 cm</b>!</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <span class="badge"><span class="txt-en">Worked example</span><span class="txt-id">Contoh soal</span></span>
+      <p class="ex-q"><span class="txt-en">A square sticker has an area of <b>49 cm²</b>. Find the length of its side.</span><span class="txt-id">Stiker persegi memiliki luas <b>49 cm²</b>. Tentukan panjang sisinya.</span></p>
+      <p class="ex-a">
+        <span class="txt-en">s = √49 → which number × itself = 49? → 7 × 7 = 49 → s = <b>7 cm</b> ✔</span>
+        <span class="txt-id">s = √49 → bilangan berapa × dirinya sendiri = 49? → 7 × 7 = 49 → s = <b>7 cm</b> ✔</span>
+      </p>
+    </div>
+
+    <div class="why-box">💡
+      <span class="txt-en"><b>Squaring and square roots are opposites</b> — like locking and unlocking a door! 🔓 Squaring hides the side, the square root reveals it again.</span>
+      <span class="txt-id"><b>Kuadrat dan akar kuadrat saling berkebalikan</b> — seperti mengunci dan membuka pintu! 🔓 Kuadrat menyembunyikan sisi, akar kuadrat menunjukkannya kembali.</span>
+    </div>
+
+    <div class="center-cta">
+      <button class="btn-goto" data-goto="practice-2" type="button">🏋️ <span class="txt-en">Go to Practice</span><span class="txt-id">Ke Soal Latihan</span> →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6 : PART 2 PRACTICE ============ -->
+<section class="slide" id="practice-2">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <span class="part-badge b2"><span class="txt-en">Part 2 of 5</span><span class="txt-id">Bagian 2 dari 5</span></span>
+      <h2>🏋️ <span class="txt-en">Practice: Square Side from Area</span><span class="txt-id">Berlatih: Sisi Persegi dari Luas</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">Hint: ask yourself — which number times itself gives the area?</span>
+        <span class="txt-id">Petunjuk: tanyakan pada dirimu — bilangan berapa dikali dirinya sendiri menghasilkan luas itu?</span>
+      </p>
+    </header>
+    <div class="practice-head">
+      <span class="chip"><span class="txt-en">Solved</span><span class="txt-id">Terpecahkan</span>: <b class="sec-score" data-sec="s2">0/10</b></span>
+      <button class="btn-back" data-goto="concept-2" type="button">← <span class="txt-en">Back to lesson</span><span class="txt-id">Kembali ke materi</span></button>
+    </div>
+    <div class="q-grid" id="q-s2"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 7 : PART 3 TRICK ============ -->
+<section class="slide" id="trick">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <span class="part-badge b3"><span class="txt-en">Part 3 of 5</span><span class="txt-id">Bagian 3 dari 5</span></span>
+      <h2><span class="txt-en">⚡ Speed Trick: Square Roots of Thousands Numbers</span><span class="txt-id">⚡ Trik Cepat: Akar Kuadrat Bilangan Ribuan</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">Big numbers are not scary when you know the trick. Example: √2025 — no calculator, just 3 steps!</span>
+        <span class="txt-id">Bilangan besar tidak menakutkan jika kamu tahu triknya. Contoh: √2025 — tanpa kalkulator, cukup 3 langkah!</span>
+      </p>
+    </header>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span>
+          <p>
+            <span class="txt-en"><b>Sandwich it!</b> Every 4-digit perfect square sits between two <b>landmark squares</b>. Learn these by heart:</span>
+            <span class="txt-id"><b>Bungkus!</b> Setiap bilangan ribuan kuadrat sempurna berada di antara dua <b>kuadrat patokan</b>. Hafalkan patokan berikut:</span>
+          </p>
+        </div>
+      </div>
+      <div class="lm-chips" style="margin-top:10px">
+        <span class="lm-chip">30² = 900</span><span class="lm-chip">40² = 1600</span><span class="lm-chip">50² = 2500</span><span class="lm-chip">60² = 3600</span><span class="lm-chip">70² = 4900</span><span class="lm-chip">80² = 6400</span><span class="lm-chip">90² = 8100</span>
+      </div>
+      <p style="margin-top:12px; font-weight:700; color:#475569; font-size:14.5px">
+        <span class="txt-en">👉 2025 sits between <b>1600</b> and <b>2500</b> → its root is between <b>40</b> and <b>50</b>.</span>
+        <span class="txt-id">👉 2025 berada di antara <b>1600</b> dan <b>2500</b> → akarnya antara <b>40</b> dan <b>50</b>.</span>
+      </p>
+    </div>
+
+    <div class="trick-grid">
+      <div class="card">
+        <h3 class="card-title">🕵️ <span class="txt-en">Step 2: The last-digit clue</span><span class="txt-id">Langkah 2: Petunjuk digit terakhir</span></h3>
+        <p style="font-weight:700; color:#475569; font-size:14px; margin-bottom:8px">
+          <span class="txt-en">The last digit of the number tells you how the root must end:</span>
+          <span class="txt-id">Digit terakhir bilangan memberi tahu bagaimana akhiran akarnya:</span>
+        </p>
+        <table class="mini-table">
+          <tr><td class="k">…1</td><td><span class="txt-en">root ends in <b>1 or 9</b></span><span class="txt-id">akar berakhiran <b>1 atau 9</b></span></td></tr>
+          <tr><td class="k">…4</td><td><span class="txt-en">root ends in <b>2 or 8</b></span><span class="txt-id">akar berakhiran <b>2 atau 8</b></span></td></tr>
+          <tr><td class="k">…9</td><td><span class="txt-en">root ends in <b>3 or 7</b></span><span class="txt-id">akar berakhiran <b>3 atau 7</b></span></td></tr>
+          <tr><td class="k">…6</td><td><span class="txt-en">root ends in <b>4 or 6</b></span><span class="txt-id">akar berakhiran <b>4 atau 6</b></span></td></tr>
+          <tr><td class="k">…5</td><td><span class="txt-en">root ends in <b>5</b> — lucky! 🍀</span><span class="txt-id">akar berakhiran <b>5</b> — beruntung! 🍀</span></td></tr>
+          <tr><td class="k">…0</td><td><span class="txt-en">root ends in <b>0</b></span><span class="txt-id">akar berakhiran <b>0</b></span></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3 class="card-title">🏆 <span class="txt-en">Step 3: Test your candidate!</span><span class="txt-id">Langkah 3: Uji kandidatmu!</span></h3>
+        <div class="steps">
+          <div class="step"><span class="step-num">a</span>
+            <p><span class="txt-en">From steps 1 and 2 you now have <b>one or two candidates</b> for the root.</span><span class="txt-id">Dari langkah 1 dan 2 kamu sekarang punya <b>satu atau dua kandidat</b> akar.</span></p>
+          </div>
+          <div class="step"><span class="step-num">b</span>
+            <p><span class="txt-en"><b>Multiply the candidate by itself.</b> If you get the original number — you win! 🎉</span><span class="txt-id"><b>Kalikan kandidat dengan dirinya sendiri.</b> Jika hasilnya bilangan aslinya — kamu menang! 🎉</span></p>
+          </div>
+          <div class="step"><span class="step-num">c</span>
+            <p><span class="txt-en">Smart shortcut: compare with the middle value, e.g. 35 × 35 = 1225, to pick the right candidate instantly.</span><span class="txt-id">Jalan pintas cerdas: bandingkan dengan nilai tengah, misalnya 35 × 35 = 1225, untuk memilih kandidat yang tepat secara instan.</span></p>
+          </div>
+        </div>
+        <div class="why-box" style="margin-top:14px">
+          <span class="txt-en">✨ With this trick, even a huge area like <b>2025 cm²</b> is easy: the side is <b>45 cm</b>!</span>
+          <span class="txt-id">✨ Dengan trik ini, luas sebesar <b>2025 cm²</b> pun mudah: sisinya <b>45 cm</b>!</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="center-cta">
+      <button class="btn-goto" data-goto="trick-ex" type="button">👀 <span class="txt-en">Watch the trick in action</span><span class="txt-id">Lihat triknya beraksi</span> →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 8 : PART 3 EXAMPLES ============ -->
+<section class="slide" id="trick-ex">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <span class="part-badge b3"><span class="txt-en">Part 3 of 5</span><span class="txt-id">Bagian 3 dari 5</span></span>
+      <h2><span class="txt-en">👀 The Speed Trick in Action</span><span class="txt-id">👀 Trik Cepat dalam Aksi</span></h2>
+    </header>
+
+    <div class="example-card">
+      <span class="badge"><span class="txt-en">Example 1</span><span class="txt-id">Contoh 1</span></span>
+      <p class="ex-q">√2025 = ?</p>
+      <p class="ex-a">
+        <span class="txt-en">
+          <b>Step 1 — Sandwich:</b> 1600 &lt; 2025 &lt; 2500 → root is between 40 and 50.<br>
+          <b>Step 2 — Last digit:</b> 2025 ends in <b>5</b> → root ends in 5 → only one candidate: 45.<br>
+          <b>Step 3 — Test:</b> 45 × 45 = 2025 ✓ &nbsp;→&nbsp; <b>√2025 = 45</b> 🎉
+        </span>
+        <span class="txt-id">
+          <b>Langkah 1 — Bungkus:</b> 1600 &lt; 2025 &lt; 2500 → akar antara 40 dan 50.<br>
+          <b>Langkah 2 — Digit terakhir:</b> 2025 berakhiran <b>5</b> → akar berakhiran 5 → hanya satu kandidat: 45.<br>
+          <b>Langkah 3 — Uji:</b> 45 × 45 = 2025 ✓ &nbsp;→&nbsp; <b>√2025 = 45</b> 🎉
+        </span>
+      </p>
+    </div>
+
+    <div class="example-card">
+      <span class="badge"><span class="txt-en">Example 2</span><span class="txt-id">Contoh 2</span></span>
+      <p class="ex-q">√1444 = ?</p>
+      <p class="ex-a">
+        <span class="txt-en">
+          <b>Step 1 — Sandwich:</b> 900 &lt; 1444 &lt; 1600 → root is between 30 and 40.<br>
+          <b>Step 2 — Last digit:</b> 1444 ends in <b>4</b> → root ends in 2 or 8 → candidates: 32 or 38.<br>
+          <b>Step 3 — Test:</b> 32 × 32 = 1024 ✗ &nbsp;then&nbsp; 38 × 38 = 1444 ✓ &nbsp;→&nbsp; <b>√1444 = 38</b> 🎉
+        </span>
+        <span class="txt-id">
+          <b>Langkah 1 — Bungkus:</b> 900 &lt; 1444 &lt; 1600 → akar antara 30 dan 40.<br>
+          <b>Langkah 2 — Digit terakhir:</b> 1444 berakhiran <b>4</b> → akar berakhiran 2 atau 8 → kandidat: 32 atau 38.<br>
+          <b>Langkah 3 — Uji:</b> 32 × 32 = 1024 ✗ &nbsp;lalu&nbsp; 38 × 38 = 1444 ✓ &nbsp;→&nbsp; <b>√1444 = 38</b> 🎉
+        </span>
+      </p>
+    </div>
+
+    <div class="why-box">💡
+      <span class="txt-en"><b>Pro tip:</b> compare with 35 × 35 = 1225. Since 1444 &gt; 1225, the root must be more than 35 → pick <b>38</b> right away!</span>
+      <span class="txt-id"><b>Tips pro:</b> bandingkan dengan 35 × 35 = 1225. Karena 1444 &gt; 1225, akarnya pasti lebih dari 35 → langsung pilih <b>38</b>!</span>
+    </div>
+
+    <div class="center-cta">
+      <button class="btn-goto" data-goto="practice-3" type="button">🏋️ <span class="txt-en">Go to Practice</span><span class="txt-id">Ke Soal Latihan</span> →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 9 : PART 3 PRACTICE ============ -->
+<section class="slide" id="practice-3">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <span class="part-badge b3"><span class="txt-en">Part 3 of 5</span><span class="txt-id">Bagian 3 dari 5</span></span>
+      <h2>🏋️ <span class="txt-en">Practice: Speed Square Roots</span><span class="txt-id">Berlatih: Akar Kuadrat Cepat</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">Use the 3 steps: sandwich → last-digit clue → test. No calculator allowed! 😄</span>
+        <span class="txt-id">Gunakan 3 langkah: bungkus → petunjuk digit terakhir → uji. Kalkulator dilarang! 😄</span>
+      </p>
+    </header>
+    <div class="practice-head">
+      <span class="chip"><span class="txt-en">Solved</span><span class="txt-id">Terpecahkan</span>: <b class="sec-score" data-sec="s3">0/10</b></span>
+      <button class="btn-back" data-goto="trick" type="button">← <span class="txt-en">Back to lesson</span><span class="txt-id">Kembali ke materi</span></button>
+    </div>
+    <div class="q-grid" id="q-s3"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10 : PART 4 CONCEPT ============ -->
+<section class="slide" id="concept-4">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <span class="part-badge b4"><span class="txt-en">Part 4 of 5</span><span class="txt-id">Bagian 4 dari 5</span></span>
+      <h2><span class="txt-en">📐 Finding a Rectangle's Side from its Perimeter</span><span class="txt-id">📐 Mencari Sisi Persegi Panjang dari Kelilingnya</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">A rectangle has 2 lengths and 2 widths — they come in pairs!</span>
+        <span class="txt-id">Persegi panjang memiliki 2 panjang dan 2 lebar — mereka berpasangan!</span>
+      </p>
+    </header>
+
+    <div class="formula-box">
+      <span class="txt-en">P = 2 × (l + w) &nbsp;&nbsp;→&nbsp;&nbsp; l + w = P ÷ 2 &nbsp;&nbsp;→&nbsp;&nbsp; unknown side = (P ÷ 2) − known side</span>
+      <span class="txt-id">K = 2 × (p + l) &nbsp;&nbsp;→&nbsp;&nbsp; p + l = K ÷ 2 &nbsp;&nbsp;→&nbsp;&nbsp; sisi yang dicari = (K ÷ 2) − sisi yang diketahui</span>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3 class="card-title">🪜 <span class="txt-en">Steps</span><span class="txt-id">Langkah-langkah</span></h3>
+        <div class="steps">
+          <div class="step"><span class="step-num">1</span>
+            <p><span class="txt-en">Halve the perimeter: <b>l + w = P ÷ 2</b>. This is one length plus one width!</span><span class="txt-id">Bagi dua kelilingnya: <b>p + l = K ÷ 2</b>. Ini adalah satu panjang ditambah satu lebar!</span></p>
+          </div>
+          <div class="step"><span class="step-num">2</span>
+            <p><span class="txt-en">Subtract the side you already know from that half.</span><span class="txt-id">Kurangkan sisi yang sudah kamu ketahui dari setengah keliling itu.</span></p>
+          </div>
+          <div class="step"><span class="step-num">3</span>
+            <p><span class="txt-en">The result is the missing side. Check with P = 2 × (l + w)!</span><span class="txt-id">Hasilnya adalah sisi yang hilang. Periksa dengan K = 2 × (p + l)!</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="visual-card">
+        <svg class="txt-en" viewBox="0 0 200 132" width="215" role="img" aria-label="Rectangle with length and width labels">
+          <rect x="40" y="30" width="120" height="60" fill="#fce7f3" stroke="#db2777" stroke-width="3.5" rx="4"/>
+          <text x="100" y="20" text-anchor="middle" font-size="15" font-weight="bold" fill="#be185d" font-family="Nunito, sans-serif">l</text>
+          <text x="100" y="108" text-anchor="middle" font-size="15" font-weight="bold" fill="#be185d" font-family="Nunito, sans-serif">l</text>
+          <text x="28" y="65" text-anchor="middle" font-size="15" font-weight="bold" fill="#7c3aed" font-family="Nunito, sans-serif">w</text>
+          <text x="172" y="65" text-anchor="middle" font-size="15" font-weight="bold" fill="#7c3aed" font-family="Nunito, sans-serif">w</text>
+        </svg>
+        <svg class="txt-id" viewBox="0 0 200 132" width="215" role="img" aria-label="Persegi panjang dengan label panjang dan lebar">
+          <rect x="40" y="30" width="120" height="60" fill="#fce7f3" stroke="#db2777" stroke-width="3.5" rx="4"/>
+          <text x="100" y="20" text-anchor="middle" font-size="15" font-weight="bold" fill="#be185d" font-family="Nunito, sans-serif">p</text>
+          <text x="100" y="108" text-anchor="middle" font-size="15" font-weight="bold" fill="#be185d" font-family="Nunito, sans-serif">p</text>
+          <text x="28" y="65" text-anchor="middle" font-size="15" font-weight="bold" fill="#7c3aed" font-family="Nunito, sans-serif">l</text>
+          <text x="172" y="65" text-anchor="middle" font-size="15" font-weight="bold" fill="#7c3aed" font-family="Nunito, sans-serif">l</text>
+        </svg>
+        <p>
+          <span class="txt-en">Going around once = <b>l + w + l + w</b> = 2 × (l + w).<br>So <b>half of the perimeter</b> = one length + one width!</span>
+          <span class="txt-id">Mengelilingi sekali = <b>p + l + p + l</b> = 2 × (p + l).<br>Jadi <b>setengah keliling</b> = satu panjang + satu lebar!</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <span class="badge"><span class="txt-en">Worked example</span><span class="txt-id">Contoh soal</span></span>
+      <p class="ex-q"><span class="txt-en">A rectangle has a perimeter of <b>24 cm</b>. Its length is <b>8 cm</b>. Find its width.</span><span class="txt-id">Sebuah persegi panjang memiliki keliling <b>24 cm</b>. Panjangnya <b>8 cm</b>. Tentukan lebarnya.</span></p>
+      <p class="ex-a">
+        <span class="txt-en">l + w = P ÷ 2 = 24 ÷ 2 = 12 → w = 12 − 8 = <b>4 cm</b> ✔ &nbsp;&nbsp;<i>(Check: 2 × (8 + 4) = 24 ✓)</i></span>
+        <span class="txt-id">p + l = K ÷ 2 = 24 ÷ 2 = 12 → l = 12 − 8 = <b>4 cm</b> ✔ &nbsp;&nbsp;<i>(Periksa: 2 × (8 + 4) = 24 ✓)</i></span>
+      </p>
+    </div>
+
+    <div class="why-box">💡
+      <span class="txt-en"><b>Why halve it?</b> The perimeter wraps around the rectangle twice: 2 lengths + 2 widths. Half of it is exactly one length + one width!</span>
+      <span class="txt-id"><b>Mengapa dibagi dua?</b> Keliling menyusuri persegi panjang dua kali: 2 panjang + 2 lebar. Setengahnya tepat sama dengan satu panjang + satu lebar!</span>
+    </div>
+
+    <div class="center-cta">
+      <button class="btn-goto" data-goto="practice-4" type="button">🏋️ <span class="txt-en">Go to Practice</span><span class="txt-id">Ke Soal Latihan</span> →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 11 : PART 4 PRACTICE ============ -->
+<section class="slide" id="practice-4">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <span class="part-badge b4"><span class="txt-en">Part 4 of 5</span><span class="txt-id">Bagian 4 dari 5</span></span>
+      <h2>🏋️ <span class="txt-en">Practice: Rectangle Side from Perimeter</span><span class="txt-id">Berlatih: Sisi Persegi Panjang dari Keliling</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">Remember the key move: half the perimeter, then subtract the known side.</span>
+        <span class="txt-id">Ingat kunci utamanya: setengah keliling, lalu kurangi sisi yang diketahui.</span>
+      </p>
+    </header>
+    <div class="practice-head">
+      <span class="chip"><span class="txt-en">Solved</span><span class="txt-id">Terpecahkan</span>: <b class="sec-score" data-sec="s4">0/10</b></span>
+      <button class="btn-back" data-goto="concept-4" type="button">← <span class="txt-en">Back to lesson</span><span class="txt-id">Kembali ke materi</span></button>
+    </div>
+    <div class="q-grid" id="q-s4"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 12 : PART 5 CONCEPT ============ -->
+<section class="slide" id="concept-5">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <span class="part-badge b5"><span class="txt-en">Part 5 of 5</span><span class="txt-id">Bagian 5 dari 5</span></span>
+      <h2><span class="txt-en">🟦 Finding a Rectangle's Side from its Area</span><span class="txt-id">🟦 Mencari Sisi Persegi Panjang dari Luasnya</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">Area is a multiplication puzzle: length × width. Divide to reveal the missing side!</span>
+        <span class="txt-id">Luas adalah teka-teki perkalian: panjang × lebar. Bagilah untuk menemukan sisi yang hilang!</span>
+      </p>
+    </header>
+
+    <div class="formula-box">
+      <span class="txt-en">A = l × w &nbsp;&nbsp;→&nbsp;&nbsp; l = A ÷ w &nbsp;or&nbsp; w = A ÷ l</span>
+      <span class="txt-id">L = p × l &nbsp;&nbsp;→&nbsp;&nbsp; p = L ÷ l &nbsp;atau&nbsp; l = L ÷ p</span>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3 class="card-title">🪜 <span class="txt-en">Steps</span><span class="txt-id">Langkah-langkah</span></h3>
+        <div class="steps">
+          <div class="step"><span class="step-num">1</span>
+            <p><span class="txt-en">Write the area formula: <b>A = l × w</b>.</span><span class="txt-id">Tulis rumus luas: <b>L = p × l</b>.</span></p>
+          </div>
+          <div class="step"><span class="step-num">2</span>
+            <p><span class="txt-en">Divide the area by the side you know: <b>missing side = A ÷ known side</b>.</span><span class="txt-id">Bagi luas dengan sisi yang diketahui: <b>sisi yang dicari = L ÷ sisi yang diketahui</b>.</span></p>
+          </div>
+          <div class="step"><span class="step-num">3</span>
+            <p><span class="txt-en">Check by multiplying the two sides back together.</span><span class="txt-id">Periksa dengan mengalikan kembali kedua sisi tersebut.</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="visual-card">
+        <svg viewBox="0 0 190 126" width="205" role="img" aria-label="7 by 5 grid rectangle">
+          <rect x="14" y="16" width="140" height="90" fill="#ccfbf1" stroke="#0d9488" stroke-width="3.5" rx="4"/>
+          <path d="M34 16V106 M54 16V106 M74 16V106 M94 16V106 M114 16V106 M134 16V106 M14 34H154 M14 52H154 M14 70H154 M14 88H154" stroke="#5eead4" stroke-width="1.4" fill="none"/>
+          <text x="84" y="10" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f766e" font-family="Nunito, sans-serif">7 cm</text>
+          <text x="172" y="65" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f766e" font-family="Nunito, sans-serif">5 cm</text>
+        </svg>
+        <p>
+          <span class="txt-en">7 columns × 5 rows = 35 little squares.<br>Area 35 cm² with one side 7 cm → the other is 35 ÷ 7 = <b>5 cm</b>!</span>
+          <span class="txt-id">7 kolom × 5 baris = 35 kotak kecil.<br>Luas 35 cm² dengan satu sisi 7 cm → sisi lainnya 35 ÷ 7 = <b>5 cm</b>!</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <span class="badge"><span class="txt-en">Worked example</span><span class="txt-id">Contoh soal</span></span>
+      <p class="ex-q"><span class="txt-en">A rectangle has an area of <b>35 cm²</b>. Its length is <b>7 cm</b>. Find its width.</span><span class="txt-id">Sebuah persegi panjang memiliki luas <b>35 cm²</b>. Panjangnya <b>7 cm</b>. Tentukan lebarnya.</span></p>
+      <p class="ex-a">
+        <span class="txt-en">w = A ÷ l = 35 ÷ 7 = <b>5 cm</b> ✔ &nbsp;&nbsp;<i>(Check: 7 × 5 = 35 ✓)</i></span>
+        <span class="txt-id">l = L ÷ p = 35 ÷ 7 = <b>5 cm</b> ✔ &nbsp;&nbsp;<i>(Periksa: 7 × 5 = 35 ✓)</i></span>
+      </p>
+    </div>
+
+    <div class="why-box">💡
+      <span class="txt-en"><b>Division undoes multiplication!</b> If sides were multiplied to make the area, dividing the area by one side brings back the other side.</span>
+      <span class="txt-id"><b>Pembagian membalikkan perkalian!</b> Jika kedua sisi dikalikan menjadi luas, membagi luas dengan satu sisi akan mengembalikan sisi yang lain.</span>
+    </div>
+
+    <div class="center-cta">
+      <button class="btn-goto" data-goto="practice-5" type="button">🏋️ <span class="txt-en">Go to Practice</span><span class="txt-id">Ke Soal Latihan</span> →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 13 : PART 5 PRACTICE ============ -->
+<section class="slide" id="practice-5">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <span class="part-badge b5"><span class="txt-en">Part 5 of 5</span><span class="txt-id">Bagian 5 dari 5</span></span>
+      <h2>🏋️ <span class="txt-en">Practice: Rectangle Side from Area</span><span class="txt-id">Berlatih: Sisi Persegi Panjang dari Luas</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">Divide the area by the side you know — and watch out, one problem is a square in disguise! 🕵️</span>
+        <span class="txt-id">Bagi luas dengan sisi yang diketahui — dan hati-hati, ada satu soal persegi menyamar! 🕵️</span>
+      </p>
+    </header>
+    <div class="practice-head">
+      <span class="chip"><span class="txt-en">Solved</span><span class="txt-id">Terpecahkan</span>: <b class="sec-score" data-sec="s5">0/10</b></span>
+      <button class="btn-back" data-goto="concept-5" type="button">← <span class="txt-en">Back to lesson</span><span class="txt-id">Kembali ke materi</span></button>
+    </div>
+    <div class="q-grid" id="q-s5"></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 14 : CONCLUSION ============ -->
+<section class="slide" id="conclusion">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <h2>🗝️ <span class="txt-en">Conclusion: Your Formula Treasure Chest</span><span class="txt-id">Kesimpulan: Peti Harta Karun Rumusmu</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">All the secrets from today's adventure, packed in one chest!</span>
+        <span class="txt-id">Semua rahasia dari petualangan hari ini, terkumpul dalam satu peti!</span>
+      </p>
+    </header>
+
+    <div class="form-grid">
+      <div class="form-card fc1">
+        <div class="f-title"><span class="txt-en">Square + Perimeter</span><span class="txt-id">Persegi + Keliling</span></div>
+        <div class="f-formula">
+          <span class="txt-en">s = P ÷ 4</span>
+          <span class="txt-id">s = K ÷ 4</span>
+        </div>
+      </div>
+      <div class="form-card fc2">
+        <div class="f-title"><span class="txt-en">Square + Area</span><span class="txt-id">Persegi + Luas</span></div>
+        <div class="f-formula">
+          <span class="txt-en">s = √A</span>
+          <span class="txt-id">s = √L</span>
+        </div>
+      </div>
+      <div class="form-card fc3">
+        <div class="f-title"><span class="txt-en">Rectangle + Perimeter</span><span class="txt-id">Persegi Panjang + Keliling</span></div>
+        <div class="f-formula">
+          <span class="txt-en">l + w = P ÷ 2<br><small>unknown = (P ÷ 2) − known</small></span>
+          <span class="txt-id">p + l = K ÷ 2<br><small>sisi dicari = (K ÷ 2) − sisi diketahui</small></span>
+        </div>
+      </div>
+      <div class="form-card fc4">
+        <div class="f-title"><span class="txt-en">Rectangle + Area</span><span class="txt-id">Persegi Panjang + Luas</span></div>
+        <div class="f-formula">
+          <span class="txt-en">l = A ÷ w<br>w = A ÷ l</span>
+          <span class="txt-id">p = L ÷ l<br>l = L ÷ p</span>
+        </div>
+      </div>
+      <div class="form-card fc5">
+        <div class="f-title"><span class="txt-en">Speed trick for √</span><span class="txt-id">Trik cepat untuk √</span></div>
+        <div class="f-formula">
+          <span class="txt-en">Sandwich 🥪 +<br>last digit 🕵️ + test 🏆</span>
+          <span class="txt-id">Bungkus 🥪 +<br>digit akhir 🕵️ + uji 🏆</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="remind-box">
+      ✏️ <span class="txt-en">Champion's habit: always write the unit in your final answer — cm, m, cm², m²!</span>
+      <span class="txt-id">Kebiasaan juara: selalu tulis satuan pada jawaban akhirmu — cm, m, cm², m²!</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 15 : REFLECTION ============ -->
+<section class="slide" id="reflection">
+  <div class="slide-inner">
+    <header class="slide-head">
+      <h2>🪞 <span class="txt-en">Reflection</span><span class="txt-id">Refleksi</span></h2>
+      <p class="slide-sub">
+        <span class="txt-en">Take a moment to think about your learning today. There are no wrong answers!</span>
+        <span class="txt-id">Luangkan waktu sejenak untuk merenungkan belajarmu hari ini. Tidak ada jawaban yang salah!</span>
+      </p>
+    </header>
+
+    <div class="card" style="text-align:center; margin-bottom:16px">
+      <h3 class="card-title">🌈 <span class="txt-en">How do you feel about today's material?</span><span class="txt-id">Bagaimana perasaanmu tentang materi hari ini?</span></h3>
+      <div class="emoji-row">
+        <button class="emoji-btn" type="button"><span class="e">😃</span><span class="txt-en">Easy!</span><span class="txt-id">Mudah!</span></button>
+        <button class="emoji-btn" type="button"><span class="e">😐</span><span class="txt-en">Okay</span><span class="txt-id">Cukup</span></button>
+        <button class="emoji-btn" type="button"><span class="e">🤔</span><span class="txt-en">Still tricky</span><span class="txt-id">Masih sulit</span></button>
+      </div>
+    </div>
+
+    <div class="ref-grid">
+      <div class="card ref-card">
+        <h3>💡 <span class="txt-en">Today I learned...</span><span class="txt-id">Hari ini saya belajar...</span></h3>
+        <textarea data-ph-en="Write here..." data-ph-id="Tulis di sini..."></textarea>
+      </div>
+      <div class="card ref-card">
+        <h3>🧩 <span class="txt-en">The trickiest part for me was...</span><span class="txt-id">Bagian tersulit untuk saya adalah...</span></h3>
+        <textarea data-ph-en="Write here..." data-ph-id="Tulis di sini..."></textarea>
+      </div>
+      <div class="card ref-card">
+        <h3>🚀 <span class="txt-en">I want to practice more on...</span><span class="txt-id">Saya ingin berlatih lagi pada...</span></h3>
+        <textarea data-ph-en="Write here..." data-ph-id="Tulis di sini..."></textarea>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 16 : THANK YOU ============ -->
+<section class="slide" id="thankyou">
+  <div class="slide-inner ty-inner">
+    <span class="ty-emoji">🎉</span>
+    <p class="ty-kicker"><span class="txt-en">Lesson complete</span><span class="txt-id">Pelajaran selesai</span></p>
+    <h2 class="ty-title">
+      <span class="txt-en">Thank You for Today!</span>
+      <span class="txt-id">Terima Kasih untuk Hari Ini!</span>
+    </h2>
+    <p class="ty-msg">
+      <span class="txt-en">Great job, <b class="js-name">Champion</b>! You are a Perimeter &amp; Area star! ⭐</span>
+      <span class="txt-id">Kerja bagus, <b class="js-name">Juara</b>! Kamu bintang Keliling &amp; Luas! ⭐</span>
+    </p>
+    <div class="ty-score">
+      🏁 <span class="txt-en">Problems solved:</span><span class="txt-id">Soal terpecahkan:</span> <b class="js-score">0</b> / 50
+    </div>
+    <div id="perfectLine" class="hidden">
+      🏆 <span class="txt-en">PERFECT SCORE! You are unstoppable!</span><span class="txt-id">NILAI SEMPURNA! Kamu luar biasa!</span>
+    </div>
+    <button id="restartBtn" type="button">🔄 <span class="txt-en">Start Again</span><span class="txt-id">Mulai Lagi</span></button>
+  </div>
+</section>
+
+</main>
+
+<footer class="navbar">
+  <div class="nav-btns">
+    <button class="nav-btn ghost" id="prevBtn" type="button">← <span class="txt-en">Back</span><span class="txt-id">Kembali</span></button>
+  </div>
+  <div id="slideCounter">1 / 16</div>
+  <div class="nav-btns">
+    <button class="nav-btn primary" id="nextBtn" type="button"><span class="txt-en">Next</span><span class="txt-id">Lanjut</span> →</button>
+  </div>
+</footer>
+<script>
+(function () {
+"use strict";
+
+/* ================= Helpers & state ================= */
+var $ = function (s) { return document.querySelector(s); };
+var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+var slides = $$(".slide");
+var current = 0;
+var studentName = "";
+var solved = new Set();
+
+function lang() {
+  return document.body.classList.contains("lang-id") ? "id" : "en";
+}
+
+var FB = {
+  ok:    { en: "✅ Correct! Brilliant!", id: "✅ Benar! Hebat!" },
+  err:   { en: "❌ Not yet — check your calculation and try again!", id: "❌ Belum tepat — periksa hitunganmu dan coba lagi!" },
+  empty: { en: "Type your answer first 😊", id: "Tulis jawabanmu dulu 😊" }
+};
+
+/* ================= Question bank ================= */
+/* Part 1 — square side from perimeter (s = P ÷ 4) */
+var S1 = [
+  { en: "A square has a perimeter of 12 cm. How long is each side?",
+    id: "Sebuah persegi memiliki keliling 12 cm. Berapa panjang setiap sisinya?",
+    ans: 3, unit: "cm",
+    expEn: "All 4 sides of a square are equal. Side = P ÷ 4 = 12 ÷ 4 = 3 cm. Check: 4 × 3 = 12 ✓",
+    expId: "Keempat sisi persegi sama panjang. Sisi = K ÷ 4 = 12 ÷ 4 = 3 cm. Periksa: 4 × 3 = 12 ✓" },
+  { en: "A square has a perimeter of 20 cm. How long is each side?",
+    id: "Sebuah persegi memiliki keliling 20 cm. Berapa panjang setiap sisinya?",
+    ans: 5, unit: "cm",
+    expEn: "Side = P ÷ 4 = 20 ÷ 4 = 5 cm. Check: 4 × 5 = 20 ✓",
+    expId: "Sisi = K ÷ 4 = 20 ÷ 4 = 5 cm. Periksa: 4 × 5 = 20 ✓" },
+  { en: "A square has a perimeter of 36 cm. How long is each side?",
+    id: "Sebuah persegi memiliki keliling 36 cm. Berapa panjang setiap sisinya?",
+    ans: 9, unit: "cm",
+    expEn: "Side = P ÷ 4 = 36 ÷ 4 = 9 cm. Check: 4 × 9 = 36 ✓",
+    expId: "Sisi = K ÷ 4 = 36 ÷ 4 = 9 cm. Periksa: 4 × 9 = 36 ✓" },
+  { en: "A square has a perimeter of 48 cm. How long is each side?",
+    id: "Sebuah persegi memiliki keliling 48 cm. Berapa panjang setiap sisinya?",
+    ans: 12, unit: "cm",
+    expEn: "Side = P ÷ 4 = 48 ÷ 4 = 12 cm. Check: 4 × 12 = 48 ✓",
+    expId: "Sisi = K ÷ 4 = 48 ÷ 4 = 12 cm. Periksa: 4 × 12 = 48 ✓" },
+  { en: "A square has a perimeter of 60 cm. How long is each side?",
+    id: "Sebuah persegi memiliki keliling 60 cm. Berapa panjang setiap sisinya?",
+    ans: 15, unit: "cm",
+    expEn: "Side = P ÷ 4 = 60 ÷ 4 = 15 cm. Check: 4 × 15 = 60 ✓",
+    expId: "Sisi = K ÷ 4 = 60 ÷ 4 = 15 cm. Periksa: 4 × 15 = 60 ✓" },
+  { en: "A square has a perimeter of 100 cm. How long is each side?",
+    id: "Sebuah persegi memiliki keliling 100 cm. Berapa panjang setiap sisinya?",
+    ans: 25, unit: "cm",
+    expEn: "Side = P ÷ 4 = 100 ÷ 4 = 25 cm. Check: 4 × 25 = 100 ✓",
+    expId: "Sisi = K ÷ 4 = 100 ÷ 4 = 25 cm. Periksa: 4 × 25 = 100 ✓" },
+  { en: "A square has a perimeter of 32 m. How long is each side?",
+    id: "Sebuah persegi memiliki keliling 32 m. Berapa panjang setiap sisinya?",
+    ans: 8, unit: "m",
+    expEn: "Side = P ÷ 4 = 32 ÷ 4 = 8 m. Check: 4 × 8 = 32 ✓",
+    expId: "Sisi = K ÷ 4 = 32 ÷ 4 = 8 m. Periksa: 4 × 8 = 32 ✓" },
+  { en: "A square has a perimeter of 8 m. How long is each side?",
+    id: "Sebuah persegi memiliki keliling 8 m. Berapa panjang setiap sisinya?",
+    ans: 2, unit: "m",
+    expEn: "Side = P ÷ 4 = 8 ÷ 4 = 2 m. Check: 4 × 2 = 8 ✓",
+    expId: "Sisi = K ÷ 4 = 8 ÷ 4 = 2 m. Periksa: 4 × 2 = 8 ✓" },
+  { en: "A square has a perimeter of 44 cm. How long is each side?",
+    id: "Sebuah persegi memiliki keliling 44 cm. Berapa panjang setiap sisinya?",
+    ans: 11, unit: "cm",
+    expEn: "Side = P ÷ 4 = 44 ÷ 4 = 11 cm. Check: 4 × 11 = 44 ✓",
+    expId: "Sisi = K ÷ 4 = 44 ÷ 4 = 11 cm. Periksa: 4 × 11 = 44 ✓" },
+  { en: "A square has a perimeter of 96 cm. How long is each side?",
+    id: "Sebuah persegi memiliki keliling 96 cm. Berapa panjang setiap sisinya?",
+    ans: 24, unit: "cm",
+    expEn: "Side = P ÷ 4 = 96 ÷ 4 = 24 cm. Check: 4 × 24 = 96 ✓",
+    expId: "Sisi = K ÷ 4 = 96 ÷ 4 = 24 cm. Periksa: 4 × 24 = 96 ✓" }
+];
+
+/* Part 2 — square side from area (s = √A) */
+var S2 = [
+  { en: "A square sticker has an area of 16 cm². Find the length of its side.",
+    id: "Stiker persegi memiliki luas 16 cm². Tentukan panjang sisinya.",
+    ans: 4, unit: "cm",
+    expEn: "Area = side × side, so side = √16. Think: 4 × 4 = 16, so the side is 4 cm.",
+    expId: "Luas = sisi × sisi, jadi sisi = √16. Pikirkan: 4 × 4 = 16, jadi sisinya 4 cm." },
+  { en: "A square photo frame has an area of 25 cm². Find the length of its side.",
+    id: "Bingkai foto persegi memiliki luas 25 cm². Tentukan panjang sisinya.",
+    ans: 5, unit: "cm",
+    expEn: "Side = √25. Think: 5 × 5 = 25, so the side is 5 cm.",
+    expId: "Sisi = √25. Pikirkan: 5 × 5 = 25, jadi sisinya 5 cm." },
+  { en: "A square has an area of 36 cm². Find the length of its side.",
+    id: "Sebuah persegi memiliki luas 36 cm². Tentukan panjang sisinya.",
+    ans: 6, unit: "cm",
+    expEn: "Side = √36. Think: 6 × 6 = 36, so the side is 6 cm.",
+    expId: "Sisi = √36. Pikirkan: 6 × 6 = 36, jadi sisinya 6 cm." },
+  { en: "A square puzzle piece has an area of 49 cm². Find the length of its side.",
+    id: "Potongan puzzle persegi memiliki luas 49 cm². Tentukan panjang sisinya.",
+    ans: 7, unit: "cm",
+    expEn: "Side = √49. Think: 7 × 7 = 49, so the side is 7 cm.",
+    expId: "Sisi = √49. Pikirkan: 7 × 7 = 49, jadi sisinya 7 cm." },
+  { en: "A square floor has an area of 64 m². Find the length of its side.",
+    id: "Lantai persegi memiliki luas 64 m². Tentukan panjang sisinya.",
+    ans: 8, unit: "m",
+    expEn: "Side = √64. Think: 8 × 8 = 64, so the side is 8 m.",
+    expId: "Sisi = √64. Pikirkan: 8 × 8 = 64, jadi sisinya 8 m." },
+  { en: "A square has an area of 81 cm². Find the length of its side.",
+    id: "Sebuah persegi memiliki luas 81 cm². Tentukan panjang sisinya.",
+    ans: 9, unit: "cm",
+    expEn: "Side = √81. Think: 9 × 9 = 81, so the side is 9 cm.",
+    expId: "Sisi = √81. Pikirkan: 9 × 9 = 81, jadi sisinya 9 cm." },
+  { en: "A square has an area of 100 cm². Find the length of its side.",
+    id: "Sebuah persegi memiliki luas 100 cm². Tentukan panjang sisinya.",
+    ans: 10, unit: "cm",
+    expEn: "Side = √100. Think: 10 × 10 = 100, so the side is 10 cm.",
+    expId: "Sisi = √100. Pikirkan: 10 × 10 = 100, jadi sisinya 10 cm." },
+  { en: "A square has an area of 121 cm². Find the length of its side.",
+    id: "Sebuah persegi memiliki luas 121 cm². Tentukan panjang sisinya.",
+    ans: 11, unit: "cm",
+    expEn: "Side = √121. Think: 11 × 11 = 121, so the side is 11 cm.",
+    expId: "Sisi = √121. Pikirkan: 11 × 11 = 121, jadi sisinya 11 cm." },
+  { en: "A square has an area of 196 cm². Find the length of its side.",
+    id: "Sebuah persegi memiliki luas 196 cm². Tentukan panjang sisinya.",
+    ans: 14, unit: "cm",
+    expEn: "Side = √196. Think: 13 × 13 = 169 (too small), 14 × 14 = 196 ✓, so the side is 14 cm.",
+    expId: "Sisi = √196. Pikirkan: 13 × 13 = 169 (terlalu kecil), 14 × 14 = 196 ✓, jadi sisinya 14 cm." },
+  { en: "A square has an area of 225 cm². Find the length of its side.",
+    id: "Sebuah persegi memiliki luas 225 cm². Tentukan panjang sisinya.",
+    ans: 15, unit: "cm",
+    expEn: "Side = √225. Think: 14 × 14 = 196 (too small), 15 × 15 = 225 ✓, so the side is 15 cm.",
+    expId: "Sisi = √225. Pikirkan: 14 × 14 = 196 (terlalu kecil), 15 × 15 = 225 ✓, jadi sisinya 15 cm." }
+];
+
+/* Part 3 — speed square roots of thousands numbers */
+var S3 = [
+  { en: "Use the speed trick to find: √1024 = ?",
+    id: "Gunakan trik cepat untuk mencari: √1024 = ?",
+    ans: 32, unit: "",
+    expEn: "Step 1: 900 < 1024 < 1600 → root is between 30 and 40. Step 2: ends in 4 → root ends in 2 or 8. Step 3: 32 × 32 = 1024 ✓ → 32.",
+    expId: "Langkah 1: 900 < 1024 < 1600 → akar antara 30 dan 40. Langkah 2: berakhiran 4 → akar berakhiran 2 atau 8. Langkah 3: 32 × 32 = 1024 ✓ → 32." },
+  { en: "Use the speed trick to find: √1369 = ?",
+    id: "Gunakan trik cepat untuk mencari: √1369 = ?",
+    ans: 37, unit: "",
+    expEn: "Step 1: 900 < 1369 < 1600 → between 30 and 40. Step 2: ends in 9 → root ends in 3 or 7. Step 3: 33 × 33 = 1089 ✗, 37 × 37 = 1369 ✓ → 37.",
+    expId: "Langkah 1: 900 < 1369 < 1600 → antara 30 dan 40. Langkah 2: berakhiran 9 → akar berakhiran 3 atau 7. Langkah 3: 33 × 33 = 1089 ✗, 37 × 37 = 1369 ✓ → 37." },
+  { en: "Use the speed trick to find: √1521 = ?",
+    id: "Gunakan trik cepat untuk mencari: √1521 = ?",
+    ans: 39, unit: "",
+    expEn: "Step 1: 900 < 1521 < 1600 → between 30 and 40. Step 2: ends in 1 → root ends in 1 or 9. Step 3: 39 × 39 = 1521 ✓ → 39.",
+    expId: "Langkah 1: 900 < 1521 < 1600 → antara 30 dan 40. Langkah 2: berakhiran 1 → akar berakhiran 1 atau 9. Langkah 3: 39 × 39 = 1521 ✓ → 39." },
+  { en: "Use the speed trick to find: √1681 = ?",
+    id: "Gunakan trik cepat untuk mencari: √1681 = ?",
+    ans: 41, unit: "",
+    expEn: "Step 1: 1600 < 1681 < 2500 → between 40 and 50. Step 2: ends in 1 → root ends in 1 or 9. Step 3: 41 × 41 = 1681 ✓ → 41.",
+    expId: "Langkah 1: 1600 < 1681 < 2500 → antara 40 dan 50. Langkah 2: berakhiran 1 → akar berakhiran 1 atau 9. Langkah 3: 41 × 41 = 1681 ✓ → 41." },
+  { en: "Use the speed trick to find: √1849 = ?",
+    id: "Gunakan trik cepat untuk mencari: √1849 = ?",
+    ans: 43, unit: "",
+    expEn: "Step 1: 1600 < 1849 < 2500 → between 40 and 50. Step 2: ends in 9 → root ends in 3 or 7. Step 3: 43 × 43 = 1849 ✓ → 43.",
+    expId: "Langkah 1: 1600 < 1849 < 2500 → antara 40 dan 50. Langkah 2: berakhiran 9 → akar berakhiran 3 atau 7. Langkah 3: 43 × 43 = 1849 ✓ → 43." },
+  { en: "Use the speed trick to find: √2025 = ?",
+    id: "Gunakan trik cepat untuk mencari: √2025 = ?",
+    ans: 45, unit: "",
+    expEn: "Step 1: 1600 < 2025 < 2500 → between 40 and 50. Step 2: ends in 5 → root ends in 5 (lucky!). Step 3: 45 × 45 = 2025 ✓ → 45.",
+    expId: "Langkah 1: 1600 < 2025 < 2500 → antara 40 dan 50. Langkah 2: berakhiran 5 → akar berakhiran 5 (beruntung!). Langkah 3: 45 × 45 = 2025 ✓ → 45." },
+  { en: "Use the speed trick to find: √2401 = ?",
+    id: "Gunakan trik cepat untuk mencari: √2401 = ?",
+    ans: 49, unit: "",
+    expEn: "Step 1: 1600 < 2401 < 2500 → between 40 and 50. Step 2: ends in 1 → root ends in 1 or 9. Step 3: 49 × 49 = 2401 ✓ → 49.",
+    expId: "Langkah 1: 1600 < 2401 < 2500 → antara 40 dan 50. Langkah 2: berakhiran 1 → akar berakhiran 1 atau 9. Langkah 3: 49 × 49 = 2401 ✓ → 49." },
+  { en: "Use the speed trick to find: √3364 = ?",
+    id: "Gunakan trik cepat untuk mencari: √3364 = ?",
+    ans: 58, unit: "",
+    expEn: "Step 1: 2500 < 3364 < 3600 → between 50 and 60. Step 2: ends in 4 → root ends in 2 or 8. Step 3: 58 × 58 = 3364 ✓ → 58.",
+    expId: "Langkah 1: 2500 < 3364 < 3600 → antara 50 dan 60. Langkah 2: berakhiran 4 → akar berakhiran 2 atau 8. Langkah 3: 58 × 58 = 3364 ✓ → 58." },
+  { en: "Use the speed trick to find: √4489 = ?",
+    id: "Gunakan trik cepat untuk mencari: √4489 = ?",
+    ans: 67, unit: "",
+    expEn: "Step 1: 3600 < 4489 < 4900 → between 60 and 70. Step 2: ends in 9 → root ends in 3 or 7. Step 3: 67 × 67 = 4489 ✓ → 67.",
+    expId: "Langkah 1: 3600 < 4489 < 4900 → antara 60 dan 70. Langkah 2: berakhiran 9 → akar berakhiran 3 atau 7. Langkah 3: 67 × 67 = 4489 ✓ → 67." },
+  { en: "Use the speed trick to find: √5625 = ?",
+    id: "Gunakan trik cepat untuk mencari: √5625 = ?",
+    ans: 75, unit: "",
+    expEn: "Step 1: 4900 < 5625 < 6400 → between 70 and 80. Step 2: ends in 5 → root ends in 5. Step 3: 75 × 75 = 5625 ✓ → 75.",
+    expId: "Langkah 1: 4900 < 5625 < 6400 → antara 70 dan 80. Langkah 2: berakhiran 5 → akar berakhiran 5. Langkah 3: 75 × 75 = 5625 ✓ → 75." }
+];
+
+/* Part 4 — rectangle side from perimeter */
+var S4 = [
+  { en: "A rectangle has a perimeter of 20 cm. Its length is 7 cm. Find its width.",
+    id: "Persegi panjang memiliki keliling 20 cm. Panjangnya 7 cm. Tentukan lebarnya.",
+    ans: 3, unit: "cm",
+    expEn: "Length + width = P ÷ 2 = 20 ÷ 2 = 10. Width = 10 − 7 = 3 cm. Check: 2 × (7 + 3) = 20 ✓",
+    expId: "Panjang + lebar = K ÷ 2 = 20 ÷ 2 = 10. Lebar = 10 − 7 = 3 cm. Periksa: 2 × (7 + 3) = 20 ✓" },
+  { en: "A rectangle has a perimeter of 24 cm. Its length is 8 cm. Find its width.",
+    id: "Persegi panjang memiliki keliling 24 cm. Panjangnya 8 cm. Tentukan lebarnya.",
+    ans: 4, unit: "cm",
+    expEn: "Length + width = 24 ÷ 2 = 12. Width = 12 − 8 = 4 cm. Check: 2 × (8 + 4) = 24 ✓",
+    expId: "Panjang + lebar = 24 ÷ 2 = 12. Lebar = 12 − 8 = 4 cm. Periksa: 2 × (8 + 4) = 24 ✓" },
+  { en: "A rectangle has a perimeter of 30 cm. Its width is 6 cm. Find its length.",
+    id: "Persegi panjang memiliki keliling 30 cm. Lebarnya 6 cm. Tentukan panjangnya.",
+    ans: 9, unit: "cm",
+    expEn: "Length + width = 30 ÷ 2 = 15. Length = 15 − 6 = 9 cm. Check: 2 × (9 + 6) = 30 ✓",
+    expId: "Panjang + lebar = 30 ÷ 2 = 15. Panjang = 15 − 6 = 9 cm. Periksa: 2 × (9 + 6) = 30 ✓" },
+  { en: "A rectangle has a perimeter of 36 cm. Its length is 10 cm. Find its width.",
+    id: "Persegi panjang memiliki keliling 36 cm. Panjangnya 10 cm. Tentukan lebarnya.",
+    ans: 8, unit: "cm",
+    expEn: "Length + width = 36 ÷ 2 = 18. Width = 18 − 10 = 8 cm. Check: 2 × (10 + 8) = 36 ✓",
+    expId: "Panjang + lebar = 36 ÷ 2 = 18. Lebar = 18 − 10 = 8 cm. Periksa: 2 × (10 + 8) = 36 ✓" },
+  { en: "A rectangle has a perimeter of 40 cm. Its width is 9 cm. Find its length.",
+    id: "Persegi panjang memiliki keliling 40 cm. Lebarnya 9 cm. Tentukan panjangnya.",
+    ans: 11, unit: "cm",
+    expEn: "Length + width = 40 ÷ 2 = 20. Length = 20 − 9 = 11 cm. Check: 2 × (11 + 9) = 40 ✓",
+    expId: "Panjang + lebar = 40 ÷ 2 = 20. Panjang = 20 − 9 = 11 cm. Periksa: 2 × (11 + 9) = 40 ✓" },
+  { en: "A rectangle has a perimeter of 50 cm. Its length is 15 cm. Find its width.",
+    id: "Persegi panjang memiliki keliling 50 cm. Panjangnya 15 cm. Tentukan lebarnya.",
+    ans: 10, unit: "cm",
+    expEn: "Length + width = 50 ÷ 2 = 25. Width = 25 − 15 = 10 cm. Check: 2 × (15 + 10) = 50 ✓",
+    expId: "Panjang + lebar = 50 ÷ 2 = 25. Lebar = 25 − 15 = 10 cm. Periksa: 2 × (15 + 10) = 50 ✓" },
+  { en: "A rectangle has a perimeter of 28 m. Its width is 5 m. Find its length.",
+    id: "Persegi panjang memiliki keliling 28 m. Lebarnya 5 m. Tentukan panjangnya.",
+    ans: 9, unit: "m",
+    expEn: "Length + width = 28 ÷ 2 = 14. Length = 14 − 5 = 9 m. Check: 2 × (9 + 5) = 28 ✓",
+    expId: "Panjang + lebar = 28 ÷ 2 = 14. Panjang = 14 − 5 = 9 m. Periksa: 2 × (9 + 5) = 28 ✓" },
+  { en: "A rectangle has a perimeter of 18 m. Its length is 6 m. Find its width.",
+    id: "Persegi panjang memiliki keliling 18 m. Panjangnya 6 m. Tentukan lebarnya.",
+    ans: 3, unit: "m",
+    expEn: "Length + width = 18 ÷ 2 = 9. Width = 9 − 6 = 3 m. Check: 2 × (6 + 3) = 18 ✓",
+    expId: "Panjang + lebar = 18 ÷ 2 = 9. Lebar = 9 − 6 = 3 m. Periksa: 2 × (6 + 3) = 18 ✓" },
+  { en: "Challenge! A rectangle has a perimeter of 24 cm. Its length is twice its width. Find its width.",
+    id: "Tantangan! Persegi panjang memiliki keliling 24 cm. Panjangnya dua kali lebarnya. Tentukan lebarnya.",
+    ans: 4, unit: "cm",
+    expEn: "Length + width = 24 ÷ 2 = 12. If width = 1 part, length = 2 parts → 3 parts = 12 → 1 part = 4. Width = 4 cm (length = 8 cm). Check: 2 × (8 + 4) = 24 ✓",
+    expId: "Panjang + lebar = 24 ÷ 2 = 12. Jika lebar = 1 bagian, panjang = 2 bagian → 3 bagian = 12 → 1 bagian = 4. Lebar = 4 cm (panjang = 8 cm). Periksa: 2 × (8 + 4) = 24 ✓" },
+  { en: "Challenge! A rectangle has a perimeter of 32 cm. Its length is 4 cm more than its width. Find its width.",
+    id: "Tantangan! Persegi panjang memiliki keliling 32 cm. Panjangnya 4 cm lebih dari lebarnya. Tentukan lebarnya.",
+    ans: 6, unit: "cm",
+    expEn: "Length + width = 32 ÷ 2 = 16. Two widths + 4 = 16 → two widths = 12 → width = 6 cm (length = 10 cm). Check: 2 × (10 + 6) = 32 ✓",
+    expId: "Panjang + lebar = 32 ÷ 2 = 16. Dua lebar + 4 = 16 → dua lebar = 12 → lebar = 6 cm (panjang = 10 cm). Periksa: 2 × (10 + 6) = 32 ✓" }
+];
+
+/* Part 5 — rectangle side from area */
+var S5 = [
+  { en: "A rectangle has an area of 24 cm². Its width is 4 cm. Find its length.",
+    id: "Persegi panjang memiliki luas 24 cm². Lebarnya 4 cm. Tentukan panjangnya.",
+    ans: 6, unit: "cm",
+    expEn: "Length = A ÷ w = 24 ÷ 4 = 6 cm. Check: 6 × 4 = 24 ✓",
+    expId: "Panjang = L ÷ l = 24 ÷ 4 = 6 cm. Periksa: 6 × 4 = 24 ✓" },
+  { en: "A rectangle has an area of 35 cm². Its length is 7 cm. Find its width.",
+    id: "Persegi panjang memiliki luas 35 cm². Panjangnya 7 cm. Tentukan lebarnya.",
+    ans: 5, unit: "cm",
+    expEn: "Width = A ÷ l = 35 ÷ 7 = 5 cm. Check: 7 × 5 = 35 ✓",
+    expId: "Lebar = L ÷ p = 35 ÷ 7 = 5 cm. Periksa: 7 × 5 = 35 ✓" },
+  { en: "A rectangle has an area of 48 cm². Its length is 8 cm. Find its width.",
+    id: "Persegi panjang memiliki luas 48 cm². Panjangnya 8 cm. Tentukan lebarnya.",
+    ans: 6, unit: "cm",
+    expEn: "Width = A ÷ l = 48 ÷ 8 = 6 cm. Check: 8 × 6 = 48 ✓",
+    expId: "Lebar = L ÷ p = 48 ÷ 8 = 6 cm. Periksa: 8 × 6 = 48 ✓" },
+  { en: "A rectangle has an area of 72 cm². Its width is 9 cm. Find its length.",
+    id: "Persegi panjang memiliki luas 72 cm². Lebarnya 9 cm. Tentukan panjangnya.",
+    ans: 8, unit: "cm",
+    expEn: "Length = A ÷ w = 72 ÷ 9 = 8 cm. Check: 8 × 9 = 72 ✓",
+    expId: "Panjang = L ÷ l = 72 ÷ 9 = 8 cm. Periksa: 8 × 9 = 72 ✓" },
+  { en: "A rectangle has an area of 63 m². Its length is 9 m. Find its width.",
+    id: "Persegi panjang memiliki luas 63 m². Panjangnya 9 m. Tentukan lebarnya.",
+    ans: 7, unit: "m",
+    expEn: "Width = A ÷ l = 63 ÷ 9 = 7 m. Check: 9 × 7 = 63 ✓",
+    expId: "Lebar = L ÷ p = 63 ÷ 9 = 7 m. Periksa: 9 × 7 = 63 ✓" },
+  { en: "A rectangle has an area of 90 cm². Its width is 6 cm. Find its length.",
+    id: "Persegi panjang memiliki luas 90 cm². Lebarnya 6 cm. Tentukan panjangnya.",
+    ans: 15, unit: "cm",
+    expEn: "Length = A ÷ w = 90 ÷ 6 = 15 cm. Check: 15 × 6 = 90 ✓",
+    expId: "Panjang = L ÷ l = 90 ÷ 6 = 15 cm. Periksa: 15 × 6 = 90 ✓" },
+  { en: "A rectangle has an area of 120 cm². Its length is 12 cm. Find its width.",
+    id: "Persegi panjang memiliki luas 120 cm². Panjangnya 12 cm. Tentukan lebarnya.",
+    ans: 10, unit: "cm",
+    expEn: "Width = A ÷ l = 120 ÷ 12 = 10 cm. Check: 12 × 10 = 120 ✓",
+    expId: "Lebar = L ÷ p = 120 ÷ 12 = 10 cm. Periksa: 12 × 10 = 120 ✓" },
+  { en: "A rectangle has an area of 200 m². Its width is 10 m. Find its length.",
+    id: "Persegi panjang memiliki luas 200 m². Lebarnya 10 m. Tentukan panjangnya.",
+    ans: 20, unit: "m",
+    expEn: "Length = A ÷ w = 200 ÷ 10 = 20 m. Check: 20 × 10 = 200 ✓",
+    expId: "Panjang = L ÷ l = 200 ÷ 10 = 20 m. Periksa: 20 × 10 = 200 ✓" },
+  { en: "A rectangle has an area of 144 cm². Its width is 12 cm. Find its length.",
+    id: "Persegi panjang memiliki luas 144 cm². Lebarnya 12 cm. Tentukan panjangnya.",
+    ans: 12, unit: "cm",
+    expEn: "Length = A ÷ w = 144 ÷ 12 = 12 cm. Surprise — it is a square in disguise! 12 × 12 = 144 ✓",
+    expId: "Panjang = L ÷ l = 144 ÷ 12 = 12 cm. Kejutan — ini persegi yang menyamar! 12 × 12 = 144 ✓" },
+  { en: "A rectangle has an area of 96 cm². Its length is 12 cm. Find its width.",
+    id: "Persegi panjang memiliki luas 96 cm². Panjangnya 12 cm. Tentukan lebarnya.",
+    ans: 8, unit: "cm",
+    expEn: "Width = A ÷ l = 96 ÷ 12 = 8 cm. Check: 12 × 8 = 96 ✓",
+    expId: "Lebar = L ÷ p = 96 ÷ 12 = 8 cm. Periksa: 12 × 8 = 96 ✓" }
+];
+
+var BANK = [
+  { key: "s1", items: S1 },
+  { key: "s2", items: S2 },
+  { key: "s3", items: S3 },
+  { key: "s4", items: S4 },
+  { key: "s5", items: S5 }
+];
+
+/* ================= Render question cards ================= */
+BANK.forEach(function (sec) {
+  var grid = document.getElementById("q-" + sec.key);
+  if (!grid) return;
+  sec.items.forEach(function (it, i) {
+    var card = document.createElement("div");
+    card.className = "q-card";
+    card.innerHTML =
+      '<div class="q-top">' +
+        '<span class="q-num">' + (i + 1) + "</span>" +
+        '<div class="q-text"><span class="txt-en">' + it.en + '</span><span class="txt-id">' + it.id + "</span></div>" +
+      "</div>" +
+      '<div class="q-controls">' +
+        '<input class="q-input" type="number" step="any" inputmode="decimal" data-ph-en="Answer" data-ph-id="Jawaban">' +
+        (it.unit ? '<span class="q-unit">' + it.unit + "</span>" : "") +
+        '<button class="btn-check" type="button"><span class="txt-en">✓ Check</span><span class="txt-id">✓ Periksa</span></button>' +
+        '<button class="btn-exp" type="button">💡 <span class="txt-en">Solution</span><span class="txt-id">Pembahasan</span></button>' +
+      "</div>" +
+      '<div class="feedback"></div>' +
+      '<div class="exp-box"><span class="txt-en">' + it.expEn + '</span><span class="txt-id">' + it.expId + "</span></div>";
+    grid.appendChild(card);
+
+    var input = card.querySelector(".q-input");
+    var check = card.querySelector(".btn-check");
+    var expBtn = card.querySelector(".btn-exp");
+    var exp = card.querySelector(".exp-box");
+    var fb = card.querySelector(".feedback");
+
+    expBtn.addEventListener("click", function () { exp.classList.toggle("open"); });
+
+    function setFb(type) {
+      card.dataset.state = type;
+      fb.className = "feedback " + (type === "ok" ? "ok" : type === "err" ? "err" : "");
+      fb.textContent = FB[type][lang()];
+    }
+
+    function doCheck() {
+      var raw = input.value.trim();
+      if (raw === "") { setFb("empty"); return; }
+      var val = parseFloat(raw);
+      if (isNaN(val)) { setFb("err"); return; }
+      if (Math.abs(val - it.ans) < 1e-9) {
+        setFb("ok");
+        card.classList.add("solved");
+        solved.add(sec.key + ":" + i);
+        input.disabled = true;
+        check.disabled = true;
+        check.style.cursor = "default";
+        refreshScores();
+      } else {
+        setFb("err");
+        card.classList.remove("shake");
+        void card.offsetWidth;
+        card.classList.add("shake");
+      }
+    }
+
+    check.addEventListener("click", doCheck);
+    input.addEventListener("keydown", function (e) { if (e.key === "Enter") doCheck(); });
+  });
+});
+
+/* ================= Scores ================= */
+function refreshScores() {
+  var global = $("#scoreNum");
+  if (global) global.textContent = String(solved.size);
+  $$(".js-score").forEach(function (el) { el.textContent = String(solved.size); });
+  BANK.forEach(function (sec) {
+    var n = sec.items.filter(function (_, i) { return solved.has(sec.key + ":" + i); }).length;
+    var el = document.querySelector('.sec-score[data-sec="' + sec.key + '"]');
+    if (el) el.textContent = n + "/10";
+  });
+  if (solved.size === 50) {
+    var p = $("#perfectLine");
+    if (p) p.classList.remove("hidden");
+  }
+}
+
+/* ================= Navigation ================= */
+function go(i) {
+  if (i < 0 || i >= slides.length) return;
+  slides[current].classList.remove("active");
+  current = i;
+  var s = slides[current];
+  s.classList.add("active");
+  s.scrollTop = 0;
+  var counter = $("#slideCounter");
+  if (counter) counter.textContent = (current + 1) + " / " + slides.length;
+  var fill = $("#progressFill");
+  if (fill) fill.style.width = ((current + 1) / slides.length * 100) + "%";
+  var prev = $("#prevBtn"), next = $("#nextBtn");
+  if (prev) prev.disabled = current === 0;
+  if (next) next.disabled = current === slides.length - 1;
+  if (s.id === "thankyou") refreshScores();
+}
+
+$("#nextBtn").addEventListener("click", function () { go(current + 1); });
+$("#prevBtn").addEventListener("click", function () { go(current - 1); });
+
+document.addEventListener("keydown", function (e) {
+  var t = (e.target && e.target.tagName || "").toUpperCase();
+  if (t === "INPUT" || t === "TEXTAREA") return;
+  if (e.key === "ArrowRight") go(current + 1);
+  if (e.key === "ArrowLeft") go(current - 1);
+});
+
+$$("[data-goto]").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    var target = btn.getAttribute("data-goto");
+    var idx = slides.findIndex(function (s) { return s.id === target; });
+    if (idx >= 0) go(idx);
+  });
+});
+
+/* ================= Language toggle ================= */
+var TITLES = { en: "Finding Side Lengths — Grade 5 Maths", id: "Menentukan Panjang Sisi — Matematika Kelas 5" };
+
+function applyLang() {
+  var id = lang() === "id";
+  document.documentElement.lang = id ? "id" : "en";
+  document.title = TITLES[lang()];
+  $$("[data-ph-en]").forEach(function (el) {
+    el.placeholder = id ? el.getAttribute("data-ph-id") : el.getAttribute("data-ph-en");
+  });
+  $$(".js-name").forEach(function (el) {
+    el.textContent = studentName || (id ? "Juara" : "Champion");
+  });
+  /* refresh stored feedback messages in the new language */
+  $$(".q-card").forEach(function (c) {
+    var st = c.getAttribute("data-state");
+    if (st && FB[st]) {
+      var fb = c.querySelector(".feedback");
+      if (fb) fb.textContent = FB[st][lang()];
+    }
+  });
+}
+
+$("#langToggle").addEventListener("click", function () {
+  document.body.classList.toggle("lang-id");
+  applyLang();
+});
+
+/* ================= Student name ================= */
+var nameInput = $("#nameInput");
+var nameHint = $("#nameHint");
+
+function startLesson() {
+  var v = nameInput.value.trim();
+  if (!v) {
+    nameHint.classList.remove("hidden");
+    nameInput.classList.remove("shake");
+    void nameInput.offsetWidth;
+    nameInput.classList.add("shake");
+    nameInput.focus();
+    return;
+  }
+  nameHint.classList.add("hidden");
+  studentName = v;
+  var wrap = $("#nameChipWrap");
+  if (wrap) { wrap.style.display = "inline-flex"; $("#nameChip").textContent = v; }
+  applyLang();
+  go(1);
+}
+
+$("#startBtn").addEventListener("click", startLesson);
+nameInput.addEventListener("keydown", function (e) { if (e.key === "Enter") startLesson(); });
+
+/* ================= Reflection emoji ================= */
+$$(".emoji-btn").forEach(function (b) {
+  b.addEventListener("click", function () {
+    $$(".emoji-btn").forEach(function (x) { x.classList.remove("selected"); });
+    b.classList.add("selected");
+  });
+});
+
+/* ================= Restart ================= */
+$("#restartBtn").addEventListener("click", function () { location.reload(); });
+
+/* ================= Init ================= */
+applyLang();
+refreshScores();
+go(0);
+
+})();
+</script>
+</body>
+</html>
